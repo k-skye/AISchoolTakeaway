@@ -14,19 +14,9 @@
       @btnClick="getVerifyCode"
     />
     <!-- 验证码 -->
-    <InputGroup
-    type="number"
-    v-model="verifyCode"
-    placeholder="验证码"
-    :error="errors.code"
-    />
+    <InputGroup type="number" v-model="verifyCode" placeholder="验证码" :error="errors.code" />
     <!--  学号 -->
-    <InputGroup
-    type="number"
-    v-if="firstLogin"
-    v-model="stuID"
-    placeholder="学号"
-    />
+    <InputGroup type="number" v-if="firstLogin" v-model="stuID" placeholder="学号" />
     <!-- 用户服务协议 -->
     <div class="login_des">
       <p>
@@ -61,15 +51,14 @@ export default {
   },
   computed: {
     isClick() {
-      if (!this.phone || !this.verifyCode){
+      if (!this.phone || !this.verifyCode) {
         if (this.firstLogin) {
           if (!this.stuID) {
             return false;
           }
         }
         return true;
-      }
-      else return false;
+      } else return false;
     }
   },
   methods: {
@@ -79,53 +68,53 @@ export default {
       // 发送请求
       if (this.firstLogin) {
         this.$axios
-        .post("/api/?s=users.userLogin", {
-          firstLogin: 1,
-          phoneNo: this.phone,
-          loginCode: this.verifyCode,
-          codeID: this.codeID,
-          name: this.name,
-          avatar: this.avatar,
-          stuID: this.stuID
-        })
-        .then(res => {
-          console.log('登陆:'+JSON.stringify(res.data.data));
-          // 检验成功 设置登录状态并且跳转到/
-          if (res.data.ret === 200) {
-            console.log('登陆成功');
-            localStorage.setItem("name", res.data.data.name);
-            this.$router.push("/");
-          }
-        })
-        .catch(err => {
-          // 返回错误信息
-          this.errors = {
-            code: err.response.data.msg
-          };
-        });
-      }else{
+          .post("/api/?s=users.userLogin", {
+            firstLogin: 1,
+            phoneNo: this.phone,
+            loginCode: this.verifyCode,
+            codeID: this.codeID,
+            name: this.name,
+            avatar: this.avatar,
+            stuID: this.stuID
+          })
+          .then(res => {
+            console.log("登陆:" + JSON.stringify(res.data.data));
+            // 检验成功 设置登录状态并且跳转到/
+            if (res.data.ret === 200) {
+              console.log("登陆成功");
+              localStorage.setItem("name", res.data.data.name);
+              this.$router.push("/");
+            }
+          })
+          .catch(err => {
+            // 返回错误信息
+            this.errors = {
+              code: err.response.data.msg
+            };
+          });
+      } else {
         this.$axios
-        .post("/api/?s=users.userLogin", {
-          firstLogin: 0,
-          phoneNo: this.phone,
-          loginCode: this.verifyCode,
-          codeID: this.codeID,
-        })
-        .then(res => {
-          console.log('登陆:'+JSON.stringify(res.data.data));
-          // 检验成功 设置登录状态并且跳转到/
-          if (res.data.ret === 200) {
-            console.log('登陆成功');
-            localStorage.setItem("name", res.data.data.name);
-            this.$router.push("/");
-          }
-        })
-        .catch(err => {
-          // 返回错误信息
-          this.errors = {
-            code: err.response.data.msg
-          };
-        });
+          .post("/api/?s=users.userLogin", {
+            firstLogin: 0,
+            phoneNo: this.phone,
+            loginCode: this.verifyCode,
+            codeID: this.codeID
+          })
+          .then(res => {
+            console.log("登陆:" + JSON.stringify(res.data.data));
+            // 检验成功 设置登录状态并且跳转到/
+            if (res.data.ret === 200) {
+              console.log("登陆成功");
+              localStorage.setItem("name", res.data.data.name);
+              this.$router.push("/");
+            }
+          })
+          .catch(err => {
+            // 返回错误信息
+            this.errors = {
+              code: err.response.data.msg
+            };
+          });
       }
     },
     getVerifyCode() {
@@ -137,7 +126,7 @@ export default {
             phoneNo: this.phone
           })
           .then(res => {
-            console.log('获取验证码:'+JSON.stringify(res.data.data));
+            console.log("获取验证码:" + JSON.stringify(res.data.data));
             this.codeID = res.data.data.codeID;
             this.firstLogin = res.data.data.firstLogin == 1 ? true : false;
           });
@@ -189,36 +178,36 @@ export default {
   padding: 30px;
   box-sizing: border-box;
   background: #fff;
-}
-.logo {
-  text-align: center;
-  img {
-    width: 150px;
+  .logo {
+    text-align: center;
+    img {
+      width: 150px;
+    }
   }
-}
-.text_group,
-.login_des,
-.login_btn {
-  margin-top: 20px;
-  button {
-    width: 100%;
-    height: 40px;
-    background-color: #48ca38;
-    border-radius: 4px;
-    color: white;
-    font-size: 14px;
-    border: none;
-    outline: none;
+  .text_group,
+  .login_des,
+  .login_btn {
+    margin-top: 20px;
+    button {
+      width: 100%;
+      height: 40px;
+      background-color: #48ca38;
+      border-radius: 4px;
+      color: white;
+      font-size: 14px;
+      border: none;
+      outline: none;
+    }
+    button[disabled] {
+      background-color: #8bda81;
+    }
   }
-  button[disabled] {
-    background-color: #8bda81;
-  }
-}
-.login_des {
-  color: #aaa;
-  line-height: 22px;
-  span {
-    color: #4d90fe;
+  .login_des {
+    color: #aaa;
+    line-height: 22px;
+    span {
+      color: #4d90fe;
+    }
   }
 }
 </style>
