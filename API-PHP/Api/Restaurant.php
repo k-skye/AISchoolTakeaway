@@ -12,9 +12,10 @@ use App\Domain\restaurant as DomainRestaurant;
 class Restaurant extends Api {
     public function getRules() {
         return array(
-            'getSomeRest' => array(
+            'getRestsByRule' => array(
                 'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
                 'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+                'condition'  => array('name' => 'condition', 'require' => true, 'desc' => '筛选规则')
             ),
             'getOneRest' => array(
                 'id'  => array('name' => 'id', 'require' => true, 'desc' => '店铺id'),
@@ -22,15 +23,15 @@ class Restaurant extends Api {
         );
     }
     /**
-     * 拿一些餐厅信息
+     * 拿指定规则排序的店铺信息
      * @desc 测试一下
      */
-    public function getSomeRest() {
+    public function getRestsByRule() {
         $domain = new DomainRestaurant();
-        return $domain->getSomeRest($this->offset,$this->limit);
+        return $domain->getRestsByRule($this->offset,$this->limit,$this->condition);
     }
     /**
-     * 拿某个餐厅信息
+     * 拿某个店铺信息
      * @desc 测试一下
      */
     public function getOneRest() {

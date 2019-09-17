@@ -13,9 +13,9 @@ let config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
-  headers: {
+   headers: {
     "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;"
-  }//因为php后端接受序列化数据，axios默认为json格式，所以修改成序列化
+  } //因为php后端接受序列化数据，axios默认为json格式，所以修改成序列化
 };
 
 const _axios = axios.create(config);

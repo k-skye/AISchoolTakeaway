@@ -68,7 +68,7 @@ export default {
       // 发送请求
       if (this.firstLogin) {
         this.$axios
-          .post("/api/?s=users.userLogin", {
+          .post("/api/?s=Users.UserLogin", {
             firstLogin: 1,
             phoneNo: this.phone,
             loginCode: this.verifyCode,
@@ -94,7 +94,7 @@ export default {
           });
       } else {
         this.$axios
-          .post("/api/?s=users.userLogin", {
+          .post("/api/?s=Users.UserLogin", {
             firstLogin: 0,
             phoneNo: this.phone,
             loginCode: this.verifyCode,
@@ -122,7 +122,7 @@ export default {
         this.validateBtn();
         // 发送网络请求
         this.$axios
-          .post("/api/?s=users.SendMessage", {
+          .post("/api/?s=Users.SendMessage", {
             phoneNo: this.phone
           })
           .then(res => {

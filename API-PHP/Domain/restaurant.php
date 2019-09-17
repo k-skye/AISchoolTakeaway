@@ -5,9 +5,22 @@ use App\Model\restaurant as ModelRestaurant;
 
 class restaurant {
 
-    public function getSomeRest($offset,$limit) {
+    public function getRestsByRule($offset,$limit,$condition) {
         $model = new ModelRestaurant();
-        return $model->getSomeRest($offset,$limit);
+        switch ($condition) {
+            case 'normal':
+                return $model->getRestsInNormal($offset,$limit);
+                break;
+            case 'sale':
+                return $model->getRestsInSale($offset,$limit);
+                break;
+            case 'stars':
+                return $model->getRestsInStars($offset,$limit);
+                break;
+            default:
+                return $model->getRestsInNormal($offset,$limit);
+                break;
+        }
     }
 
     public function getOneRest($id) {
