@@ -61,7 +61,7 @@ class users {
     public function checkFirst($phoneNo) {
         //检测是否首次登陆
         $modelUser = new ModelUsers();
-        $res = $modelUser->getOneUser($phoneNo);
+        $res = $modelUser->getOneUserByPhone($phoneNo);
         if (empty($res)) {
             return -1;
         }else {
@@ -86,7 +86,7 @@ class users {
                 }
             }else{
                 //查找已存在的，返回学生名字
-                $res = $modelUser->getOneUser($phoneNo);
+                $res = $modelUser->getOneUserByPhone($phoneNo);
                 if (empty($res)) {
                     return -1;
                 }else {

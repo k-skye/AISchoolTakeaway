@@ -19,9 +19,15 @@ class users extends NotORM {
         return $orm->insert_id();
     }
 
-    public function getOneUser($phoneNo) {
+    public function getOneUserByPhone($phoneNo) {
         return $this->getORM()
         ->where('phoneNo', $phoneNo)
+        ->fetchOne();
+    }
+
+    public function getOneUserByUserID($userID) {
+        return $this->getORM()
+        ->where('id', $userID)
         ->fetchOne();
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <section class="index-container">
-    <div class="index-shopInfo">
+    <div class="index-shopInfo" @click="$router.push({name: 'shop',params: {restID: restaurant.id}})">
       <!-- 左侧图片 -->
       <div class="logo_container">
         <img :src="restaurant.logo" alt>
