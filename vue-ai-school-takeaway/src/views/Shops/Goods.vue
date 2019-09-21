@@ -166,7 +166,6 @@ export default {
       // console.log(this.listHeight);
     },
     handleFood(food) {
-      console.log(food);
       this.selectedFood = food;
       this.showFood = true;
     }

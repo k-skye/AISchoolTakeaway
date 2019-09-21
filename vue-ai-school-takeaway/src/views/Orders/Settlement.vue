@@ -63,7 +63,6 @@ import CartGroup from "../../components/Orders/CartGroup";
 import CartItem from "../../components/Orders/CartItem";
 import Tableware from "../../components/Orders/Tableware";
 import { Toast } from "mint-ui";
-import { userInfo } from "os";
 export default {
   name: "Settlement",
   data() {
