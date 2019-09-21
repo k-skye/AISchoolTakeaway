@@ -60,15 +60,20 @@ export default {
           var foodsArr = new Array();
           foods.forEach(id => {
             order.food.forEach(food => {
-                 if (food.id == id) {
-                  foodsArr.push(food); //把每行food的全部数据对象都放入数组
-                }
+              if (food.id == id) {
+                foodsArr.push(food); //把每行food的全部数据对象都放入数组
+              }
             });
           });
           this.orderlist[i].foodsArr = foodsArr;
-          foodsArr.forEach( food => {
-            showfood += (' ' + food.name);
+          var o = 0;
+          foodsArr.forEach(food => {
+            if (o < 2) {
+              showfood += " " + food.name;
+            }
+            o++;
           });
+          showfood += " 等";
           this.orderlist[i].showfood = showfood;
         });
       });
