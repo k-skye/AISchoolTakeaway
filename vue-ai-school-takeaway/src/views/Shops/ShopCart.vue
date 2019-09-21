@@ -38,10 +38,10 @@
           <span v-if="isEmpty">未选购商品</span>
           <span v-else>¥{{totalPrice.toFixed(2)}}</span>
         </p>
-        <p class="bottomNav-cartdelivery">另需配送费10元</p>
+        <p class="bottomNav-cartdelivery">另需配送费{{restInfo.deliveryFee}}元</p>
       </div>
       <button class="submit-btn">
-        <span v-if="isEmpty">¥8元起送</span>
+        <span v-if="isEmpty">请先点餐</span>
         <span @click="settlement" v-else>去结算</span>
       </button>
     </div>
@@ -89,6 +89,9 @@ export default {
         });
       });
       return empty;
+    },
+    restInfo() {
+      return this.$store.getters.restInfo;
     }
   },
   methods: {
@@ -105,7 +108,7 @@ export default {
     },
     settlement() {
       this.$store.dispatch("setOrderInfo", {
-        foodInfo: this.foodInfo.rst,
+        foodInfo: this.foodInfo,
         selectFoods: this.selectFoods
       });
       this.$router.push("/settlement");

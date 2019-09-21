@@ -13,7 +13,7 @@ class comment {
         $modelUsers = new ModelUsers();
         foreach ($arr as $value){
             $arr[$i]['images'] = json_decode($value['images']);
-            //把每个id换成用户名字
+            //添加名字和头像一起返回
             $userID = $arr[$i]['userID'];
             $arr[$i]['userName'] = $modelUsers->getOneUserByUserID($userID)['name'];
             $arr[$i]['userAvatar'] = $modelUsers->getOneUserByUserID($userID)['avatar'];

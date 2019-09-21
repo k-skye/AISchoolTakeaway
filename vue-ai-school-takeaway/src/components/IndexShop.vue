@@ -26,7 +26,7 @@
           <div>
             <span>¥10起送</span>
             |
-            <span>配送费¥2起</span>
+            <span>配送费¥{{restaurant.deliveryFee}}起</span>
           </div>
           <div class="index-distanceWrap">
             <span>{{restaurant.roomNum}}饭</span>

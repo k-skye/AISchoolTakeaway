@@ -10,7 +10,7 @@ class Site extends Api {
     public function getRules() {
         return array(
             'index' => array(
-                'username'  => array('name' => 'username', 'default' => 'PhalApi', 'desc' => '用户名'),
+                'username'  => array('name' => 'username', 'default' => 'AISchool', 'desc' => '用户名'),
             ),
         );
     }

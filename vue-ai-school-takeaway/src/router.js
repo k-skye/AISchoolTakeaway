@@ -30,11 +30,6 @@ export default new Router({
           path: '/me',
           name: 'me',
           component: () => import('./views/Me.vue')
-        },
-        {
-          path: '/address',
-          name: 'address',
-          component: () => import('./views/Address.vue')
         }
       ]
     },
@@ -60,6 +55,36 @@ export default new Router({
       path: '/login',
       name: 'login',
       component: () => import('./views/Login.vue')
+    },
+    {
+      path: '/myAddress',
+      name: 'myAddress',
+      component: () => import('./views/Orders/MyAddress.vue')
+    },
+    {
+      path: '/addAddress',
+      name: 'addAddress',
+      component: () => import('./views/Orders/AddAddress.vue')
+    },
+    {
+      path: '/settlement',
+      name: 'settlement',
+      component: () => import('./views/Orders/Settlement.vue')
+    },
+    {
+      path: '/remark',
+      name: 'remark',
+      component: () => import('./views/Orders/Remark.vue')
+    },
+    {
+      path: '/pay',
+      name: 'pay',
+      component: () => import('./views/Orders/Pay.vue')
+    },
+    {
+      path: '/orderInfo',
+      name: 'orderInfo',
+      component: () => import('./views/Orders/OrderInfo.vue')
     }
   ]
 })

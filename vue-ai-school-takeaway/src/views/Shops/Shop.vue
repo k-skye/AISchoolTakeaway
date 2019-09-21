@@ -69,6 +69,7 @@ export default {
         }
       }).then(res => {
         this.shopInfo = res.data.data;
+        this.$store.dispatch("setRestInfo", this.shopInfo);
       });
     }
   },

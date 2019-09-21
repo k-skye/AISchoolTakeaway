@@ -6,6 +6,7 @@ use App\Model\phonecode as ModelPhoneCode;
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Exception\ClientException;
 use AlibabaCloud\Client\Exception\ServerException;
+use App\Model\address as ModelAddress;
 
 class users {
 
@@ -49,8 +50,8 @@ class users {
             $errors = $e->getErrorMessage() . PHP_EOL;
         }
         //保存随机数
-        $model = new ModelPhoneCode();
-        $codeID = $model->saveCode($phoneNo,$randomCode);
+        $modelPhoneCode = new ModelPhoneCode();
+        $codeID = $modelPhoneCode->saveCode($phoneNo,$randomCode);
         if ($codeID > 0) {
             return $codeID;
         }else {
@@ -71,26 +72,36 @@ class users {
     
     public function userLogin($firstLogin,$loginCode,$codeID,$name,$phoneNo,$avatar,$stuID) {
         //检测code是否正确
-        $model = new ModelPhoneCode();
+        $modelPhoneCode = new ModelPhoneCode();
         $modelUser = new ModelUsers();
-        $randomCode = $model->getCode($codeID);
+        $randomCode = $modelPhoneCode->getCode($codeID);
         if ($randomCode == $loginCode) {
             //正确
             if ($firstLogin == 1) {
                 //去users表创建新用户
                 $res = $modelUser->createUsers($name,$phoneNo,$avatar,$stuID);
                 if ($res > 0) {
-                    return 0;
+                    //并返回用户信息
+                    $res = $modelUser->getOneUserByPhone($phoneNo);
+                    $addrID = $res['mainAddressID'];
+                    $modelAddress = new ModelAddress();
+                    $addr = $modelAddress->getOneByAddrById($addrID);
+                    $res['addr'] = $addr['dormitory']+$addr['roomNum'];
+                    return $res;
                 }else {
                     return -1;
                 }
             }else{
-                //查找已存在的，返回学生名字
+                //查找已存在的，返回学生信息
                 $res = $modelUser->getOneUserByPhone($phoneNo);
                 if (empty($res)) {
                     return -1;
                 }else {
-                    return $res['name'];
+                    $addrID = $res['mainAddressID'];
+                    $modelAddress = new ModelAddress();
+                    $addr = $modelAddress->getOneByAddrById($addrID);
+                    $res['addr'] = $addr['dormitory'].'-'.$addr['roomNum'];
+                    return $res;
                 }
             }
         }else{

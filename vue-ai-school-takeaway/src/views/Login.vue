@@ -106,6 +106,8 @@ export default {
             if (res.data.ret === 200) {
               console.log("登陆成功");
               localStorage.setItem("name", res.data.data.name);
+              //保存个人信息
+              this.$store.dispatch("setUserInfo", res.data.data);
               this.$router.push("/");
             }
           })

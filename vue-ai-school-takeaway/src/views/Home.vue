@@ -1,10 +1,8 @@
 <template>
   <div class="home">
     <div class="header">
-      <div class="address_map" @click="$router.push({name: 'address'})">
-        <i class="fa fa-map-marker"></i>
-        <span>{{address}}</span>
-        <i class="fa fa-sort-desc"></i>
+      <div class="address_map">
+        <span>下午好！</span>
       </div>
     </div>
     <div class="search_wrap" @click="$router.push('/search')">
@@ -170,10 +168,6 @@ export default {
 .header .address_map {
   color: #fff;
   font-weight: bold;
-}
-.address_map i {
-  margin: 0 3px;
-  font-size: 18px;
 }
 .address_map span {
   display: inline-block;

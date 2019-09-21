@@ -9,22 +9,53 @@ class restaurant {
         $model = new ModelRestaurant();
         switch ($condition) {
             case 'normal':
-                return $model->getRestsInNormal($offset,$limit);
+                $arr = $model->getRestsInNormal($offset,$limit);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '11';
+                    $i++;
+                }
+                return $arr;
                 break;
             case 'sale':
-                return $model->getRestsInSale($offset,$limit);
+                $arr = $model->getRestsInSale($offset,$limit);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '11';
+                    $i++;
+                }
+                return $arr;
                 break;
             case 'stars':
-                return $model->getRestsInStars($offset,$limit);
+                $arr = $model->getRestsInStars($offset,$limit);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '11';
+                    $i++;
+                }
+                return $arr;
                 break;
             default:
-                return $model->getRestsInNormal($offset,$limit);
+                $arr = $model->getRestsInNormal($offset,$limit);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '11';
+                    $i++;
+                }
+                return $arr;
                 break;
         }
     }
 
     public function getOneRest($id) {
         $model = new ModelRestaurant();
-        return $model->getOneRest($id);
+        $res = $model->getOneRest($id);
+        $res['deliveryFee'] = '11';
+        $res['deliveryTime'] = '30';
+        return $res;
     }
 }

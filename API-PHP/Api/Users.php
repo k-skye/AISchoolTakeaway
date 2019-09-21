@@ -62,9 +62,7 @@ class Users extends Api {
         $res = $domain->userLogin($this->firstLogin,$this->loginCode,$this->codeID,$this->name,$this->phoneNo,$this->avatar,$this->stuID);
         switch ($res) {
             case '0':
-                return array(
-                    'name' => $this->name
-                );
+                return $res;
                 break;
             case '-1':
                 throw new InternalServerErrorException('登陆错误', 2);
@@ -73,9 +71,7 @@ class Users extends Api {
                 throw new BadRequestException('验证码错误', 1);
                 break;  
             default:
-                return array(
-                    'name' => $res
-                );
+                return $res;
                 break;
         }
     }
