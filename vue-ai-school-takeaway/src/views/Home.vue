@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     getData() {
-      this.$axios("/api/?s=HomeData.GetHeadAdImg").then(res => {
+      this.$axios("https://takeawayapi.pykky.com/?s=HomeData.GetHeadAdImg").then(res => {
         this.swipeImgs = JSON.parse(res.data.data).headAdImg;
       }); //加载广告
       this.firstLoadData(); //加载商家
@@ -102,7 +102,7 @@ export default {
       this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
-      this.$axios("/api/?s=Restaurant.GetRestsByRule", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule", {
         params: {
           offset: this.offset,
           limit: this.size,
@@ -116,7 +116,7 @@ export default {
       if (!this.allLoaded) {
         this.offset += 5;
         // 拉取商家信息
-        this.$axios("/api/?s=Restaurant.GetRestsByRule", {
+        this.$axios("https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule", {
           params: {
             offset: this.offset,
             limit: this.size,

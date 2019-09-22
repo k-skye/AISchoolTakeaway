@@ -62,7 +62,7 @@ export default {
   },
   methods: {
     getData() {
-      this.$axios("/api/?s=Comment.GetSomeComment", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Comment.GetSomeComment", {
         params: {
           restID: this.restID,
           offset: 1,

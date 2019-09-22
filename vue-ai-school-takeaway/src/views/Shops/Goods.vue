@@ -99,7 +99,7 @@ export default {
   },
   methods: {
     getData() {
-      this.$axios("/api/?s=Food.GetFoods", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Food.GetFoods", {
         params: {
           restID: this.restID
         }

@@ -105,7 +105,7 @@ export default {
     addAddress() {
       this.addressInfo.userID = this.userID;
       this.$axios
-        .post("/api/?s=Address.AddAddr", this.addressInfo)
+        .post("https://takeawayapi.pykky.com/?s=Address.AddAddr", this.addressInfo)
         .then(res => {
           if (!this.$store.getters.userInfo) {
             this.$store.dispatch("setAddrInfo", this.addressInfo);
@@ -116,7 +116,7 @@ export default {
     },
     editAddress() {
       this.$axios
-        .post('/api/?s=Address.ChangeAddr',
+        .post('https://takeawayapi.pykky.com/?s=Address.ChangeAddr',
           this.addressInfo
         )
         .then(res => {

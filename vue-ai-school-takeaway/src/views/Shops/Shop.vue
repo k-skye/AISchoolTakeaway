@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     getData() {
-      this.$axios("/api/?s=Restaurant.GetOneRest", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Restaurant.GetOneRest", {
         params: {
           id: this.restID
         }

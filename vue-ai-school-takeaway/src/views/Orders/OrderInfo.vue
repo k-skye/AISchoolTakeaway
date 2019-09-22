@@ -11,7 +11,7 @@
         <CartGroup
           v-if="orderDetail.orderInfo"
           :orderInfo="orderDetail.orderInfo"
-          :totalPrice="orderDetail.totalPrice"
+          :totalPrice="orderDetail.payPrice"
         />
       </div>
 
@@ -21,7 +21,7 @@
         <ul class="card-list">
           <li class="list-item">
             <span>送达时间:</span>
-            <div>{{orderDetail.date}}</div>
+            <div>{{orderDetail.payTime}}</div>
           </li>
           <li class="list-item">
             <span>送货地址:</span>
@@ -40,7 +40,7 @@
         <ul class="card-list">
           <li class="list-item">
             <span>订单号:</span>
-            {{orderDetail._id}}
+            {{orderDetail.id}}
           </li>
           <li class="list-item">
             <span>支付方式:</span>
@@ -48,7 +48,7 @@
           </li>
           <li class="list-item">
             <span>下单时间:</span>
-            {{orderDetail.date}}
+            {{orderDetail.payTime}}
           </li>
           <li class="list-item" v-if="orderDetail.remarkInfo">
             <span>订单备注:</span>
@@ -75,7 +75,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.orderDetail = to.params;
-      // console.log(vm.orderDetail);
+      console.log(to.params);
     });
   },
   components: {

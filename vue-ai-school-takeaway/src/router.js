@@ -6,13 +6,11 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes: [
-    {
+  routes: [{
       path: '/',
       // name: 'index',
       component: () => import('./views/index.vue'),
-      children: [
-        {
+      children: [{
           path: '',
           redirect: '/home'
         },
@@ -38,8 +36,7 @@ export default new Router({
       name: 'shop',
       redirect: '/goods',
       component: () => import('./views/Shops/Shop.vue'),
-      children: [
-        {
+      children: [{
           path: '/goods',
           name: 'goods',
           component: () => import('./views/Shops/Goods.vue')
@@ -52,9 +49,9 @@ export default new Router({
       ]
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('./views/Login.vue')
+      path: '/register',
+      name: 'register',
+      component: () => import('./views/Register.vue')
     },
     {
       path: '/myAddress',

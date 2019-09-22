@@ -135,7 +135,7 @@ export default {
       };
       // console.log(orderlist);
       this.$axios
-        .post(`/api/user/add_order/${localStorage.ele_login}`, orderlist)
+        .post(`https://takeawayapi.pykky.com/user/add_order/${localStorage.ele_login}`, orderlist)
         .then(res => {
           // console.log(res.data);
           this.$router.push("/order");

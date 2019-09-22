@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     getData() {
-      this.$axios("/api/?s=Orders.GetOnesAllOrders", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Orders.GetOnesAllOrders", {
         params: {
           id: this.userInfo.id
         }

@@ -3,6 +3,8 @@
     <div class="logo">
       <img src="../assets/logo.png" alt="my login image" />
     </div>
+    <!--  学号 -->
+    <InputGroup type="number" v-model="stuID" placeholder="学号" :error="errors.stuid" />
     <!-- 手机号 -->
     <InputGroup
       type="number"
@@ -15,18 +17,16 @@
     />
     <!-- 验证码 -->
     <InputGroup type="number" v-model="verifyCode" placeholder="验证码" :error="errors.code" />
-    <!--  学号 -->
-    <InputGroup type="number" v-if="firstLogin" v-model="stuID" placeholder="学号" />
     <!-- 用户服务协议 -->
     <div class="login_des">
       <p>
-        新用户登录即自动注册，表示已同意
+        注册即表示您已同意
         <span>《用户服务协议》</span>
       </p>
     </div>
     <!-- 登录按钮 -->
     <div class="login_btn">
-      <button :disabled="isClick" @click="handleLogin">登录</button>
+      <button :disabled="isClick" @click="handleLogin">注册</button>
     </div>
   </div>
 </template>
@@ -43,99 +43,80 @@ export default {
       btnTitle: "获取验证码",
       disabled: false,
       codeID: "", //验证码ID
-      name: "aaa",
-      avatar: "aaa",
       stuID: "",
-      firstLogin: false
+      openid: ""
     };
   },
   computed: {
     isClick() {
-      if (!this.phone || !this.verifyCode) {
-        if (this.firstLogin) {
-          if (!this.stuID) {
-            return false;
-          }
-        }
+      if (!this.phone || !this.verifyCode || !this.stuID) {
         return true;
       } else return false;
     }
   },
+  created() {
+    this.openid = this.getQueryVariable("openid");
+  },
   methods: {
+    getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+          return pair[1];
+        }
+      }
+      return false;
+    },
     handleLogin() {
       // 取消错误提醒
       this.errors = {};
       // 发送请求
-      if (this.firstLogin) {
-        this.$axios
-          .post("/api/?s=Users.UserLogin", {
-            firstLogin: 1,
-            phoneNo: this.phone,
-            loginCode: this.verifyCode,
-            codeID: this.codeID,
-            name: this.name,
-            avatar: this.avatar,
-            stuID: this.stuID
-          })
-          .then(res => {
-            console.log("登陆:" + JSON.stringify(res.data.data));
-            // 检验成功 设置登录状态并且跳转到/
-            if (res.data.ret === 200) {
-              console.log("登陆成功");
-              localStorage.setItem("name", res.data.data.name);
-              this.$router.push("/");
-            }
-          })
-          .catch(err => {
-            // 返回错误信息
-            this.errors = {
-              code: err.response.data.msg
-            };
-          });
-      } else {
-        this.$axios
-          .post("/api/?s=Users.UserLogin", {
-            firstLogin: 0,
-            phoneNo: this.phone,
-            loginCode: this.verifyCode,
-            codeID: this.codeID
-          })
-          .then(res => {
-            console.log("登陆:" + JSON.stringify(res.data.data));
-            // 检验成功 设置登录状态并且跳转到/
-            if (res.data.ret === 200) {
-              console.log("登陆成功");
-              localStorage.setItem("name", res.data.data.name);
-              //保存个人信息
-              this.$store.dispatch("setUserInfo", res.data.data);
-              this.$router.push("/");
-            }
-          })
-          .catch(err => {
-            // 返回错误信息
-            this.errors = {
-              code: err.response.data.msg
-            };
-          });
-      }
+      this.$axios
+        .post("https://takeawayapi.pykky.com/?s=Users.UserReg", {
+          phoneNo: this.phone,
+          loginCode: this.verifyCode,
+          codeID: this.codeID,
+          stuID: this.stuID,
+          openid: this.openid
+        })
+        .then(res => {
+          // 检验成功 设置登录状态并且跳转到/
+          if (res.data.ret === 200) {
+            localStorage.setItem("openid", this.openid);
+            localStorage.setItem("firstlogin", 0);
+            this.$router.push("/");
+          }
+        })
+        .catch(err => {
+          // 返回错误信息
+          this.errors = {
+            code: err.response.data.msg
+          };
+        });
     },
     getVerifyCode() {
       if (this.validatePhone()) {
         this.validateBtn();
         // 发送网络请求
         this.$axios
-          .post("/api/?s=Users.SendMessage", {
+          .post("https://takeawayapi.pykky.com/?s=Users.SendMessage", {
             phoneNo: this.phone
           })
           .then(res => {
-            console.log("获取验证码:" + JSON.stringify(res.data.data));
-            this.codeID = res.data.data.codeID;
-            this.firstLogin = res.data.data.firstLogin == 1 ? true : false;
+            if (res.data.ret == 402) {
+              this.errors = {
+                phone: "手机号码已存在,请用原来绑定的微信登陆"
+              };
+            } else {
+              this.codeID = res.data.data.codeID;
+            }
           });
       }
     },
     validateBtn() {
-      let time = 10;
+      let time = 60;
       let timer = setInterval(() => {
         if (time == 0) {
           clearInterval(timer);
@@ -159,6 +140,11 @@ export default {
       } else if (!/^1[345678]\d{9}$/.test(this.phone)) {
         this.errors = {
           phone: "请填写正确的手机号码"
+        };
+        return false;
+      } else if (!/\b\d{12}\b/.test(this.stuID)) {
+        this.errors = {
+          stuid: "请先填写正确的学号"
         };
         return false;
       } else {
@@ -207,6 +193,7 @@ export default {
   .login_des {
     color: #aaa;
     line-height: 22px;
+    text-align: center;
     span {
       color: #4d90fe;
     }

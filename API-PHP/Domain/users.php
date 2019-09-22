@@ -59,51 +59,73 @@ class users {
         }
     }
 
-    public function checkFirst($phoneNo) {
-        //检测是否首次登陆
+    public function checkFirstByOpenid($openid) {
+        //检测是否存在这个openid，存在就返回openid对应用户信息
+        $modelUser = new ModelUsers();
+        $res = $modelUser->getOneUserByOpenid($openid);
+        if (empty($res)) {
+            //不存在就插入新的用户，把openid存进去
+            $rs = $modelUser->createOpenid($openid);
+            if ($rs > 0) {
+                //插入成功
+                return 1;
+            }else {
+                return -1;
+            }
+        }else {
+            //已存在了，判断有没有信息在里面，有的话返回firstlogin1不然就是0
+            if (empty($res['phoneNo'])) {
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+    }
+
+    public function checkPhoneExist($phoneNo) {
+        //检测是否存在这个openid，存在就返回openid对应用户信息
         $modelUser = new ModelUsers();
         $res = $modelUser->getOneUserByPhone($phoneNo);
-        if (empty($res)) {
+        if (!empty($res)) {
             return -1;
-        }else {
+        }
+    }
+
+    public function getOneUserInfo($openid) {
+        //检测是否存在这个openid，存在就返回openid对应用户信息
+        $modelUser = new ModelUsers();
+        $res = $modelUser->getOneUserByOpenid($openid);
+        if (empty($res['name'])) {
+            $res['firstlogin'] = 1;
+        }else{
+            $res['firstlogin'] = 0;
+        }
+        return $res;
+    }
+
+    public function saveWechatUserInfo($openid,$nickname,$city,$headimgurl) {
+        $modelUser = new ModelUsers();
+        $res = $modelUser->saveWechatUserInfo($openid,$nickname,$city,$headimgurl);
+        if ($res == 0 || $res) {//数据已更新或无变化
             return 0;
+        }else {
+            return -1;//更新异常
         }
     }
     
-    public function userLogin($firstLogin,$loginCode,$codeID,$name,$phoneNo,$avatar,$stuID) {
+    public function userReg($loginCode,$codeID,$phoneNo,$stuID,$openid) {
         //检测code是否正确
         $modelPhoneCode = new ModelPhoneCode();
         $modelUser = new ModelUsers();
         $randomCode = $modelPhoneCode->getCode($codeID);
         if ($randomCode == $loginCode) {
             //正确
-            if ($firstLogin == 1) {
-                //去users表创建新用户
-                $res = $modelUser->createUsers($name,$phoneNo,$avatar,$stuID);
-                if ($res > 0) {
-                    //并返回用户信息
-                    $res = $modelUser->getOneUserByPhone($phoneNo);
-                    $addrID = $res['mainAddressID'];
-                    $modelAddress = new ModelAddress();
-                    $addr = $modelAddress->getOneByAddrById($addrID);
-                    $res['addr'] = $addr['dormitory']+$addr['roomNum'];
-                    return $res;
+                $res = $modelUser->changeUserInfo($phoneNo,$stuID,$openid);
+                if ($res == 0 || $res) {//数据已更新或无变化
+                    return 0;
                 }else {
-                    return -1;
+                    return -1;//更新异常
                 }
-            }else{
-                //查找已存在的，返回学生信息
-                $res = $modelUser->getOneUserByPhone($phoneNo);
-                if (empty($res)) {
-                    return -1;
-                }else {
-                    $addrID = $res['mainAddressID'];
-                    $modelAddress = new ModelAddress();
-                    $addr = $modelAddress->getOneByAddrById($addrID);
-                    $res['addr'] = $addr['dormitory'].'-'.$addr['roomNum'];
-                    return $res;
-                }
-            }
         }else{
             //错误
             return -2;

@@ -115,7 +115,7 @@ export default {
       if (this.userInfo.mainAddressID != 0) {
         this.haveAddress = true;
         if (!this.addrInfo) {
-          this.$axios("/api/?s=Address.GetOneAddr", {
+          this.$axios("https://takeawayapi.pykky.com/?s=Address.GetOneAddr", {
           params: {
             id: this.userInfo.mainAddressID
           }

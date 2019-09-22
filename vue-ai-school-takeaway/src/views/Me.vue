@@ -3,17 +3,17 @@
     <div class="headInfo">
       <div class="head-img"></div>
       <div class="head-profile">
-        <p class="user-id" v-if="userInfo">{{userInfo.name}}</p>
-        <p v-else class="user-id" @click="handleLogin">登录/注册</p>
+        <p v-if="firstlogin" class="user-id" @click="handleRes">登陆/注册</p>
+        <p class="user-id" v-else>{{userInfo.name}}</p>
         <p class="user-phone">
           <i class="fa fa-mobile"></i>
-          <span v-if="userInfo">{{encryptPhone(userInfo.phoneNo)}}</span>
-          <span v-else>登录后享受更多特权</span>
+          <span v-if="firstlogin">登陆后就能开始点餐咯～</span>
+          <span v-else>{{encryptPhone(userInfo.phoneNo)}}</span>
         </p>
       </div>
       <i class="fa fa-angle-right"></i>
     </div>
-    <div v-if="userInfo">
+    <div v-if="!firstlogin">
       <div class="address-cell">
         <i class="fa fa-map-marker"></i>
         <div class="address-index" @click="myAddress">
@@ -21,7 +21,6 @@
           <i class="fa fa-angle-right"></i>
         </div>
       </div>
-      <button @click="handleLogout" class="loginOut-btn">退出登录</button>
     </div>
   </div>
 </template>
@@ -31,32 +30,32 @@ export default {
   name: "me",
   data() {
     return {
-      userInfo: null
+      firstlogin: true
     };
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => vm.getData());
+  created() {
+    if (localStorage.firstlogin == 1) {
+      this.firstlogin = true;
+    } else {
+      this.firstlogin = false;
+    }
   },
   methods: {
-    handleLogin() {
-      this.$router.push("/login");
-    },
-    getData() {
-      this.userInfo = this.$store.getters.userInfo;
-      if (!this.userInfo) {
-        const user_id = localStorage.ele_login;
-        this.$axios(`/api/user/user_info/${user_id}`).then(res => {
-          // console.log(res.data);
-          this.userInfo = res.data;
-        });
-      }
+    handleRes() {
+      const appid = "wx3df92dead7bcd174";
+      const redirectUrl = encodeURI(
+        "https://takeawayapi.pykky.com/?s=Users.getInfoInWechat"
+      );
+      const wechatUrl =
+        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
+        appid +
+        "&redirect_uri=" +
+        redirectUrl +
+        "&response_type=code&scope=snsapi_userinfo&state=register#wechat_redirect";
+      window.location.href = wechatUrl;
     },
     encryptPhone(phone) {
       return phone.replace(/(\d{3})\d{4}(\d{4})/, "$1****$2");
-    },
-    handleLogout() {
-      localStorage.removeItem("ele_login");
-      this.$router.push("/login");
     },
     myAddress() {
       if (this.userInfo.mainAddressID > 0) {
@@ -77,6 +76,11 @@ export default {
           }
         });
       }
+    }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
     }
   }
 };
@@ -160,18 +164,5 @@ export default {
 .address-index > i {
   font-size: 1.3rem;
   color: #ccc;
-}
-.loginOut-btn {
-  display: block;
-  width: 100%;
-  text-align: center;
-  padding: 3.733333vw 0;
-  margin: 5.333333vw 0;
-  color: #ff5339;
-  border-radius: 0.8vw;
-  font-size: 1rem;
-  font-weight: 700;
-  background-color: #fff;
-  border: 0;
 }
 </style>

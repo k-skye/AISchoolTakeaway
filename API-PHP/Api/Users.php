@@ -14,17 +14,24 @@ use PhalApi\Exception\BadRequestException;
 class Users extends Api {
     public function getRules() {
         return array(
-            'userLogin' => array(
-                'firstLogin'  => array('name' => 'firstLogin', 'require' => true, 'desc' => '是否第一次登陆'),
+            'userReg' => array(
                 'phoneNo'  => array('name' => 'phoneNo', 'require' => true, 'desc' => '手机号码'),
                 'loginCode'  => array('name' => 'loginCode', 'require' => true, 'desc' => '验证码'),
                 'codeID'  => array('name' => 'codeID', 'require' => true, 'desc' => '验证码id'),
-                'name'  => array('name' => 'name', 'desc' => '学生名字'),
-                'avatar'  => array('name' => 'avatar', 'desc' => '头像'),
-                'stuID'  => array('name' => 'stuID', 'desc' => '学号')
+                'stuID'  => array('name' => 'stuID', 'require' => true, 'desc' => '学号'),
+                'openid'  => array('name' => 'openid', 'require' => true, 'desc' => 'openid')
             ),
             'sendMessage' => array(
                 'phoneNo'  => array('name' => 'phoneNo', 'require' => true, 'desc' => '手机号码'),
+            ),
+            'getOpenid' => array(
+                'code'  => array('name' => 'code', 'require' => true, 'desc' => '微信CODE'),
+            ),
+            'getUserInfo' => array(
+                'openid'  => array('name' => 'openid', 'require' => true, 'desc' => 'openid'),
+            ),
+            'getInfoInWechat' => array(
+                'code'  => array('name' => 'code', 'require' => true, 'desc' => '微信CODE'),
             )
         );
     }
@@ -35,37 +42,32 @@ class Users extends Api {
      */
     public function sendMessage() {
         $domain = new DomainUsers();
+        $check = $domain->checkPhoneExist($this->phoneNo);
+        if ($check == -1) {
+            throw new BadRequestException('手机号已存在', 2);
+        }
         $codeID = $domain->sendMessage($this->phoneNo);//返回新增id
         if ($codeID > 0) {
-            $firstLogin = $domain->checkFirst($this->phoneNo);//检测是否已存在，第一次注册登陆
-            if ($firstLogin == -1) {
-                return array(
-                    'firstLogin' => '1',
-                    'codeID' => $codeID
-                );
-            }else {
-                return array(
-                    'firstLogin' => '0',
-                    'codeID' => $codeID
-                );
-            }
+            return array(
+                'codeID' => $codeID
+            );
         }else {
             throw new InternalServerErrorException("新增验证码错误", 1);
         }
     }
     /**
-     * 用户登陆
-     * @desc 提交验证码验证并登陆
+     * 用户注册
+     * @desc 提交验证码验证并注册
      */
-    public function userLogin() {
+    public function userReg() {
         $domain = new DomainUsers();
-        $res = $domain->userLogin($this->firstLogin,$this->loginCode,$this->codeID,$this->name,$this->phoneNo,$this->avatar,$this->stuID);
+        $res = $domain->userReg($this->loginCode,$this->codeID,$this->phoneNo,$this->stuID,$this->openid);
         switch ($res) {
             case '0':
                 return $res;
                 break;
             case '-1':
-                throw new InternalServerErrorException('登陆错误', 2);
+                throw new InternalServerErrorException('更新数据和注册失败', 2);
                 break;    
             case '-2':
                 throw new BadRequestException('验证码错误', 1);
@@ -82,5 +84,76 @@ class Users extends Api {
     public function getAllUsers() {
         $domain = new DomainUsers();
         return $domain->getAllUsers();
+    }
+    /**
+     * 微信登陆回调获取openid
+     * @desc 测试一下
+     */
+    public function getOpenid() {
+        //用拿到的code请求微信服务器拿openid
+        $curl = new \PhalApi\CUrl();
+        $appid = 'wx3df92dead7bcd174';
+        $appsecret = 'd6bade00fdeec6e09500d74a9d3fb15b';
+        $rs = $curl->get('https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$appid.'&secret='.$appsecret.'&code='.$this->code.'&grant_type=authorization_code', 3000);
+        $rs = json_decode($rs);
+        if (property_exists($rs,'openid')) {
+            $domain = new DomainUsers();
+            $res = $domain->checkFirstByOpenid($rs->openid);
+            if ($res == -1) {
+                throw new InternalServerErrorException('创建openid失败', 7);
+            }else {
+                //跳转回去前端处理
+                if ($res == 1) {
+                    $to = "location:http://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
+                    header($to);
+                }else{
+                    $to = "location:http://takeaway.pykky.com/?firstlogin=0&openid=".$rs->openid;
+                    header($to);
+                }
+            }
+        }else {
+            throw new InternalServerErrorException($rs->errmsg, 6);
+        }
+    }
+    /**
+     * 获取一个用户详细信息
+     * @desc 测试一下
+     */
+    public function getUserInfo() {
+        $domain = new DomainUsers();
+        return $domain->getOneUserInfo($this->openid);
+    }
+    /**
+     * 注册前微信登陆获取详细个人信息
+     * @desc 测试一下
+     */
+    public function getInfoInWechat() {
+        //用拿到的code请求微信服务器拿openid
+        $curl = new \PhalApi\CUrl();
+        $appid = 'wx3df92dead7bcd174';
+        $appsecret = 'd6bade00fdeec6e09500d74a9d3fb15b';
+        $rs = $curl->get('https://api.weixin.qq.com/sns/oauth2/access_token?appid='.$appid.'&secret='.$appsecret.'&code='.$this->code.'&grant_type=authorization_code', 3000);
+        $rs = json_decode($rs);
+        if (property_exists($rs,'openid') && property_exists($rs,'access_token')) {
+            $openid = $rs->openid;
+            $at = $rs->access_token;
+            $rrs = $curl->get('https://api.weixin.qq.com/sns/userinfo?access_token='.$at.'&openid='.$openid.'&lang=zh_CN', 3000);
+            $rrs = json_decode($rrs);
+            if (property_exists($rrs,'nickname')) {
+                $domain = new DomainUsers();
+                $res = $domain->saveWechatUserInfo($rrs->openid,$rrs->nickname,$rrs->city,$rrs->headimgurl);
+                if ($res == -1) {
+                    throw new InternalServerErrorException('更新用户信息失败', 10);
+                }else {
+                    //跳转回去前端处理
+                    $to = "location:http://takeaway.pykky.com/register?isregister=1&openid=".$openid;
+                    header($to);
+                }
+            }else {
+                throw new InternalServerErrorException($rrs->errmsg, 9);
+            }
+        }else {
+            throw new InternalServerErrorException($rs->errmsg, 8);
+        }
     }
 } 

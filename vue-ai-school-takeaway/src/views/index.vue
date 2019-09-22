@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <router-view></router-view>
-    <TabBar :data="tabbarData"/>
+    <TabBar :data="tabbarData" />
   </div>
 </template>
 
@@ -17,6 +17,70 @@ export default {
         { title: "我的", icon: "user", path: "/me" }
       ]
     };
+  },
+  created() {
+    const haveopenid = localStorage.openid ? true : false;
+    var havefirstlogin = localStorage.firstlogin ? true : false;
+    const openidReq = this.getQueryVariable("openid");
+    const firstloginReq = this.getQueryVariable("firstlogin");
+    const isregisterReq = this.getQueryVariable("isregister");
+    if (isregisterReq != 1) {
+      if (!haveopenid) {
+        //跳转回来时，带上了openid和firstlogin参数，保存到缓存
+        if (openidReq) {
+          localStorage.setItem("openid", openidReq);
+          localStorage.setItem("firstlogin", firstloginReq);
+          havefirstlogin = true;
+          if (firstloginReq == 0) {
+            //用openid去get全部用户信息回来
+            this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
+              params: {
+                openid: openidReq
+              }
+            }).then(res => {
+              this.$store.dispatch("setUserInfo", res.data.data);
+            });
+          }
+        }
+        if (!havefirstlogin) {
+          const appid = "wx3df92dead7bcd174";
+          const redirectUrl = encodeURI(
+            "https://takeawayapi.pykky.com/?s=Users.GetOpenid"
+          );
+          const wechatUrl =
+            "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
+            appid +
+            "&redirect_uri=" +
+            redirectUrl +
+            "&response_type=code&scope=snsapi_base&state=indexLogin#wechat_redirect";
+          window.location.href = wechatUrl;
+        }
+      } else {
+        //用openid去get全部用户信息回来
+        const openid = localStorage.openid;
+        this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
+          params: {
+            openid: openid
+          }
+        }).then(res => {
+          this.$store.dispatch("setUserInfo", res.data.data);
+          localStorage.setItem("firstlogin", res.data.data.firstlogin);
+        });
+      }
+    }
+  },
+  methods: {
+    getQueryVariable(variable) {
+      var query = window.location.search.substring(1);
+      var vars = query.split("&");
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+          return pair[1];
+        }
+      }
+      return false;
+    }
   },
   components: {
     TabBar
