@@ -14,45 +14,28 @@
     <van-popup v-model="showRule" closeable position="bottom" :style="{ height: '50%' }">
       <div class="settings">
         <div class="head">筛选</div>
-        <div class="chooses"><!-- 做居中处理 -->
-        <div class="chooseRest">
-          <van-field
-            readonly
-            clickable
+        <div class="chooses">
+          <Choose
             label="饭堂"
             :value="chooseRestValue"
+            @getValue="getRestValue"
             placeholder="选择饭堂"
-            @click="showChooseRest = true"
+            :data="rests"
           />
-
-          <van-popup v-model="showChooseRest" position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="rests"
-              @cancel="showChooseRest = false"
-              @confirm="onChooseRestConfirm"
-            />
-          </van-popup>
-        </div>
-        <div class="chooseUserAddr">
-          <van-field
-            readonly
-            clickable
+          <Choose
             label="收货地址"
             :value="chooseAddrValue"
+            @getValue="getAddrValue"
             placeholder="选择收货地址"
-            @click="showChooseAddr = true"
+            :data="addrs"
           />
-
-          <van-popup v-model="showChooseAddr" position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="addrs"
-              @cancel="showChooseAddr = false"
-              @confirm="onChooseAddrConfirm"
-            />
-          </van-popup>
-        </div>
+          <Choose
+            label="性别"
+            :value="chooseSexValue"
+            @getValue="getSexValue"
+            placeholder="选择同学性别"
+            :data="sexes"
+          />
         </div>
         <div class="isNear">
           <div class="title">包括附近的宿舍</div>
@@ -64,7 +47,50 @@
     </van-popup>
     <div class="content">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-cell v-for="item in list" :key="item" :title="item" />
+        <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
+        <van-collapse v-model="activeNames">
+          <van-collapse-item name="1" :icon="statusIcon">
+            <div slot="title" class="title">
+              第四饭堂
+              <van-icon name="arrow" class="icon" />C15
+              <div class="end">
+                <van-icon name="clock-o" class="icon" />12:24
+                <van-icon name="bag-o" class="icon" />x4
+                <van-icon name="contact" class="icon" />男
+              </div>
+            </div>
+            <div class="foods">
+              <ul>
+                <li>
+                  <div class="food">
+                    <div class="name">1.招牌手撕鸡</div>
+                    <div class="price">¥14.00</div>
+                  </div>
+                </li>
+                <li>
+                  <div class="food">
+                    <div class="name">2.湿炒河粉</div>
+                    <div class="price">¥18.00</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <van-divider />
+            <div class="bottom">
+              <div class="totalMoney">
+                <div class="totalTitle">商品总价：</div>
+                <div class="totalPrice">¥32.00</div>
+              </div>
+              <div class="incomeMoney">
+                <div class="totalTitle">可得配送费：</div>
+                <div class="totalPrice">¥2.0</div>
+              </div>
+              <div class="orderThisButton">
+                <van-button type="primary" @click="onOrderButtonClick">&nbsp接单&nbsp</van-button>
+              </div>
+            </div>
+          </van-collapse-item>
+        </van-collapse>
       </van-list>
     </div>
   </div>
@@ -72,6 +98,8 @@
 
 <script>
 import { Dialog } from "vant";
+import Choose from "../components/Choose";
+import { Toast } from 'vant';
 export default {
   name: "deliver",
   data() {
@@ -81,9 +109,8 @@ export default {
       finished: false,
       list: [],
       showRule: false,
-      showChooseRest: false,
       chooseRestValue: "",
-      rests: ["第一饭堂", "第二饭堂", "第三饭堂", "第四饭堂", "门口"],
+      rests: ["第一饭堂+第二饭堂", "第三饭堂", "第四饭堂", "门口"],
       addrs: [
         "c1",
         "c2",
@@ -109,16 +136,20 @@ export default {
         "c22",
         "c23"
       ],
-      showChooseAddr: false,
       chooseAddrValue: "",
-      nearChecked: true
+      nearChecked: true,
+      chooseSexValue: "",
+      sexes: ["男", "女"],
+      activeNames: ["1"],
+      statusIcon: "shop-o"
     };
   },
   methods: {
     onOrderInput(orderChecked) {
       Dialog.confirm({
-        title: "提醒",
-        message: "是否切换开关？"
+        title: "是否开/关？",
+        message:
+          "注：接单开启后就算您关闭本页面也会在微信继续收到筛选后的接单提醒噢～"
       }).then(() => {
         this.orderChecked = orderChecked;
       });
@@ -141,17 +172,35 @@ export default {
     onSetting() {
       this.showRule = true;
     },
-    onChooseRestConfirm(value) {
-      this.chooseRestValue = value;
-      this.showChooseRest = false;
+    getRestValue(data) {
+      this.chooseRestValue = data;
     },
-    onChooseAddrConfirm(value) {
-      this.chooseAddrValue = value;
-      this.showChooseAddr = false;
+    getAddrValue(data) {
+      this.chooseAddrValue = data;
+    },
+    getSexValue(data) {
+      this.chooseSexValue = data;
     },
     onNearInput() {
       this.nearChecked = !this.nearChecked;
+    },
+    onOrderButtonClick() {
+      Dialog.confirm({
+        title: "确定接单吗？",
+        message: "注：如果接单后不送将受到相应处罚甚至封号！"
+      }).then(() => {
+        this.statusIcon = "checked";
+        this.activeNames.forEach((item, index) => {
+          if (item == "1") {
+            this.activeNames.splice(index, 1);
+          }
+        });
+        Toast.success('接单成功');
+      });
     }
+  },
+  components: {
+    Choose
   }
 };
 </script>
@@ -195,11 +244,11 @@ export default {
       font-size: 35px;
       margin: 5px 0 0 10px;
     }
-    .chooseRest {
-      margin: 20px 30px 0 30px;
-    }
-    .chooseUserAddr {
-      margin: 5px 30px 0 30px;
+    .chooses {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 30px;
     }
     .isNear {
       margin: 10px 0;
@@ -218,6 +267,37 @@ export default {
   .content {
     margin-top: 41px;
     height: calc(100% - 41px);
+    .title {
+      display: flex;
+      align-items: center;
+      .icon {
+        padding: 0 5px;
+      }
+      .end {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        flex-grow: 1;
+      }
+    }
+    .foods {
+      padding: 0 10px;
+      .food {
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    .bottom {
+      display: flex;
+      justify-content: space-around;
+      .totalTitle {
+        color: black;
+      }
+      .totalPrice {
+        color: red;
+        font-size: 15px;
+      }
+    }
   }
 }
 </style>
