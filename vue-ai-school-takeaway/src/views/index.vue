@@ -24,7 +24,7 @@ export default {
     const openidReq = this.getQueryVariable("openid");
     const firstloginReq = this.getQueryVariable("firstlogin");
     const isregisterReq = this.getQueryVariable("isregister");
-    if (isregisterReq != 1) {
+    /* if (isregisterReq != 1) {
       if (!haveopenid) {
         //跳转回来时，带上了openid和firstlogin参数，保存到缓存
         if (openidReq) {
@@ -67,7 +67,7 @@ export default {
           localStorage.setItem("firstlogin", res.data.data.firstlogin);
         });
       }
-    }
+    } */
   },
   methods: {
     getQueryVariable(variable) {

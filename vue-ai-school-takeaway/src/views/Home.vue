@@ -201,7 +201,7 @@ export default {
 
 .entries {
   background: #fff;
-  height: 47.2vw;
+  /* height: 47.2vw; */
   text-align: center;
   overflow: hidden;
 }
