@@ -140,7 +140,7 @@ export default {
       nearChecked: true,
       chooseSexValue: "",
       sexes: ["男", "女"],
-      activeNames: ["1"],
+      activeNames: [],
       statusIcon: "shop-o"
     };
   },

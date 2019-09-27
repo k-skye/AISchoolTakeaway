@@ -33,7 +33,7 @@ export default new Router({
         {
           path: '/wallet',
           name: 'wallet',
-          component: () => import('./views/Wallet.vue')
+          component: () => import('./views/Me/Wallet.vue')
         }
 
       ]
