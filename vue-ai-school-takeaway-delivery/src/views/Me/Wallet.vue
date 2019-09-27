@@ -1,5 +1,19 @@
 <template>
   <div class="wallet">
+    <van-popup v-model="showChangePass" closeable round :style="{ height: '40%',width: '80%' }">
+      <div class="head">修改支付密码</div>
+      <div class="contain">
+        <div class="cells">
+          <van-cell-group title=" ">
+            <van-field v-model="oldpass" type="textarea" placeholder="请输入旧支付密码" rows="1" autosize></van-field>
+            <van-field v-model="newpass" type="textarea" placeholder="请输入新支付密码" rows="1" autosize></van-field>
+          </van-cell-group>
+        </div>
+        <div class="changeButton">
+          <van-button slot="button" size="large" type="primary" @click="onChangePassButtonClick">修改</van-button>
+        </div>
+      </div>
+    </van-popup>
     <div class="header">
       <van-nav-bar title="钱包" left-arrow @click-left="$router.push('me')" />
     </div>
@@ -7,7 +21,7 @@
       <div class="totalMoney">
         ¥ 104.00
         <br />
-        <span>收入¥ 26.00</span>
+        <span>含收入¥ 26.00</span>
       </div>
       <div class="payButton">
         <van-button type="primary" @click="showPopup">提现到零钱</van-button>
@@ -52,8 +66,9 @@
     </van-popup>
     <div class="cells">
       <van-cell-group title=" ">
-        <van-cell icon="newspaper-o" title="账单明细" is-link to="wallet" />
-        <van-cell icon="gold-coin-o" title="修改支付密码" is-link to="wallet" />
+        <van-cell icon="balance-o" title="月收入" value="¥12.0" />
+        <van-cell icon="newspaper-o" title="账单明细" is-link to="billdetail" />
+        <van-cell icon="gold-coin-o" title="修改支付密码" is-link @click="onChangePassCellClick" />
       </van-cell-group>
     </div>
   </div>
@@ -61,13 +76,17 @@
 
 <script>
 import { Dialog } from "vant";
+import { Toast } from "vant";
 export default {
   name: "me",
   data() {
     return {
       show: false,
       value: "",
-      showKeyboard: true
+      showKeyboard: true,
+      showChangePass: false,
+      oldpass: "",
+      newpass: ""
     };
   },
   methods: {
@@ -84,6 +103,15 @@ export default {
       Dialog.alert({
         message: "服务费是从伙伴的实际收入中收取20%作为我们的运营成本"
       });
+    },
+    onChangePassCellClick() {
+      this.showChangePass = true;
+    },
+    onChangePassButtonClick(){
+      this.showChangePass = false;
+      Toast.success("修改成功");
+      this.oldpass = "";
+      this.newpass = "";
     }
   }
 };
@@ -95,6 +123,22 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
+  .head {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+  .contain {
+    .cells{
+      margin-top: 5px;
+    }
+    .changeButton {
+      display: flex;
+      justify-content: center;
+      margin: 18px 10px 0;
+    }
+  }
+
   .showMoney {
     background-color: white;
     margin-top: 30px;

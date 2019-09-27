@@ -6,10 +6,10 @@
         马上注册成为伙伴吧～
         <van-icon name="arrow" />
       </div>
-      <div v-else class="info" @click="$router.push('wallet')">
+      <div v-else class="info">
         无限大人
         <br />18237817281
-        <van-icon name="arrow" />
+        <!-- <van-icon name="arrow" /> -->
       </div>
     </div>
     <div class="contain">
@@ -17,13 +17,13 @@
         <van-cell icon="paid" title="钱包" is-link value="¥99.0" to="wallet"/>
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="orders-o" is-link>
+        <van-cell icon="orders-o" is-link @click="$router.push('allorder')" >
           <template slot="title">
             <span class="custom-title">订单</span>
             <van-tag round type="success">37</van-tag>
           </template>
         </van-cell>
-        <van-cell icon="star-o" is-link>
+        <van-cell icon="star-o" is-link @click="$router.push('comment')">
           <template slot="title">
             <span class="custom-title">评价</span>
             <van-tag round type="warning">23</van-tag>
@@ -31,9 +31,9 @@
         </van-cell>
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="question-o" title="帮助" is-link />
-        <van-cell icon="notes-o" title="协议" is-link />
-        <van-cell icon="bullhorn-o" title="建议反馈" is-link />
+        <van-cell icon="question-o" @click="$router.push('help')" title="帮助" is-link />
+        <van-cell icon="notes-o" @click="$router.push('protocol')" title="协议" is-link />
+        <van-cell icon="bullhorn-o" @click="$router.push('support')" title="建议反馈" is-link />
       </van-cell-group>
     </div>
   </div>

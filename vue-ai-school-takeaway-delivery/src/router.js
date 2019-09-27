@@ -34,7 +34,38 @@ export default new Router({
           path: '/wallet',
           name: 'wallet',
           component: () => import('./views/Me/Wallet.vue')
+        },
+        {
+          path: '/help',
+          name: 'help',
+          component: () => import('./views/Me/Help.vue')
+        },
+        {
+          path: '/support',
+          name: 'support',
+          component: () => import('./views/Me/Support.vue')
+        },
+        {
+          path: '/protocol',
+          name: 'protocol',
+          component: () => import('./views/Me/Protocol.vue')
+        },
+        {
+          path: '/allorder',
+          name: 'allorder',
+          component: () => import('./views/Me/Allorder.vue')
+        },
+        {
+          path: '/comment',
+          name: 'comment',
+          component: () => import('./views/Me/Comment.vue')
+        },
+        {
+          path: '/billdetail',
+          name: 'billdetail',
+          component: () => import('./views/Me/Billdetail.vue')
         }
+
 
       ]
     }

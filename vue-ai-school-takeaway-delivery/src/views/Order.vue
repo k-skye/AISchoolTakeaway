@@ -242,7 +242,7 @@ export default {
   .settings {
     .head {
       font-size: 35px;
-      margin: 5px 0 0 10px;
+      margin: 10px 0 0 10px;
     }
     .chooses {
       display: flex;
