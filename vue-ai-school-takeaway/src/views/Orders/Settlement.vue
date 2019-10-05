@@ -239,7 +239,7 @@ export default {
       var discID = -1;
       if (!this.orderInfo.discount.id) {
         discID = -1;
-      }else{
+      } else {
         discID = this.orderInfo.discount.id;
       }
       this.$axios
@@ -251,11 +251,31 @@ export default {
           totalPrice: this.totalPrice,
           payPrice: this.realPrice,
           addrID: this.addrInfo.id,
-          discountID: discID
+          discountID: discID,
+          openID: this.userInfo.openid
         })
         .then(res => {
-          console.log(res);
-          this.$router.push("/order");
+          //微信支付
+          
+          const data = JSON.parse(res.data.data);
+          WeixinJSBridge.invoke("getBrandWCPayRequest", data, res => {
+            if (res.err_msg == "get_brand_wcpay_request:ok") {
+              // 使用以上方式判断前端返回,微信团队郑重提示：
+              //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+              Dialog({
+                message: "支付成功"
+              });
+              this.$router.push("/order");
+            } else {
+              Dialog({
+                message:
+                  "支付失败：" +
+                  res.data.data.err_code +
+                  res.data.data.err_desc +
+                  res.data.data.err_msg
+              });
+            }
+          });
         });
 
       /*       this.$router.push("/pay");  */

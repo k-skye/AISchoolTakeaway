@@ -104,10 +104,10 @@ class Users extends Api {
             }else {
                 //跳转回去前端处理
                 if ($res == 1) {
-                    $to = "location:http://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
+                    $to = "location:https://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
                     header($to);
                 }else{
-                    $to = "location:http://takeaway.pykky.com/?firstlogin=0&openid=".$rs->openid;
+                    $to = "location:https://takeaway.pykky.com/?firstlogin=0&openid=".$rs->openid;
                     header($to);
                 }
             }
@@ -146,7 +146,7 @@ class Users extends Api {
                     throw new InternalServerErrorException('更新用户信息失败', 10);
                 }else {
                     //跳转回去前端处理
-                    $to = "location:http://takeaway.pykky.com/register?isregister=1&openid=".$openid;
+                    $to = "location:https://takeaway.pykky.com/register?isregister=1&openid=".$openid;
                     header($to);
                 }
             }else {

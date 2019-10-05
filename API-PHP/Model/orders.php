@@ -21,4 +21,18 @@ class orders extends NotORM {
         // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
         return $orm->insert_id();
     }
+
+    public function updateOrderNo($id,$orderNo) {
+        $data = array('orderNo' => $orderNo);
+        return $this->getORM()
+        ->where('id', $id)
+        ->update($data);
+    }
+
+    public function updateOrderPay($orderNo,$payPrice,$payTime) {
+        $data = array('payTime' => $payTime,'payPrice' => $payPrice,'status' => 1);
+        return $this->getORM()
+        ->where('orderNo', $orderNo)
+        ->update($data);
+    }
 }

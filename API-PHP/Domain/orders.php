@@ -35,13 +35,23 @@ class orders {
             //让红包报废
             $modelDisc = new ModelDiscount();
             $ress = $modelDisc->changeToFalseAndReason($discountID,"已使用");
-            if ($res == 0 || $res) {//数据已更新或无变化
-                return 0;
+            if ($ress == 0 || $ress) {//数据已更新或无变化
+                return $res;
             }else{
                 return -2;
             }
         }else {
             return -1;
         }
+    }
+    
+    public function updateOrderNo($id,$orderNo) {
+        $model = new ModelOders();
+        return $model->updateOrderNo($id,$orderNo);
+    }
+
+    public function updateOrderPay($orderNo,$payPrice,$payTime) {
+        $model = new ModelOders();
+        return $model->updateOrderPay($orderNo,$payPrice,$payTime);
     }
 }
