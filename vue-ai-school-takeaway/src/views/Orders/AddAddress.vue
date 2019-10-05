@@ -1,6 +1,8 @@
 <template>
   <div class="addAddress">
-    <Header :isLeft="true" :title="title" />
+    <div class="header">
+      <van-nav-bar :title="title" left-arrow @click-left="$router.go(-1)" />
+    </div>
     <!-- 添加地址 -->
     <div class="viewbody">
       <div class="content">
@@ -38,10 +40,9 @@
 </template>
 
 <script>
-import Header from "../../components/Header";
 import FormBlock from "../../components/Orders/FormBlock";
 import AddressSearch from "../../components/Orders/AddressSearch";
-import { Toast } from "mint-ui";
+import { Toast } from 'vant';
 export default {
   name: "AddAddress",
   data() {
@@ -51,14 +52,14 @@ export default {
       addressInfo: {},
       showSearch: false,
       sex: "",
-      userID: ""
+      userInfo: null
     };
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.addressInfo = to.params.addressInfo;
       vm.title = to.params.title;
-      vm.userID = to.params.userID;
+      vm.userInfo = to.params.userInfo;
     });
   },
   methods: {
@@ -96,19 +97,17 @@ export default {
       }
     },
     showMsg(msg) {
-      Toast({
-        message: msg,
-        position: "bottom",
-        duration: 2000
-      });
+      Toast(msg);
     },
     addAddress() {
-      this.addressInfo.userID = this.userID;
+      this.addressInfo.userID = this.userInfo.id;
       this.$axios
         .post("https://takeawayapi.pykky.com/?s=Address.AddAddr", this.addressInfo)
         .then(res => {
-          if (!this.$store.getters.userInfo) {
-            this.$store.dispatch("setAddrInfo", this.addressInfo);
+          this.$store.dispatch("setAddrInfo", this.addressInfo);
+          if (this.userInfo.mainAddressID == 0) {
+              this.userInfo.mainAddressID == res.data.data;
+              this.$store.dispatch("setUserInfo", this.userInfo);
           }
           this.$router.push("myAddress");
         })
@@ -125,7 +124,6 @@ export default {
     }
   },
   components: {
-    Header,
     FormBlock,
     AddressSearch
   }
@@ -137,7 +135,6 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding-top: 45px;
 }
 .viewbody {
   width: 100%;

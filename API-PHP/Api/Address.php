@@ -63,10 +63,16 @@ class Address extends Api {
     public function addAddr() {
         $domain = new DomainAddress();
         $res = $domain->addAddr($this->userID,$this->dormitory,$this->roomNum,$this->gender,$this->name,$this->phone);
-        if ($res == 0) {
-            return $res;
-        }else {
-            throw new InternalServerErrorException('添加地址失败', 3);
+        switch ($res) {
+            case '-1':
+                throw new InternalServerErrorException('添加地址失败', 3);
+                break;
+            case '-2':
+                throw new InternalServerErrorException('修改默认收货地址id失败', 11);
+                break;
+            default:
+                return $res;
+                break;
         }
     }
     /**

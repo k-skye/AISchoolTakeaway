@@ -1,6 +1,6 @@
 import Vue from 'vue'
-import MintUI from 'mint-ui';
-import 'mint-ui/lib/style.css';
+import { Tabbar, TabbarItem, Swipe, SwipeItem, Sticky, List, NavBar, CouponCell, CouponList, Popup, Icon }  from 'vant';
+import 'vant/lib/index.css';
 import './plugins/axios'
 import App from './App.vue'
 import router from './router'
@@ -8,7 +8,7 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-Vue.use(MintUI);
+Vue.use(Tabbar).use(TabbarItem).use(Swipe).use(SwipeItem).use(Sticky).use(List).use(NavBar).use(CouponCell).use(CouponList).use(Popup).use(Icon);
 
 new Vue({
   router,

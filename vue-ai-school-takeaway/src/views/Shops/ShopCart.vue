@@ -109,7 +109,8 @@ export default {
     settlement() {
       this.$store.dispatch("setOrderInfo", {
         foodInfo: this.foodInfo,
-        selectFoods: this.selectFoods
+        selectFoods: this.selectFoods,
+        discount: {id: null, value: null}
       });
       this.$router.push("/settlement");
     }

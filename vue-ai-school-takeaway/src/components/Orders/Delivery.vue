@@ -9,10 +9,6 @@
         <i class="fa fa-angle-right"></i>
       </div>
     </div>
-    <div class="cart-item">
-      <div class="cart-item-title">支付方式</div>
-      <div class="pay-text">在线支付</div>
-    </div>
   </section>
 </template>
 
@@ -44,7 +40,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px dotted #eee;
+  border-top: 1px dotted #eee;
   padding: 4.266667vw 0;
 }
 .delivery-left {
@@ -67,19 +63,5 @@ export default {
   margin-left: 0.666667vw;
   color: #888;
   font-size: 1.2rem;
-}
-.cart-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4.266667vw 0 5.333333vw 0;
-  font-size: 1rem;
-  color: #333;
-}
-.cart-item .cart-item-title {
-  font-weight: 500;
-}
-.pay-text {
-  color: #2395ff;
 }
 </style>

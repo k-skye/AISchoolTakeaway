@@ -1,7 +1,8 @@
 <template>
   <div class="myAddress">
-    <Header :isLeft="true" :title="title" />
-
+    <div class="header">
+      <van-nav-bar :title="title" left-arrow @click-left="$router.go(-1)" />
+    </div>
     <!-- 显示收货地址 -->
     <div class="address-view">
       <div class="address-card" v-for="(address,index) in allAddress" :key="index">
@@ -35,7 +36,6 @@
 </template>
 
 <script>
-import Header from "../../components/Header";
 export default {
   name: "MyAddress",
   data() {
@@ -66,7 +66,7 @@ export default {
             dormitory: "",
             roomNum: ""
           },
-          userID: this.userInfo.id
+          userInfo: this.userInfo
         }
       });
     },
@@ -103,9 +103,6 @@ export default {
       this.$store.dispatch("setAddrInfo", address);
       this.$router.push("/settlement");
     }
-  },
-  components: {
-    Header
   }
 };
 </script>
@@ -115,7 +112,6 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  padding-top: 45px;
 }
 
 .address-view-bottom {
@@ -147,10 +143,12 @@ export default {
   border-bottom: 1px solid #ddd;
   display: flex;
   min-height: 18.133333vw;
+  align-items: center;
 }
 .address-card-body {
   flex: 1;
   overflow: hidden;
+  margin-left: 5px;
 }
 .address-card-title {
   font-size: 1rem;

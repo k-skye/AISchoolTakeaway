@@ -12,9 +12,9 @@ export default {
   data() {
     return {
       tabbarData: [
-        { title: "首页", icon: "home", path: "/home" },
-        { title: "订单", icon: "file-text-o", path: "/order" },
-        { title: "我的", icon: "user", path: "/me" }
+        { title: "首页", icon: "wap-home-o", path: "/home" },
+        { title: "订单", icon: "orders-o", path: "/order" },
+        { title: "我的", icon: "user-o", path: "/me" }
       ]
     };
   },
@@ -24,7 +24,7 @@ export default {
     const openidReq = this.getQueryVariable("openid");
     const firstloginReq = this.getQueryVariable("firstlogin");
     const isregisterReq = this.getQueryVariable("isregister");
-    /* if (isregisterReq != 1) {
+    if (isregisterReq != 1) {
       if (!haveopenid) {
         //跳转回来时，带上了openid和firstlogin参数，保存到缓存
         if (openidReq) {
@@ -67,10 +67,10 @@ export default {
           localStorage.setItem("firstlogin", res.data.data.firstlogin);
         });
       }
-    } */
+    } 
   },
   methods: {
-    getQueryVariable(variable) {
+    getQueryVariable(variable) {//从地址中获取参数
       var query = window.location.search.substring(1);
       var vars = query.split("&");
       for (var i = 0; i < vars.length; i++) {
@@ -88,9 +88,9 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .index {
   width: 100%;
-  height: calc(100% - 45px);
+  height: calc(100% - 50px);
 }
 </style>

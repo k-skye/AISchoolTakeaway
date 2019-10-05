@@ -17,6 +17,13 @@ class users extends NotORM {
         ->update($data);
     }
 
+    public function changeUserInfoOnMainAddrIDByUserId($userID,$mainAddrID) {
+        $data = array('mainAddressID' => $mainAddrID);
+        return $this->getORM()
+        ->where('id', $userID)
+        ->update($data);
+    }
+
     public function getOneUserByPhone($phoneNo) {
         return $this->getORM()
         ->where('phoneNo', $phoneNo)

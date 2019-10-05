@@ -2,6 +2,7 @@
 namespace App\Domain;
 
 use App\Model\address as ModelAddress;
+use App\Model\users as ModelUsers;
 
 class address {
 
@@ -19,7 +20,14 @@ class address {
         $model = new ModelAddress();
         $res = $model->addAddr($userid,$dormitory,$roomNum,$gender,$name,$phone);
         if ($res) {
-            return 0;
+            $usermodel = new ModelUsers();
+            //修改用户类里的mainAddressID
+            $rres = $usermodel->changeUserInfoOnMainAddrIDByUserId($userid,$res);
+            if ($rres) {
+                return $res;
+            }else{
+                return -2;
+            }
         }else {
             return -1;
         }

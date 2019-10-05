@@ -8,7 +8,8 @@ const types = {
   ORDER_INFO: 'ORDER_INFO',
   REST_INFO: 'REST_INFO',
   USER_INFO: 'USER_INFO',
-  REMARK_INFO: 'REMARK_INFO'
+  REMARK_INFO: 'REMARK_INFO',
+  ORDER_INFO_DISCOUNT: 'ORDER_INFO_DISCOUNT'
 };
 
 export default new Vuex.Store({
@@ -35,6 +36,20 @@ export default new Vuex.Store({
           price += parseFloat(food.price) * food.count;
         });
         price += parseFloat(state.restInfo.deliveryFee);
+      }
+      return price;
+    },
+    realPrice: state => {
+      let price = 0;
+      if (state.orderInfo) {
+        const selectFoods = state.orderInfo.selectFoods;
+        selectFoods.forEach(food => {
+          price += parseFloat(food.price) * food.count;
+        });
+        price += parseFloat(state.restInfo.deliveryFee);
+        if (state.orderInfo.discount.value) {
+          price -= parseFloat((state.orderInfo.discount.value)/100);
+        }
       }
       return price;
     },
@@ -75,6 +90,13 @@ export default new Vuex.Store({
       } else {
         state.remarkInfo = null;
       }
+    },
+    [types.ORDER_INFO_DISCOUNT](state, discount) {
+      if (discount) {
+        state.orderInfo.discount = discount;
+      } else {
+        state.orderInfo.discount = null;
+      }
     }
   },
   actions: {
@@ -92,6 +114,9 @@ export default new Vuex.Store({
     },
     setRemarkInfo: ({ commit }, remarkInfo) => {
       commit(types.REMARK_INFO, remarkInfo);
+    },
+    setDiscount: ({ commit }, discount) => {
+      commit(types.ORDER_INFO_DISCOUNT, discount);
     }
   }
 })

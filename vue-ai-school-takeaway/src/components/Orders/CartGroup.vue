@@ -3,16 +3,19 @@
     <h3>{{restInfo.name}}</h3>
     <ul>
       <li v-for="(food,index) in orderInfo.selectFoods" :key="index">
-        <img :src="food.logo" alt>
+        <img :src="food.logo" alt />
         <div class="cart-group-info">
           <span>{{food.name}}</span>
           <span>x {{food.count}}</span>
-          <span>{{food.price}}</span>
+          <span>¥{{food.price}}</span>
         </div>
       </li>
-      <li class="cart-group-total">
+      <li class="cart-group-deliveryFee">
         <div>配送费</div>
         <div>¥{{restInfo.deliveryFee}}</div>
+      </li>
+      <li class="cart-group-discount" @click="showList = true">
+        <van-coupon-cell title="红包" :coupons="coupons" :chosen-coupon="chosenCoupon" @click="showList = true" />
       </li>
       <li class="cart-group-total">
         <div class="discounts"></div>
@@ -63,7 +66,6 @@ export default {
   align-items: center;
   width: 100%;
   padding: 3.2vw 0;
-  border-bottom: 1px dotted #eee;
   color: inherit;
 }
 .cart-group > ul > li > img {
@@ -78,9 +80,23 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+.cart-group-deliveryFee {
+  justify-content: space-between;
+  padding: 4vw 0 1vw !important;
+  border-top: 1px dotted #eee;
+}
+.van-coupon-cell {
+  justify-content: space-between;
+  padding: 1vw 0 4vw !important;
+  border-bottom: 1px dotted #eee;
+}
+.cart-title {
+  color: red;
+}
 .cart-group-total {
   justify-content: space-between;
   padding: 4vw 0 4.8vw !important;
+  border-bottom: 1px dotted #eee;
 }
 .discounts {
   color: #bbb;
