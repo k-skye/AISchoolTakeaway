@@ -103,12 +103,21 @@ class Users extends Api {
                 throw new InternalServerErrorException('创建openid失败', 7);
             }else {
                 //跳转回去前端处理
-                if ($res == 1) {
-                    $to = "location:https://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
-                    header($to);
-                }else{
-                    $to = "location:https://takeaway.pykky.com/?firstlogin=0&openid=".$rs->openid;
-                    header($to);
+                switch ($res) {
+                    case '1':
+                        $to = "location:https://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
+                        header($to);
+                        break;
+                    
+                    case '2':
+                        $to = "location:https://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
+                        header($to);
+                        break;
+
+                    default:
+                        $to = "location:https://takeaway.pykky.com/?firstlogin=0&openid=".$rs->openid;
+                        header($to);
+                        break;
                 }
             }
         }else {

@@ -75,9 +75,9 @@ class users {
         }else {
             //已存在了，判断有没有信息在里面，有的话返回firstlogin1不然就是0
             if (empty($res['phoneNo'])) {
-                return 1;
+                return 2;
             }else{
-                return 0;
+                return 3;
             }
         }
     }

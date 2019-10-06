@@ -24,8 +24,8 @@ export default {
     const openidReq = this.getQueryVariable("openid");
     const firstloginReq = this.getQueryVariable("firstlogin");
     const isregisterReq = this.getQueryVariable("isregister");
-    if (isregisterReq != 1) {
-      if (!haveopenid) {
+    if (isregisterReq != 1) {//不是注册页面的时候才生效，注册时候用注册页面的请求
+      if (!haveopenid) {//缓存中有没有openid
         //跳转回来时，带上了openid和firstlogin参数，保存到缓存
         if (openidReq) {
           localStorage.setItem("openid", openidReq);
@@ -42,7 +42,7 @@ export default {
             });
           }
         }
-        if (!havefirstlogin) {
+        if (!havefirstlogin) {//缓存中没有fistlogin
           const appid = "wx3df92dead7bcd174";
           const redirectUrl = encodeURI(
             "https://takeawayapi.pykky.com/?s=Users.GetOpenid"
