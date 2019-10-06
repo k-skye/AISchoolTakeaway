@@ -1,6 +1,8 @@
 <template>
   <div class="remark">
-    <Header :isLeft="true" title="订单备注"/>
+    <div class="header">
+      <van-nav-bar title="确认订单" left-arrow @click-left="$router.go(-1)" />
+    </div>
     <!-- 订单备注 -->
     <div class="view-body">
       <section>
@@ -28,7 +30,6 @@
 </template>
 
 <script>
-import Header from "../../components/Header";
 export default {
   name: "Remark",
   data() {
@@ -79,9 +80,6 @@ export default {
       this.$router.go(-1);
     }
   },
-  components: {
-    Header
-  }
 };
 </script>
 

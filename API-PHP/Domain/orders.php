@@ -8,9 +8,9 @@ use App\Model\discount as ModelDiscount;
 
 class orders {
 
-    public function getOnesAllOrders($id,$offset,$limit) {
+    public function getOnesAllOrders($userID,$offset,$limit) {
         $model = new ModelOders();
-        $arr = $model->getOnesAllOrders($id,$offset,$limit);
+        $arr = $model->getOnesAllOrders($userID,$offset,$limit);
         $i = 0;
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();

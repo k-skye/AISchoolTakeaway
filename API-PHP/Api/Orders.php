@@ -14,7 +14,9 @@ class Orders extends Api {
     public function getRules() {
         return array(
             'getOnesAllOrders' => array(
-                'id'  => array('name' => 'id', 'require' => true, 'desc' => '用户id'),
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
             ),
             'createOneOrder' => array(
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
@@ -40,7 +42,7 @@ class Orders extends Api {
      */
     public function getOnesAllOrders() {
         $domain = new DomainOders();
-        return $domain->getOnesAllOrders($this->id,1,1);
+        return $domain->getOnesAllOrders($this->userID,$this->offset,$this->limit);
     }
     /**
      * 创建订单

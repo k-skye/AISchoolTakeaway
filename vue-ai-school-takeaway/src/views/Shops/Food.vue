@@ -14,8 +14,7 @@
         <div class="foodpanel-foodinfo">
           <h4>{{food.name}}</h4>
           <div class="foodpanel-foodsales">
-            <span>月售{{food.salesNum}}</span>
-            <span>好评率 11%</span>
+            <span>月售{{food.salesNum}} 好评率 11%</span>
           </div>
           <div class="foodpanel-priceLine">
             <span>¥{{food.price}}</span>

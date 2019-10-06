@@ -102,7 +102,7 @@ export default {
   margin-bottom: 1.6vw;
 }
 .brief-modal ul li p {
-  font-size: 0.293333rem;
+  font-size: 0.8rem;
   color: #999;
 }
 .brief-modal .promotion {

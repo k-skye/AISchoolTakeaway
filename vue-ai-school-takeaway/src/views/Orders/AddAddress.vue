@@ -17,7 +17,7 @@
         <FormBlock v-model="addressInfo.phone" label="电话" placeholder="手机号码" />
         <FormBlock
           v-model="addressInfo.dormitory"
-          @click="showSearch=true"
+          @click="showPicker = true"
           label="地址"
           placeholder="选择宿舍"
           icon="angle-right"
@@ -25,7 +25,7 @@
         <FormBlock
           v-model="addressInfo.roomNum"
           label="房间号"
-          placeholder="404房"
+          placeholder="xxx房"
           textarea="textarea"
         />
       </div>
@@ -35,14 +35,20 @@
       </div>
     </div>
     <!-- 搜索地址 -->
-    <AddressSearch @close="showSearch=false" :showSearch="showSearch" :addressInfo="addressInfo" />
+    <van-popup v-model="showPicker" position="bottom">
+      <van-picker
+        show-toolbar
+        :columns="columns"
+        @cancel="showPicker = false"
+        @confirm="onConfirm"
+      />
+    </van-popup>
   </div>
 </template>
 
 <script>
 import FormBlock from "../../components/Orders/FormBlock";
-import AddressSearch from "../../components/Orders/AddressSearch";
-import { Toast } from 'vant';
+import { Toast } from "vant";
 export default {
   name: "AddAddress",
   data() {
@@ -50,8 +56,9 @@ export default {
       title: "",
       sexes: ["先生", "女士"],
       addressInfo: {},
-      showSearch: false,
       sex: "",
+      showPicker: false,
+      columns: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20'],
       userInfo: null
     };
   },
@@ -63,6 +70,10 @@ export default {
     });
   },
   methods: {
+    onConfirm(value) {
+      this.addressInfo.dormitory = value;
+      this.showPicker = false;
+    },
     checkSex(item) {
       if (item == "先生") {
         this.addressInfo.gender = "1";
@@ -71,7 +82,6 @@ export default {
         this.addressInfo.gender = "2";
         this.sex = "女士";
       }
-      this.addressInfo.dormitory = "c15";
     },
     handleSave() {
       if (!this.addressInfo.name) {
@@ -102,12 +112,15 @@ export default {
     addAddress() {
       this.addressInfo.userID = this.userInfo.id;
       this.$axios
-        .post("https://takeawayapi.pykky.com/?s=Address.AddAddr", this.addressInfo)
+        .post(
+          "https://takeawayapi.pykky.com/?s=Address.AddAddr",
+          this.addressInfo
+        )
         .then(res => {
           this.$store.dispatch("setAddrInfo", this.addressInfo);
           if (this.userInfo.mainAddressID == 0) {
-              this.userInfo.mainAddressID == res.data.data;
-              this.$store.dispatch("setUserInfo", this.userInfo);
+            this.userInfo.mainAddressID == res.data.data;
+            this.$store.dispatch("setUserInfo", this.userInfo);
           }
           this.$router.push("myAddress");
         })
@@ -115,7 +128,8 @@ export default {
     },
     editAddress() {
       this.$axios
-        .post('https://takeawayapi.pykky.com/?s=Address.ChangeAddr',
+        .post(
+          "https://takeawayapi.pykky.com/?s=Address.ChangeAddr",
           this.addressInfo
         )
         .then(res => {
@@ -124,8 +138,7 @@ export default {
     }
   },
   components: {
-    FormBlock,
-    AddressSearch
+    FormBlock
   }
 };
 </script>

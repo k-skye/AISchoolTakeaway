@@ -28,6 +28,11 @@ export default new Router({
           path: '/me',
           name: 'me',
           component: () => import('./views/Me.vue')
+        },
+        {
+          path: '/orderInfo',
+          name: 'orderInfo',
+          component: () => import('./views/Orders/OrderInfo.vue')
         }
       ]
     },
@@ -72,16 +77,6 @@ export default new Router({
       path: '/remark',
       name: 'remark',
       component: () => import('./views/Orders/Remark.vue')
-    },
-    {
-      path: '/pay',
-      name: 'pay',
-      component: () => import('./views/Orders/Pay.vue')
-    },
-    {
-      path: '/orderInfo',
-      name: 'orderInfo',
-      component: () => import('./views/Orders/OrderInfo.vue')
     }
   ]
 })

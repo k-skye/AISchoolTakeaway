@@ -19,4 +19,9 @@ class discount {
         }
     }
 
+    public function getOnesDiscounts($id) {
+        $model = new ModelDiscount();
+        return $model->getOnesDiscounts($id);
+    }
+
 }

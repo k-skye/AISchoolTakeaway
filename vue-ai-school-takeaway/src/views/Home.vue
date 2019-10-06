@@ -207,7 +207,7 @@ export default {
         span {
           display: block;
           color: #666;
-          font-size: 0.32rem;
+          font-size: 0.7rem;
         }
         .img_wrap {
           position: relative;

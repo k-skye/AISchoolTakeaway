@@ -15,6 +15,9 @@ class Discount extends Api {
             'getOnesAllcounts' => array(
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
             ),
+            'getOnesDiscounts' => array(
+                'id'  => array('name' => 'id', 'require' => true, 'desc' => '红包id'),
+            ),
         );
     }
     /**
@@ -30,4 +33,13 @@ class Discount extends Api {
             return $res;
         }
     }
+    /**
+     * 用红包id拿某个红包信息
+     * @desc 测试一下
+     */
+    public function getOnesDiscounts() {
+        $domain = new DomainDiscount();
+        return $domain->getOnesDiscounts($this->id);
+    }
+    
 } 

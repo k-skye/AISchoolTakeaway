@@ -9,7 +9,7 @@
       <div class="index_main">
         <!-- 第一行 店铺名字 -->
         <div class="index_shopname">
-          <span>{{restaurant.name}}</span>
+          <span class="shopname">{{restaurant.name}}</span>
         </div>
 
         <!-- 第二行 星级 -->
@@ -58,6 +58,12 @@ export default {
   color: #666;
   padding: 4vw 0;
   border-bottom: 0.133333vw solid #eee;
+}
+.shopname{
+  font-size: 1rem;
+}
+span{
+  font-size: 0.7rem;
 }
 .index-shopInfo {
   display: flex;

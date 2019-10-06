@@ -55,5 +55,6 @@ export default {
   margin-right: 1.066667vw;
   color: #ffbe00;
   display: inline-block;
+  font-size: 0.6rem;
 }
 </style>

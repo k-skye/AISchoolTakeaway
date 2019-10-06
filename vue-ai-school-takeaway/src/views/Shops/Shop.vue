@@ -16,8 +16,10 @@
     <!-- 商家信息 -->
     <div class="index-rst">
       <div class="rst-name">
-        <span @click="showInfoModel = true">{{shopInfo.name}}</span>
-        <i class="fa fa-caret-right"></i>
+        <span @click="showInfoModel = true">
+          {{shopInfo.name}}
+          <i class="fa fa-caret-right"></i>
+        </span>
       </div>
       <!-- 弹窗信息 -->
       <InfoModel
@@ -158,14 +160,14 @@ export default {
   margin-top: 1.733333vw;
   color: #666;
   text-align: center;
-  font-size: 0.6rem;
+  font-size: 0.8rem;
 }
 .rst-order span {
   margin: 0 3px;
 }
 .index-rst .rst-promotion {
   width: 80vw;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: #999;
   overflow: hidden;
   text-overflow: ellipsis;

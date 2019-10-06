@@ -38,7 +38,7 @@
           <span v-if="isEmpty">未选购商品</span>
           <span v-else>¥{{totalPrice.toFixed(2)}}</span>
         </p>
-        <p class="bottomNav-cartdelivery">另需配送费{{restInfo.deliveryFee}}元</p>
+        <p class="bottomNav-cartdelivery">另需伙伴费{{restInfo.deliveryFee}}元</p>
       </div>
       <button class="submit-btn">
         <span v-if="isEmpty">请先点餐</span>
@@ -70,15 +70,6 @@ export default {
       this.totalPrice = 0;
       this.selectFoods = [];
       this.foodInfo.forEach(cate => {
-        if (cate.count) {
-          empty = false;
-          this.totalCount += item.count;
-          this.totalPrice += item.price * item.count;
-          this.selectFoods.push(item);
-        }
-      });
-
-      this.foodInfo.forEach(cate => {
         cate.food.forEach(food => {
           if (food.count) {
             empty = false;
@@ -102,7 +93,7 @@ export default {
 
       this.foodInfo.menu.forEach(menu => {
         menu.foods.forEach(item => {
-          food.count = 0;
+          item.count = 0;
         });
       });
     },
@@ -160,13 +151,13 @@ export default {
   flex: 1;
 }
 .bottomNav-carttotal {
-  font-size: 0.8rem;
+  font-size: 1rem;
   line-height: normal;
   color: #fff;
 }
 .bottomNav-cartdelivery {
   color: #999;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
 }
 .submit-btn {
   height: 100%;

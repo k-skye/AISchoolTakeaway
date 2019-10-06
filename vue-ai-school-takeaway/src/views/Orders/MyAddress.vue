@@ -101,7 +101,8 @@ export default {
       this.selectIndex = index;
       // 将address对象存储到vuex
       this.$store.dispatch("setAddrInfo", address);
-      this.$router.push("/settlement");
+      this.$router.go(-1);
+      // TODO 更换默认收货地址
     }
   }
 };

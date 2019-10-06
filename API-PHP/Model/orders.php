@@ -5,10 +5,10 @@ use PhalApi\Model\NotORMModel as NotORM;
 
 class orders extends NotORM {
 
-    public function getOnesAllOrders($id,$offset,$limit) {
+    public function getOnesAllOrders($userID,$offset,$limit) {
         return $this->getORM()
             ->where('id >= ?', $offset)
-            ->where('userID = ?', $id)
+            ->where('userID = ?', $userID)
             ->limit($limit)
             ->fetchAll();
     }

@@ -25,4 +25,10 @@ class discount extends NotORM {
         ->where('id', $id)
         ->update($data);
     }
+
+    public function getOnesDiscounts($id) {
+        return $this->getORM()
+        ->where('id', $id)
+        ->fetchOne();
+    }
 }

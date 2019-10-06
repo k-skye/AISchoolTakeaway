@@ -229,7 +229,15 @@ export default {
       //开始创建订单
       var foodArrID = []; //食物的id数组
       this.orderInfo.selectFoods.forEach(element => {
-        foodArrID.push(Number(element.id));
+        //让2份以上的商品也添加上，不然无论你点了多少分都只记录一份
+        if (element.count > 1) {
+          for (let i = 0; i < element.count; i++) {
+            foodArrID.push(Number(element.id));
+          }
+        }else{
+          //只有一份
+          foodArrID.push(Number(element.id));
+        }
       });
       foodArrID = JSON.stringify(foodArrID).toString();
       var remarks = this.remarkInfo.tableware + "," + this.remarkInfo.remark;
@@ -256,7 +264,6 @@ export default {
         })
         .then(res => {
           //微信支付
-          
           const data = JSON.parse(res.data.data);
           WeixinJSBridge.invoke("getBrandWCPayRequest", data, res => {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
@@ -277,10 +284,6 @@ export default {
             }
           });
         });
-
-      /*       this.$router.push("/pay");  */
-
-      return;
     }
   },
   components: {
@@ -454,10 +457,11 @@ export default {
       bottom: 0;
       background: #00e067;
       min-width: 28vw;
-      padding: 0 1.333333vw;
       border: none;
+      outline: none;
       color: #fff;
       font-size: 1.2rem;
+      height: 100%;
     }
   }
 }

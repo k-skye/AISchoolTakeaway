@@ -210,7 +210,7 @@ export default {
 }
 .menu-wrapper li {
   padding: 4.666667vw 2vw;
-  font-size: 0.6rem;
+  font-size: 0.8rem;
   color: #666;
   line-height: 1.2;
 }
@@ -246,7 +246,7 @@ export default {
 .category-title span {
   flex: 1;
   color: #999;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -281,7 +281,7 @@ export default {
 }
 .fooddetails-des {
   margin: 1.333333vw 0;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: #999;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -291,7 +291,7 @@ export default {
 .fooddetails-sales {
   margin: 1.733333vw 0 !important;
   color: #999;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   line-height: 1;
   min-height: 1em;
 }
@@ -302,7 +302,7 @@ export default {
   margin-top: 3.733333vw;
 }
 .fooddetails-price .price {
-  font-size: 1rem;
+  font-size: 1.1rem;
   line-height: 4.266667vw;
   color: #ff5339;
   padding-bottom: 0.933333vw;
