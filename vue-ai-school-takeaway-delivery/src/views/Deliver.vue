@@ -1,13 +1,18 @@
 <template>
   <div class="deliver">
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list
+      v-if="!firstlogin"
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
       <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
       <van-collapse v-model="activeNames">
-        <van-collapse-item name="1" >
+        <van-collapse-item name="1">
           <div slot="title" class="title">
             <van-tag v-if="status == 0 ? true : false" type="danger">待取</van-tag>
-            <van-tag v-if="status == 1 ? true : false" type="primary">待送达</van-tag>
-            &nbsp&nbsp第四饭堂
+            <van-tag v-if="status == 1 ? true : false" type="primary">待送达</van-tag>&nbsp&nbsp第四饭堂
             <van-icon name="arrow" class="icon" />C15
             <div class="end">
               <van-icon name="clock-o" class="icon" />12:24
@@ -78,22 +83,31 @@
         </van-collapse-item>
       </van-collapse>
     </van-list>
+    <div class="nologin" v-else>
+      <NoLoginInfo />
+    </div>
   </div>
 </template>
 
 <script>
 import { Dialog } from "vant";
 import { Toast } from "vant";
+import NoLoginInfo from "../components/NoLoginInfo";
+
 export default {
   name: "deliver",
   data() {
     return {
+      firstlogin: false,
       loading: false,
       finished: false,
       list: [],
       activeNames: [],
       status: 0
     };
+  },
+  created() {
+    this.firstlogin = localStorage.firstlogin == 0 ? false : true;
   },
   methods: {
     onLoad() {
@@ -124,7 +138,7 @@ export default {
         Toast.success("成功");
       });
     },
-    onDeliveButtonClick(){
+    onDeliveButtonClick() {
       Dialog.confirm({
         title: "确定已送达到客户手上了吗？"
       }).then(() => {
@@ -132,6 +146,9 @@ export default {
         Toast.success("成功");
       });
     }
+  },
+  components: {
+    NoLoginInfo
   }
 };
 </script>
@@ -191,6 +208,11 @@ export default {
       color: red;
       font-size: 15px;
     }
+  }
+  .nologin {
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

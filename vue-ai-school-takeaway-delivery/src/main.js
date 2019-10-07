@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { Tabbar, TabbarItem, Switch, List, Cell, Button, Icon, Popup, Picker, Field, CellGroup, Tag, NavBar, Panel, Divider, PasswordInput, NumberKeyboard, Collapse, CollapseItem } from 'vant';
 import 'vant/lib/index.css';
+import './plugins/axios'
 import App from './App.vue'
 import router from './router'
 import store from './store'

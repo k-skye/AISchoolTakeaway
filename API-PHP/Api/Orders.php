@@ -34,6 +34,9 @@ class Orders extends Api {
                 'orderNo'  => array('name' => 'orderNo', 'require' => true, 'desc' => '微信商户订单号'),
                 'payTime'  => array('name' => 'payTime', 'require' => true, 'desc' => '支付时间')
             ),
+            'getAllNeedDeliveOrders' => array(
+                //TODO
+            ),
         );
     }
     /**

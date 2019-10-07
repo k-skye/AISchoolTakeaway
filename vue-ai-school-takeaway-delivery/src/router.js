@@ -13,7 +13,7 @@ export default new Router({
       component: () => import('./views/index.vue'),
       children: [{
           path: '',
-          redirect: '/me'
+          redirect: '/order'
         },
         {
           path: '/order',
@@ -65,9 +65,12 @@ export default new Router({
           name: 'billdetail',
           component: () => import('./views/Me/Billdetail.vue')
         }
-
-
       ]
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('./views/Register.vue')
     }
   ]
 })

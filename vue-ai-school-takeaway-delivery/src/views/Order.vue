@@ -1,6 +1,6 @@
 <template>
   <div class="order">
-    <div class="header">
+    <div v-if="!firstlogin" class="header">
       <div class="headerContain">
         <div class="orderButton">
           <van-switch :value="orderChecked" @input="onOrderInput" />
@@ -11,7 +11,13 @@
         </div>
       </div>
     </div>
-    <van-popup v-model="showRule" closeable position="bottom" :style="{ height: '50%' }">
+    <van-popup
+      v-if="!firstlogin"
+      v-model="showRule"
+      closeable
+      position="bottom"
+      :style="{ height: '50%' }"
+    >
       <div class="settings">
         <div class="head">筛选</div>
         <div class="chooses">
@@ -45,7 +51,7 @@
         </div>
       </div>
     </van-popup>
-    <div class="content">
+    <div v-if="!firstlogin" class="content">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
         <van-collapse v-model="activeNames">
@@ -93,13 +99,18 @@
         </van-collapse>
       </van-list>
     </div>
+    <div class="nologin" v-else>
+      <NoLoginInfo />
+    </div>
   </div>
 </template>
 
 <script>
 import { Dialog } from "vant";
 import Choose from "../components/Choose";
-import { Toast } from 'vant';
+import { Toast } from "vant";
+import NoLoginInfo from "../components/NoLoginInfo";
+
 export default {
   name: "deliver",
   data() {
@@ -141,8 +152,12 @@ export default {
       chooseSexValue: "",
       sexes: ["男", "女"],
       activeNames: [],
-      statusIcon: "shop-o"
+      statusIcon: "shop-o",
+      firstlogin: false
     };
+  },
+  created() {
+    this.firstlogin = localStorage.firstlogin == 0 ? false : true;
   },
   methods: {
     onOrderInput(orderChecked) {
@@ -195,12 +210,13 @@ export default {
             this.activeNames.splice(index, 1);
           }
         });
-        Toast.success('接单成功');
+        Toast.success("接单成功");
       });
     }
   },
   components: {
-    Choose
+    Choose,
+    NoLoginInfo
   }
 };
 </script>
@@ -298,6 +314,11 @@ export default {
         font-size: 15px;
       }
     }
+  }
+  .nologin {
+    height: 100%;
+    display: flex;
+    align-items: center;
   }
 }
 </style>

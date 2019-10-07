@@ -37,14 +37,8 @@ export default {
     };
   },
   created() {
-    if (localStorage.firstlogin == 1) {
-      this.firstlogin = true;
-    } else {
-      this.firstlogin = false;
-    }
-
-    const haveopenid = localStorage.openid ? true : false;
-    this.logoImgUrl = haveopenid == true ? this.userInfo.avatar : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
+    this.firstlogin = localStorage.firstlogin == 0 ? false : true;
+    this.logoImgUrl = this.firstlogin == false ? this.userInfo.avatar : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
   },
   methods: {
     handleRes() {
