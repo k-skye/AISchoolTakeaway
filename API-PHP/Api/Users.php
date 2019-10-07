@@ -37,6 +37,22 @@ class Users extends Api {
     }
 
     /**
+     * 管理员登陆
+     * @desc 测试一下
+     */
+    public function loginAdmin() {
+        return array("token" => "admin-token");
+    }
+
+    /**
+     * 管理员登出
+     * @desc 测试一下
+     */
+    public function logout() {
+        return "success";
+    }
+
+    /**
      * 发送短信
      * @desc 利用阿里云短信API模版
      */

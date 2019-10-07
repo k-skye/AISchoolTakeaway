@@ -69,7 +69,7 @@ class Orders extends Api {
                     $rs = $curl->get($url, 10000);
                     return $rs;
                 }else{
-                    throw new InternalServerErrorException("添加商户订单号失败状态失败", 14);
+                    throw new InternalServerErrorException("添加商户订单号失败", 14);
                 }
                 break;
         }

@@ -38,4 +38,23 @@ class restaurant extends NotORM {
             ->where('id = ?', $id)
             ->fetchOne();
     }
+
+    public function getRestsAdmin($page,$limit,$rateQuery,$rate,$name,$statusQuery,$status,$sortQuery) {
+        return $this->getORM()
+            ->where($rateQuery, $rate)
+            ->where('name LIKE ?', "%".$name."%")
+            ->where($statusQuery, $status)
+            ->order($sortQuery)
+            ->page($page, $limit)
+            ->fetchAll();
+    }
+
+    public function addRestsAdmin($name,$roomNum,$location,$logo) {
+        $data = array('name' => $name,'roomNum' => $roomNum,'location' => $location,'logo' => $logo);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    }
 }

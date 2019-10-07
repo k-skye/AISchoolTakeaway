@@ -58,4 +58,40 @@ class restaurant {
         $res['deliveryTime'] = '30';
         return $res;
     }
+
+    public function getRestsAdmin($page,$limit,$rate,$name,$status,$sort) {
+        $model = new ModelRestaurant();
+        //SELECT * FROM `restaurant` WHERE `name` LIKE '%牛肉%' AND `status` != '3' AND `stars` <= 5
+        //可选参数
+        $rateQuery = "";
+        if ($rate == "") {
+            $rateQuery = "stars NOT LIKE ?";
+            $rate = "6";
+        }else{
+            $rateQuery = "stars LIKE ?";
+            $rate = "%".$rate."%";
+        }
+        $statusQuery = "";
+        if ($status == "") {
+            $statusQuery = "status NOT LIKE ?";
+            $status = "3";
+        }else{
+            $statusQuery = "status LIKE ?";
+            $status = "%".$status."%";
+        }
+        $sortQuery = "";
+        if ($sort == "-id") {
+            $sortQuery = "id DESC";
+        }else{
+            $sortQuery = "id";
+        }
+        $res = $model->getRestsAdmin($page,$limit,$rateQuery,$rate,$name,$statusQuery,$status,$sortQuery);
+        $total = count($res);
+        return array('items' => $res,'total' => $total);
+    }
+
+    public function addRestsAdmin($name,$roomNum,$location,$logo) {
+        $model = new ModelRestaurant();
+        return $model->addRestsAdmin($name,$roomNum,$location,$logo);
+    }
 }
