@@ -13,6 +13,14 @@ class orders extends NotORM {
             ->fetchAll();
     }
 
+    public function getAllOrdersOnNeedDelive($offset,$limit) {
+        return $this->getORM()
+            ->where('id >= ?', $offset)
+            ->where('status = 1')
+            ->limit($limit)
+            ->fetchAll();
+    }
+
     public function insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID,$createTime) {
         $data = array('userID' => $userID,'foods' => $foodArrID,'remark' => $remark,'discountID' => $discountID,'restID' => $restID,'totalPrice' => $totalPrice,'payPrice' => $payPrice,'addressID' => $addrID,'createTime' => $createTime, 'status' => 0);
         $orm = $this->getORM();

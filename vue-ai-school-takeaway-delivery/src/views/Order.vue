@@ -54,29 +54,23 @@
     <div v-if="!firstlogin" class="content">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-        <van-collapse v-model="activeNames">
-          <van-collapse-item name="1" :icon="statusIcon">
+        <van-collapse v-model="activeNames" v-for="(order,index) in orders" :key="index">
+          <van-collapse-item :name="index" :icon="statusIcon">
             <div slot="title" class="title">
-              第四饭堂
-              <van-icon name="arrow" class="icon" />C15
+              第{{order.restNum}}饭堂
+              <van-icon name="arrow" class="icon" />{{order.dormitory}}
               <div class="end">
-                <van-icon name="clock-o" class="icon" />12:24
-                <van-icon name="bag-o" class="icon" />x4
-                <van-icon name="contact" class="icon" />男
+                <van-icon name="clock-o" class="icon" />{{order.shouldDeliveTime}}
+                <van-icon name="bag-o" class="icon" />x{{order.foodsCount}}
+                <!-- <van-icon name="contact" class="icon" />男 -->
               </div>
             </div>
             <div class="foods">
               <ul>
-                <li>
+                <li v-for="(food,indexFood) in order.foodsArr" :key="indexFood">
                   <div class="food">
-                    <div class="name">1.招牌手撕鸡</div>
-                    <div class="price">¥14.00</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="food">
-                    <div class="name">2.湿炒河粉</div>
-                    <div class="price">¥18.00</div>
+                    <div class="name">{{indexFood+1}}.{{food.name}}</div>
+                    <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
                   </div>
                 </li>
               </ul>
@@ -85,14 +79,14 @@
             <div class="bottom">
               <div class="totalMoney">
                 <div class="totalTitle">商品总价：</div>
-                <div class="totalPrice">¥32.00</div>
+                <div class="totalPrice">¥{{parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="incomeMoney">
                 <div class="totalTitle">可得配送费：</div>
-                <div class="totalPrice">¥2.0</div>
+                <div class="totalPrice">¥{{parseFloat(order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="orderThisButton">
-                <van-button type="primary" @click="onOrderButtonClick">&nbsp接单&nbsp</van-button>
+                <van-button type="primary" @click="onOrderButtonClick(order.id,index)">&nbsp接单&nbsp</van-button>
               </div>
             </div>
           </van-collapse-item>
@@ -115,6 +109,10 @@ export default {
   name: "deliver",
   data() {
     return {
+      orderlist: [], //存放当前订单容器
+      orders: [], //存放所有订单容器
+      offset: 1,
+      size: 5,
       orderChecked: false,
       loading: false,
       finished: false,
@@ -153,13 +151,57 @@ export default {
       sexes: ["男", "女"],
       activeNames: [],
       statusIcon: "shop-o",
-      firstlogin: false
+      firstlogin: false,
     };
   },
   created() {
-    this.firstlogin = localStorage.firstlogin == 0 ? false : true;
+    this.getData();
   },
   methods: {
+    getData(){
+      this.firstlogin = localStorage.firstlogin == 0 ? false : true;
+      this.firstLoadData();
+    },
+    firstLoadData() {
+      this.offset = 1;
+      this.allLoaded = false;
+      // 拉取商家信息
+      this.$axios("https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders", {
+        params: {
+          offset: this.offset,
+          limit: this.size
+        }
+      }).then(res => {
+        if (res.data.data.length == 0) {
+          // TODO
+          this.allLoaded = true;
+          return;
+        }
+        this.orderlist = res.data.data;
+        this.orders = res.data.data;
+        this.handleData();
+        console.log(this.orders);
+      });
+    },
+    handleData() {
+      //对商品数据处理
+      var i = 0;
+      this.orderlist.forEach(order => {
+        var showfood = "";
+        var OrderFoods = JSON.parse(order.foods);
+        var foodsArr = new Array();
+        OrderFoods.forEach(id => {
+          order.food.forEach(food => {
+            if (food.id == id) {
+              foodsArr.push(food); //把每行food的全部数据对象都放入数组
+            }
+          });
+        });
+        this.orders[i].foodsArr = foodsArr;
+        this.orders[i].foodsCount = foodsArr.length;//食物数量
+        i++;
+      });
+    },
     onOrderInput(orderChecked) {
       Dialog.confirm({
         title: "是否开/关？",
@@ -172,15 +214,32 @@ export default {
     onLoad() {
       // 异步更新数据
       setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
+        if (!this.allLoaded) {
+          this.offset += 5;
+          // 拉取商家信息
+          this.$axios(
+            "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
+            {
+              params: {
+                offset: this.offset,
+                limit: this.size
+              }
+            }
+          ).then(res => {
+            if (res.data.length > 0) {
+              this.orderlist = res.data.data;
+              this.handleData();
+              this.loading = false;
+              if (res.data < this.size) {
+                this.allLoaded = true;
+                this.loading = false;
+              }
+            } else {
+              // 数据为空
+              this.allLoaded = true;
+              this.loading = false;
+            }
+          });
         }
       }, 500);
     },
@@ -199,17 +258,18 @@ export default {
     onNearInput() {
       this.nearChecked = !this.nearChecked;
     },
-    onOrderButtonClick() {
+    onOrderButtonClick(orderID,indexx) {
       Dialog.confirm({
         title: "确定接单吗？",
         message: "注：如果接单后不送将受到相应处罚甚至封号！"
       }).then(() => {
         this.statusIcon = "checked";
         this.activeNames.forEach((item, index) => {
-          if (item == "1") {
+          if (item == indexx) {
             this.activeNames.splice(index, 1);
           }
         });
+        //TODO Tomorrow
         Toast.success("接单成功");
       });
     }

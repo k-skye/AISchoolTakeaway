@@ -35,7 +35,8 @@ class Orders extends Api {
                 'payTime'  => array('name' => 'payTime', 'require' => true, 'desc' => '支付时间')
             ),
             'getAllNeedDeliveOrders' => array(
-                //TODO
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
             ),
         );
     }
@@ -46,6 +47,14 @@ class Orders extends Api {
     public function getOnesAllOrders() {
         $domain = new DomainOders();
         return $domain->getOnesAllOrders($this->userID,$this->offset,$this->limit);
+    }
+    /**
+     * 拿所有订单待接单的
+     * @desc 测试一下
+     */
+    public function getAllNeedDeliveOrders() {
+        $domain = new DomainOders();
+        return $domain->getAllOrdersOnNeedDelive($this->offset,$this->limit);
     }
     /**
      * 创建订单
