@@ -13,6 +13,12 @@ class orders extends NotORM {
             ->fetchAll();
     }
 
+    public function getOnesOneOrder($ID) {
+        return $this->getORM()
+            ->where('id = ?', $ID)
+            ->fetchOne();
+    }
+
     public function getAllOrdersOnNeedDelive($offset,$limit) {
         return $this->getORM()
             ->where('id >= ?', $offset)

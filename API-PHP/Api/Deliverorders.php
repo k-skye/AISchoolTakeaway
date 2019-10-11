@@ -17,6 +17,19 @@ class Deliverorders extends Api {
                 'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
                 'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
             ),
+            'getAllOrder' => array(
+                'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+            ),
+            'changToGetFood' => array(
+                'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
+                'ID'  => array('name' => 'ID', 'require' => true, 'desc' => '配送订单id'),
+            ),
+            'changToFinishDelive' => array(
+                'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
+                'ID'  => array('name' => 'ID', 'require' => true, 'desc' => '配送订单id'),
+            ),
         );
     }
     /**
@@ -30,6 +43,40 @@ class Deliverorders extends Api {
             return 'ok';
         }else{
             throw new InternalServerErrorException("新增配送订单失败", 16);
+        }
+    }
+    /**
+     * 拿配送订单
+     * @desc 测试一下
+     */
+    public function getAllOrder() {
+        $domain = new DomainDeliverorders();
+        return $domain->getAllOrder($this->deliverID,$this->offset,$this->limit);
+    }
+    /**
+     * 已取到商品
+     * @desc 测试一下
+     */
+    public function changToGetFood() {
+        $domain = new DomainDeliverorders();
+        $res = $domain->changToGetFood($this->orderID,$this->ID);
+        if ($res > 0 ) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException("修改配送订单已取餐失败", 17);
+        }
+    }
+    /**
+     * 已送达
+     * @desc 测试一下
+     */
+    public function changToFinishDelive() {
+        $domain = new DomainDeliverorders();
+        $res = $domain->changToFinishDelive($this->orderID,$this->ID);
+        if ($res > 0 ) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException("修改配送已送达订单失败", 18);
         }
     }
 } 

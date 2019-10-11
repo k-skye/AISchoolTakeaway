@@ -25,6 +25,28 @@ class deliverorders extends NotORM {
 
         // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
         return $orm->insert_id();
+    }
+
+    public function getAllOrder($deliverID,$offset,$limit) {
+        return $this->getORM()
+        ->where('id >= ?', $offset)
+        ->where('deliverID = ?', $deliverID)
+        ->where('delivedTime IS NULL')//未送达
+        ->limit($limit)
+        ->fetchAll();
     } 
 
+    public function updateGetFoodTime($ID,$time) {
+        $data = array('getFoodTime' => $time);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    } 
+
+    public function updatedelivedTime($ID,$time) {
+        $data = array('delivedTime' => $time);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    } 
 }

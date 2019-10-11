@@ -91,8 +91,12 @@
                 <div class="totalPrice">¥{{parseFloat(order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="orderThisButton">
-                <van-button v-if="order.haveSumit"  type="info">已接单</van-button>
-                <van-button v-else type="primary" @click="onOrderButtonClick(order.id,index)">&nbsp接单&nbsp</van-button>
+                <van-button v-if="order.status == 2 ? true : false" type="info">已接单</van-button>
+                <van-button
+                  v-else
+                  type="primary"
+                  @click="onOrderButtonClick(order.id,index)"
+                >&nbsp接单&nbsp</van-button>
               </div>
             </div>
           </van-collapse-item>
@@ -122,7 +126,6 @@ export default {
       orderChecked: false,
       loading: false,
       finished: false,
-      list: [],
       showRule: false,
       chooseRestValue: "",
       rests: ["第一饭堂+第二饭堂", "第三饭堂", "第四饭堂", "门口"],
@@ -206,7 +209,6 @@ export default {
         });
         this.orders[i].foodsArr = foodsArr;
         this.orders[i].foodsCount = foodsArr.length; //食物数量
-        this.orders[i].haveSumit = 0; //用来动态修改在提交之后修改开头的图标变成打勾的
         i++;
       });
     },
@@ -270,31 +272,35 @@ export default {
       Dialog.confirm({
         title: "确定接单吗？",
         message: "注：如果接单后不送将受到相应处罚甚至封号！"
-      }).then(() => {
-        //开始创建订单
-        this.$axios(
-          "https://takeawayapi.pykky.com/?s=Deliverorders.CreateOneOrder",
-          {
-            params: {
-              orderID: orderID,
-              deliverID: this.userInfo.id
-            }
-          }
-        ).then(res => {
-          if (res.data.data == "ok") {
-            this.$set(this.orders[indexx], "haveSumit", 1); //让开头的图标变成打勾
-            //this.orders[indexx].haveSumit == 1; 用上面来替代掉这句，才能让vue刷新视图里的数据
-            this.activeNames.forEach((item, index) => {
-              if (item == indexx) {
-                this.activeNames.splice(index, 1);
+      })
+        .then(() => {
+          //开始创建订单
+          this.$axios(
+            "https://takeawayapi.pykky.com/?s=Deliverorders.CreateOneOrder",
+            {
+              params: {
+                orderID: orderID,
+                deliverID: this.userInfo.id
               }
-            });
-            Toast.success("接单成功");
-          } else {
-            Toast.fail("接单失败！" + res.data.msg);
-          }
+            }
+          ).then(res => {
+            if (res.data.data == "ok") {
+              this.$set(this.orders[indexx], "status", 2); //让开头的图标变成打勾
+              //this.orders[indexx].haveSumit == 1; 用上面来替代掉这句，才能让vue刷新视图里的数据
+              this.activeNames.forEach((item, index) => {
+                if (item == indexx) {
+                  this.activeNames.splice(index, 1);
+                }
+              });
+              Toast.success("接单成功");
+            } else {
+              Toast.fail("接单失败！" + res.data.msg);
+            }
+          });
+        })
+        .catch(() => {
+          // on cancel
         });
-      });
     }
   },
   computed: {
