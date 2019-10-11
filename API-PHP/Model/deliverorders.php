@@ -18,4 +18,13 @@ class deliverorders extends NotORM {
             ->count();
     }
 
+    public function addOneOrder($orderID,$deliverID,$createTime) {
+        $data = array('orderID' => $orderID,'deliverID' => $deliverID,'createTime' => $createTime);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    } 
+
 }

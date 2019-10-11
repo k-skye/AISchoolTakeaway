@@ -43,4 +43,11 @@ class orders extends NotORM {
         ->where('orderNo', $orderNo)
         ->update($data);
     }
+
+    public function updateStatus($id,$statusNum) {
+        $data = array('status' => $statusNum);
+        return $this->getORM()
+        ->where('id', $id)
+        ->update($data);
+    }
 }

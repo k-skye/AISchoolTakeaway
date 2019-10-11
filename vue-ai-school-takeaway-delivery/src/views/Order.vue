@@ -55,13 +55,16 @@
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
         <van-collapse v-model="activeNames" v-for="(order,index) in orders" :key="index">
-          <van-collapse-item :name="index" :icon="statusIcon">
+          <van-collapse-item :name="index" :icon="order.haveSumit == 1 ? 'checked' : 'shop-o'">
             <div slot="title" class="title">
               第{{order.restNum}}饭堂
-              <van-icon name="arrow" class="icon" />{{order.dormitory}}
+              <van-icon name="arrow" class="icon" />
+              {{order.dormitory}}
               <div class="end">
-                <van-icon name="clock-o" class="icon" />{{order.shouldDeliveTime}}
-                <van-icon name="bag-o" class="icon" />x{{order.foodsCount}}
+                <van-icon name="clock-o" class="icon" />
+                {{order.shouldDeliveTime}}
+                <van-icon name="bag-o" class="icon" />
+                x{{order.foodsCount}}
                 <!-- <van-icon name="contact" class="icon" />男 -->
               </div>
             </div>
@@ -79,14 +82,17 @@
             <div class="bottom">
               <div class="totalMoney">
                 <div class="totalTitle">商品总价：</div>
-                <div class="totalPrice">¥{{parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2)}}</div>
+                <div
+                  class="totalPrice"
+                >¥{{parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="incomeMoney">
                 <div class="totalTitle">可得配送费：</div>
                 <div class="totalPrice">¥{{parseFloat(order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="orderThisButton">
-                <van-button type="primary" @click="onOrderButtonClick(order.id,index)">&nbsp接单&nbsp</van-button>
+                <van-button v-if="order.haveSumit"  type="info">已接单</van-button>
+                <van-button v-else type="primary" @click="onOrderButtonClick(order.id,index)">&nbsp接单&nbsp</van-button>
               </div>
             </div>
           </van-collapse-item>
@@ -150,37 +156,38 @@ export default {
       chooseSexValue: "",
       sexes: ["男", "女"],
       activeNames: [],
-      statusIcon: "shop-o",
-      firstlogin: false,
+      firstlogin: false
     };
   },
   created() {
     this.getData();
   },
   methods: {
-    getData(){
+    getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
       this.firstLoadData();
     },
     firstLoadData() {
       this.offset = 1;
-      this.allLoaded = false;
+      this.finished = false;
       // 拉取商家信息
-      this.$axios("https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders", {
-        params: {
-          offset: this.offset,
-          limit: this.size
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
+        {
+          params: {
+            offset: this.offset,
+            limit: this.size
+          }
         }
-      }).then(res => {
+      ).then(res => {
         if (res.data.data.length == 0) {
           // TODO
-          this.allLoaded = true;
+          this.finished = true;
           return;
         }
         this.orderlist = res.data.data;
         this.orders = res.data.data;
         this.handleData();
-        console.log(this.orders);
       });
     },
     handleData() {
@@ -198,7 +205,8 @@ export default {
           });
         });
         this.orders[i].foodsArr = foodsArr;
-        this.orders[i].foodsCount = foodsArr.length;//食物数量
+        this.orders[i].foodsCount = foodsArr.length; //食物数量
+        this.orders[i].haveSumit = 0; //用来动态修改在提交之后修改开头的图标变成打勾的
         i++;
       });
     },
@@ -214,7 +222,7 @@ export default {
     onLoad() {
       // 异步更新数据
       setTimeout(() => {
-        if (!this.allLoaded) {
+        if (!this.finished) {
           this.offset += 5;
           // 拉取商家信息
           this.$axios(
@@ -231,12 +239,12 @@ export default {
               this.handleData();
               this.loading = false;
               if (res.data < this.size) {
-                this.allLoaded = true;
+                this.finished = true;
                 this.loading = false;
               }
             } else {
               // 数据为空
-              this.allLoaded = true;
+              this.finished = true;
               this.loading = false;
             }
           });
@@ -258,20 +266,40 @@ export default {
     onNearInput() {
       this.nearChecked = !this.nearChecked;
     },
-    onOrderButtonClick(orderID,indexx) {
+    onOrderButtonClick(orderID, indexx) {
       Dialog.confirm({
         title: "确定接单吗？",
         message: "注：如果接单后不送将受到相应处罚甚至封号！"
       }).then(() => {
-        this.statusIcon = "checked";
-        this.activeNames.forEach((item, index) => {
-          if (item == indexx) {
-            this.activeNames.splice(index, 1);
+        //开始创建订单
+        this.$axios(
+          "https://takeawayapi.pykky.com/?s=Deliverorders.CreateOneOrder",
+          {
+            params: {
+              orderID: orderID,
+              deliverID: this.userInfo.id
+            }
+          }
+        ).then(res => {
+          if (res.data.data == "ok") {
+            this.$set(this.orders[indexx], "haveSumit", 1); //让开头的图标变成打勾
+            //this.orders[indexx].haveSumit == 1; 用上面来替代掉这句，才能让vue刷新视图里的数据
+            this.activeNames.forEach((item, index) => {
+              if (item == indexx) {
+                this.activeNames.splice(index, 1);
+              }
+            });
+            Toast.success("接单成功");
+          } else {
+            Toast.fail("接单失败！" + res.data.msg);
           }
         });
-        //TODO Tomorrow
-        Toast.success("接单成功");
       });
+    }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
     }
   },
   components: {
