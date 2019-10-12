@@ -7,6 +7,7 @@ use App\Model\restaurant as ModelRestaurant;
 use App\Model\food as ModelFood;
 use App\Model\address as ModelAddress;
 use App\Model\comment as ModelComment;
+use App\Model\tradinglog as ModelTradinglog;
 
 class deliverorders {
 
@@ -131,16 +132,20 @@ class deliverorders {
         }
     }
 
-    public function changToFinishDelive($orderID,$ID) {
+    public function changToFinishDelive($orderID,$ID,$deliverID) {
         $model = new ModelDeliverorders();
         $t = time();
         $createTime = date('Y-m-d H:i:s',$t);
         //修改原订单状态为4-已送达
         $modelOrder = new ModelOders();
         $res = $modelOrder->updateStatus($orderID,4);
-        $rres = $model->updatedelivedTime($ID,$createTime);
-        if ($rres && $res) {
-            return $rres;
+        $orderInfo = $modelOrder->getOnesOneOrder($orderID);
+        $money = $orderInfo['deliveFee'];
+        $modelTradLog = new ModelTradinglog();
+        $rres = $modelTradLog->addOneTradLogWithDeliver($deliverID,$money,$createTime,$ID);
+        $rrres = $model->updatedelivedTime($ID,$createTime);
+        if ($rrres && $res && $rres) {
+            return $rrres;
         }else {
             return -1;
         }

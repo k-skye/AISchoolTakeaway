@@ -29,6 +29,7 @@ class Deliverorders extends Api {
             'changToFinishDelive' => array(
                 'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
                 'ID'  => array('name' => 'ID', 'require' => true, 'desc' => '配送订单id'),
+                'deliverID' => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
             ),
             'getOneUserAllOrderFinish' => array(
                 'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
@@ -98,7 +99,7 @@ class Deliverorders extends Api {
      */
     public function changToFinishDelive() {
         $domain = new DomainDeliverorders();
-        $res = $domain->changToFinishDelive($this->orderID,$this->ID);
+        $res = $domain->changToFinishDelive($this->orderID,$this->ID,$this->deliverID);
         if ($res > 0 ) {
             return 'ok';
         }else{

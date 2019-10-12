@@ -86,7 +86,7 @@
             <div class="deliveButton" v-if="orderDelive.order.status == 3 ? true : false">
               <van-button
                 type="primary"
-                @click="onDeliveButtonClick(orderDelive.order.id,orderDelive.id,index)"
+                @click="onDeliveButtonClick(orderDelive.order.id,orderDelive.id,index,userInfo.id)"
               >我已送达</van-button>
             </div>
             <div class="finishButton" v-if="orderDelive.order.status == 4 ? true : false">
@@ -237,7 +237,7 @@ export default {
           // on cancel
         });
     },
-    onDeliveButtonClick(orderID, iD, indexx) {
+    onDeliveButtonClick(orderID, iD, indexx,deID) {
       Dialog.confirm({
         title: "确定已送达到客户手上了吗？"
       })
@@ -247,7 +247,8 @@ export default {
             {
               params: {
                 orderID: orderID,
-                ID: iD
+                ID: iD,
+                deliverID: deID
               }
             }
           ).then(res => {

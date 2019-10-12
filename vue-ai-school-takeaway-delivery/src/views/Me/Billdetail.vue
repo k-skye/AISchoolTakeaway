@@ -5,10 +5,11 @@
     </div>
     <div class="contain">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-cell-group v-for="item in list" :key="item" >
-          <van-cell title="08-23 12:48" icon="clock-o">
-            <div class="right-in" v-if="true" slot="default">+ ¥2.0</div>
-            <div class="right-out" v-else slot="default">- ¥13.00</div>
+        <van-cell-group v-for="(trad,index) in trads" :key="index" >
+          <van-cell :title="trad.date" icon="clock-o">
+            {{trad.type}}{{trad.done == 0 ? ' (待确认收货)':''}}
+            <div class="right-in" v-if="(trad.money > 0)" slot="default">+ ¥{{parseFloat(trad.money).toFixed(2)}}</div>
+            <div class="right-out" v-else slot="default">- ¥{{parseFloat(trad.money).toFixed(2)}}</div>
           </van-cell>
         </van-cell-group>
       </van-list>
@@ -23,24 +24,75 @@ export default {
     return {
       loading: false,
       finished: false,
-      list: []
+      offset: 1,
+      size: 5,
+      trads:[] //存放数据容器
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.firstLoadData();
+    });
+  },
   methods:{
+    firstLoadData() {
+      this.offset = 1;
+      this.finished = false;
+      // 拉取商家信息
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
+        {
+          params: {
+            deliverID: this.userInfo.id,
+            offset: this.offset,
+            limit: this.size
+          }
+        }
+      ).then(res => {
+        if (JSON.stringify(res.data.data) == "{}") {
+          this.finished = true;
+          this.loading = false;
+          return;
+        }
+        this.trads = res.data.data;
+      });
+    },
     onLoad() {
       // 异步更新数据
       setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
+        if (!this.finished) {
+          this.offset += 5;
+          // 拉取商家信息
+          this.$axios(
+            "https://takeawayapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
+            {
+              params: {
+                deliverID: this.userInfo.id,
+                offset: this.offset,
+                limit: this.size
+              }
+            }
+          ).then(res => {
+            if (res.data.length > 0) {
+              this.trads = res.data.data;
+              this.loading = false;
+              if (res.data < this.size) {
+                this.finished = true;
+                this.loading = false;
+              }
+            } else {
+              // 数据为空
+              this.finished = true;
+              this.loading = false;
+            }
+          });
         }
       }, 500);
+    }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
     }
   }
 };
