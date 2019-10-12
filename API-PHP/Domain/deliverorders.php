@@ -31,30 +31,57 @@ class deliverorders {
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();
         $modelAddr = new ModelAddress();
+        $i = 0;
         foreach ($arr as $value){
-            $value['order'] = $model->getOnesOneOrder($value['orderID']);
-            $restID = $value['order']['restID'];
-            $addrID = $value['order']['addressID'];
+            $arr[$i]['order'] = $model->getOnesOneOrder($value['orderID']);
+            $restID = $arr[$i]['order']['restID'];
+            $addrID = $arr[$i]['order']['addressID'];
             //处理时间
-            $date=date_create($value['order']['shouldDeliveTime']);
+            $date=date_create($arr[$i]['order']['shouldDeliveTime']);
             $output=date_format($date,"H:i");
             $t = time();
             $createTime = (int)date('d',$t) + 1;
             $thatTime = (int)date_format($date,"d");
             if ($thatTime == $createTime){
-            	$value['order']['shouldDeliveTime'] = '明天 '.$output;
+            	$arr[$i]['order']['shouldDeliveTime'] = '明天 '.$output;
             }else {
-                $value['order']['shouldDeliveTime'] = $output;
+                $arr[$i]['order']['shouldDeliveTime'] = $output;
             }
             $restRes = $modelRest->getOneRest($restID);
-            $value['order']['restName'] = $restRes['name'];
-            $value['order']['restLogo'] = $restRes['logo'];
-            $value['order']['restNum'] = $restRes['roomNum'];
-            $value['order']['location'] = $restRes['location'];
+            $arr[$i]['order']['restName'] = $restRes['name'];
+            $arr[$i]['order']['restLogo'] = $restRes['logo'];
+            $arr[$i]['order']['restNum'] = $restRes['roomNum'];
+            $arr[$i]['order']['location'] = $restRes['location'];
             $addrRes = $modelAddr->getOneByAddrById($addrID);
-            $value['addr'] = $addrRes;
+            $arr[$i]['addr'] = $addrRes;
             $foodsRes = $modelFood->getFoodsByRestID($restID);
-            $value['food'] = $foodsRes;
+            $arr[$i]['food'] = $foodsRes;
+            $i++;
+        }
+        return $arr;
+    }
+
+    public function getOneUserAllOrderFinish($deliverID,$offset,$limit) {
+        $modelOrder = new ModelDeliverorders();
+        $arr =  $modelOrder->getOneUserAllOrderFinish($deliverID,$offset,$limit);
+        $model = new ModelOders();
+        $modelRest = new ModelRestaurant();
+        $modelFood = new ModelFood();
+        $modelAddr = new ModelAddress();
+        $i = 0;
+        foreach ($arr as $value){
+            $arr[$i]['order'] = $model->getOnesOneOrder($value['orderID']);
+            $restID = $arr[$i]['order']['restID'];
+            $addrID = $arr[$i]['order']['addressID'];
+            $restRes = $modelRest->getOneRest($restID);
+            $arr[$i]['order']['restName'] = $restRes['name'];
+            $arr[$i]['order']['restLogo'] = $restRes['logo'];
+            $arr[$i]['order']['restNum'] = $restRes['roomNum'];
+            $addrRes = $modelAddr->getOneByAddrById($addrID);
+            $arr[$i]['dormitory'] = $addrRes['dormitory'];
+            $foodsRes = $modelFood->getFoodsByRestID($restID);
+            $arr[$i]['food'] = $foodsRes;
+            $i++;
         }
         return $arr;
     }

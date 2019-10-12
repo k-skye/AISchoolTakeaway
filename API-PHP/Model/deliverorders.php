@@ -49,4 +49,12 @@ class deliverorders extends NotORM {
         ->where('id', $ID)
         ->update($data);
     } 
+
+    public function getOneUserAllOrderFinish($deliverID,$offset,$limit) {
+        return $this->getORM()
+        ->where('id >= ?', $offset)
+        ->where('deliverID = ?', $deliverID)
+        ->limit($limit)
+        ->fetchAll();
+    }
 }

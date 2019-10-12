@@ -19,7 +19,7 @@
         <van-cell icon="paid" title="钱包" is-link :value="'¥'+(parseFloat(userInfo.noun)+userInfo.notDoneMoney)" to="wallet" />
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="orders-o" is-link @click="$router.push('allorder')">
+        <van-cell icon="orders-o" is-link @click="$router.push({ name: 'allorder', params: { deliverID: userInfo.id }})">
           <template slot="title">
             <span class="custom-title">订单</span>
             <van-tag round type="success">{{userInfo.orderCount}}</van-tag>

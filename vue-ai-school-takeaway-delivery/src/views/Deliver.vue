@@ -57,12 +57,8 @@
           <van-divider />
           <div class="foods">
             <ul>
-              <li>
-                <div
-                  class="food"
-                  v-for="(food,indexFood) in orderDelive.order.foodsArr"
-                  :key="indexFood"
-                >
+              <li v-for="(food,indexFood) in orderDelive.order.foodsArr" :key="indexFood">
+                <div class="food">
                   <div class="name">{{indexFood+1}}.{{food.name}}</div>
                   <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
                 </div>
@@ -82,10 +78,16 @@
               <div class="totalPrice">¥{{parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
             </div>
             <div class="orderThisButton" v-if="orderDelive.order.status == 2 ? true : false">
-              <van-button type="info" @click="onGetGoodsButtonClick(orderDelive.order.id,orderDelive.id,index)">已取到商品</van-button>
+              <van-button
+                type="info"
+                @click="onGetGoodsButtonClick(orderDelive.order.id,orderDelive.id,index)"
+              >已取到商品</van-button>
             </div>
             <div class="deliveButton" v-if="orderDelive.order.status == 3 ? true : false">
-              <van-button type="primary" @click="onDeliveButtonClick(orderDelive.order.id,orderDelive.id,index)">我已送达</van-button>
+              <van-button
+                type="primary"
+                @click="onDeliveButtonClick(orderDelive.order.id,orderDelive.id,index)"
+              >我已送达</van-button>
             </div>
             <div class="finishButton" v-if="orderDelive.order.status == 4 ? true : false">
               <van-button type="success">已完成</van-button>
@@ -147,7 +149,6 @@ export default {
         }
       ).then(res => {
         if (JSON.stringify(res.data.data) == "{}") {
-          // TODO
           this.finished = true;
           this.loading = false;
           this.nodata = true;
@@ -210,7 +211,7 @@ export default {
         }
       }, 500);
     },
-    onGetGoodsButtonClick(orderID,iD,indexx) {
+    onGetGoodsButtonClick(orderID, iD, indexx) {
       Dialog.confirm({
         title: "确定取到商品了吗？"
       })
@@ -236,7 +237,7 @@ export default {
           // on cancel
         });
     },
-    onDeliveButtonClick(orderID,iD,indexx) {
+    onDeliveButtonClick(orderID, iD, indexx) {
       Dialog.confirm({
         title: "确定已送达到客户手上了吗？"
       })
@@ -250,17 +251,17 @@ export default {
               }
             }
           ).then(res => {
-          if (res.data.data == "ok") {
-            this.$set(this.orders[indexx].order, "status", 4); //让开头的图标变化
-            this.activeNames.forEach((item, index) => {
-              if (item == indexx) {
-                this.activeNames.splice(index, 1);
-              }
-            });
-            Toast.success("成功");
-          } else {
-            Toast.fail("失败！" + res.data.msg);
-          }
+            if (res.data.data == "ok") {
+              this.$set(this.orders[indexx].order, "status", 4); //让开头的图标变化
+              this.activeNames.forEach((item, index) => {
+                if (item == indexx) {
+                  this.activeNames.splice(index, 1);
+                }
+              });
+              Toast.success("成功");
+            } else {
+              Toast.fail("失败！" + res.data.msg);
+            }
           });
         })
         .catch(() => {

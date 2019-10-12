@@ -30,6 +30,11 @@ class Deliverorders extends Api {
                 'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
                 'ID'  => array('name' => 'ID', 'require' => true, 'desc' => '配送订单id'),
             ),
+            'getOneUserAllOrderFinish' => array(
+                'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+            ),
         );
     }
     /**
@@ -46,12 +51,20 @@ class Deliverorders extends Api {
         }
     }
     /**
-     * 拿配送订单
+     * 拿所有待配送订单
      * @desc 测试一下
      */
     public function getAllOrder() {
         $domain = new DomainDeliverorders();
         return $domain->getAllOrder($this->deliverID,$this->offset,$this->limit);
+    }
+    /**
+     * 拿一个伙伴的所有订单
+     * @desc 用在我的，所有订单界面
+     */
+    public function getOneUserAllOrderFinish() {
+        $domain = new DomainDeliverorders();
+        return $domain->getOneUserAllOrderFinish($this->deliverID,$this->offset,$this->limit);
     }
     /**
      * 已取到商品

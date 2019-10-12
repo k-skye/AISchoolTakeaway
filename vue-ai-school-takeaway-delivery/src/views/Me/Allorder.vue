@@ -6,40 +6,34 @@
     <div class="contain">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-        <van-collapse v-model="activeNames">
-          <van-collapse-item name="1" icon="shop-o">
+        <van-collapse v-model="activeNames" v-for="(orderDelive,index) in orders" :key="index">
+          <van-collapse-item :name="index" icon="shop-o">
             <div slot="title" class="title">
-              第四饭堂
-              <van-icon name="arrow" class="icon" />C15
+              第{{orderDelive.order.restNum}}饭堂
+              <van-icon name="arrow" class="icon" />{{orderDelive.dormitory}}
               <div class="end">
-                <van-icon name="clock-o" class="icon" />08-25 12:24
+                <van-icon name="clock-o" class="icon" />{{orderDelive.delivedTime}}
               </div>
             </div>
             <div class="foods">
               <ul>
-                <li>
-                  <div class="food">
-                    <div class="name">1.招牌手撕鸡</div>
-                    <div class="price">¥14.00</div>
-                  </div>
-                </li>
-                <li>
-                  <div class="food">
-                    <div class="name">2.湿炒河粉</div>
-                    <div class="price">¥18.00</div>
-                  </div>
-                </li>
+                <li v-for="(food,indexFood) in orderDelive.order.foodsArr" :key="indexFood">
+                <div class="food">
+                  <div class="name">{{indexFood+1}}.{{food.name}}</div>
+                  <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
+                </div>
+              </li>
               </ul>
             </div>
             <van-divider />
             <div class="bottom">
               <div class="totalMoney">
                 <div class="totalTitle">商品总价：</div>
-                <div class="totalPrice">¥32.00</div>
+                <div class="totalPrice">¥{{parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="incomeMoney">
                 <div class="totalTitle">已得配送费：</div>
-                <div class="totalPrice">¥2.0</div>
+                <div class="totalPrice">¥{{parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
               </div>
             </div>
           </van-collapse-item>
@@ -54,28 +48,99 @@ export default {
   name: "allorder",
   data() {
     return {
+      orderlist: [], //存放当前订单容器
+      orders: [], //存放所有订单容器
+      offset: 1,
+      size: 5,
       loading: false,
       finished: false,
-      list: [],
-      activeNames: []
+      activeNames: [],
+      deliverID: null
     };
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.deliverID = to.params.deliverID;
+      vm.firstLoadData();
+    });
+  },
   methods: {
+    firstLoadData() {
+      this.offset = 1;
+      this.finished = false;
+      // 拉取商家信息
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
+        {
+          params: {
+            deliverID: this.deliverID,
+            offset: this.offset,
+            limit: this.size
+          }
+        }
+      ).then(res => {
+        if (JSON.stringify(res.data.data) == "{}") {
+          this.finished = true;
+          this.loading = false;
+          return;
+        }
+        this.orderlist = res.data.data;
+        this.orders = res.data.data;
+        this.handleData();
+      });
+    },
+    handleData() {
+      //对商品数据处理
+      var i = 0;
+      this.orderlist.forEach(orders => {
+        var showfood = "";
+        var OrderFoods = JSON.parse(orders.order.foods);
+        var foodsArr = new Array();
+        OrderFoods.forEach(id => {
+          orders.food.forEach(food => {
+            if (food.id == id) {
+              foodsArr.push(food); //把每行food的全部数据对象都放入数组
+            }
+          });
+        });
+        this.orders[i].order.foodsArr = foodsArr;
+        this.orders[i].order.foodsCount = foodsArr.length; //食物数量
+        i++;
+      });
+    },
     onLoad() {
       // 异步更新数据
       setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        // 加载状态结束
-        this.loading = false;
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
+        if (!this.finished) {
+          this.offset += 5;
+          // 拉取商家信息
+          this.$axios(
+            "https://takeawayapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
+            {
+              params: {
+                deliverID: this.deliverID,
+                offset: this.offset,
+                limit: this.size
+              }
+            }
+          ).then(res => {
+            if (res.data.length > 0) {
+              this.orderlist = res.data.data;
+              this.handleData();
+              this.loading = false;
+              if (res.data < this.size) {
+                this.finished = true;
+                this.loading = false;
+              }
+            } else {
+              // 数据为空
+              this.finished = true;
+              this.loading = false;
+            }
+          });
         }
       }, 500);
-    }
+    },
   }
 };
 </script>
