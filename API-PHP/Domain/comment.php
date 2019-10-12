@@ -3,6 +3,7 @@ namespace App\Domain;
 
 use App\Model\comment as ModelComment;
 use App\Model\users as ModelUsers;
+use App\Model\deliverorders as ModelDeliverorders;
 
 class comment {
 
@@ -20,6 +21,17 @@ class comment {
             $i++;
         }
         return $arr;
+    }
+
+    public function CommentDeliveReply($ID,$text,$deliveOrderID) {
+        $model = new ModelComment();
+        $modelDeliveOrder = new ModelDeliverorders();
+        $res = $modelDeliveOrder->updatehasComment($deliveOrderID);
+        if ($res > 0) {
+            return $model->updateCommentDeliveReply($ID,$text);
+        }else{
+            return -1;
+        }
     }
 
 }

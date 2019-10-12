@@ -35,6 +35,11 @@ class Deliverorders extends Api {
                 'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
                 'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
             ),
+            'getAllOrderCountCanComment' => array(
+                'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+            ),
         );
     }
     /**
@@ -65,6 +70,14 @@ class Deliverorders extends Api {
     public function getOneUserAllOrderFinish() {
         $domain = new DomainDeliverorders();
         return $domain->getOneUserAllOrderFinish($this->deliverID,$this->offset,$this->limit);
+    }
+    /**
+     * 拿一个伙伴的所有可评价订单
+     * @desc 测试一下
+     */
+    public function getAllOrderCountCanComment() {
+        $domain = new DomainDeliverorders();
+        return $domain->getAllOrderCountCanComment($this->deliverID,$this->offset,$this->limit);
     }
     /**
      * 已取到商品

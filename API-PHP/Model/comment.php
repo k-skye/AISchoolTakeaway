@@ -13,4 +13,17 @@ class comment extends NotORM {
             ->fetchAll();
     }
 
+    public function getOneComment($ID) {
+        return $this->getORM()
+            ->where('id', $ID)
+            ->fetchOne();
+    }
+
+    public function updateCommentDeliveReply($ID,$text) {
+        $data = array('deliverReply' => $text);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    } 
+
 }

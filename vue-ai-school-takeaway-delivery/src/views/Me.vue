@@ -10,22 +10,40 @@
       </div>
       <div v-else class="info">
         {{userInfo.name}}
-        <br /><div class="phone"><van-icon name="phone" />{{userInfo.phoneNo}}</div>
+        <br />
+        <div class="phone">
+          <van-icon name="phone" />
+          {{userInfo.phoneNo}}
+        </div>
         <!-- <van-icon name="arrow" /> -->
       </div>
     </div>
     <div class="contain" v-if="!firstlogin">
       <van-cell-group title=" ">
-        <van-cell icon="paid" title="钱包" is-link :value="'¥'+(parseFloat(userInfo.noun)+userInfo.notDoneMoney)" to="wallet" />
+        <van-cell
+          icon="paid"
+          title="钱包"
+          is-link
+          :value="'¥'+(parseFloat(userInfo.noun)+userInfo.notDoneMoney)"
+          to="wallet"
+        />
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="orders-o" is-link @click="$router.push({ name: 'allorder', params: { deliverID: userInfo.id }})">
+        <van-cell
+          icon="orders-o"
+          is-link
+          @click="$router.push({ name: 'allorder', params: { deliverID: userInfo.id }})"
+        >
           <template slot="title">
             <span class="custom-title">订单</span>
             <van-tag round type="success">{{userInfo.orderCount}}</van-tag>
           </template>
         </van-cell>
-        <van-cell icon="star-o" is-link @click="$router.push('comment')">
+        <van-cell
+          icon="star-o"
+          is-link
+          @click="$router.push({ name: 'comment', params: { deliverID: userInfo.id }})"
+        >
           <template slot="title">
             <span class="custom-title">评价</span>
             <van-tag round type="warning">{{userInfo.commentCount}}</van-tag>
@@ -57,10 +75,28 @@ export default {
   },
   created() {
     this.firstlogin = localStorage.firstlogin == 0 ? false : true;
-    this.logoImgUrl = this.firstlogin == false ? this.userInfo.avatar : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
+    this.logoImgUrl =
+      this.firstlogin == false
+        ? this.userInfo.avatar
+        : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getuserInfo();
+    });
   },
   methods: {
-    
+    getuserInfo() {
+      const openid = localStorage.openid;
+      //用openid去get全部用户信息回来
+      this.$axios("https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
+        params: {
+          openid: openid
+        }
+      }).then(res => {
+        this.$store.dispatch("setUserInfo", res.data.data);
+      });
+    }
   },
   computed: {
     userInfo() {
@@ -112,7 +148,7 @@ export default {
       margin-left: 18px;
       line-height: 24px;
       font-size: 20px;
-      .phone{
+      .phone {
         display: flex;
         width: 100%;
         align-items: center;

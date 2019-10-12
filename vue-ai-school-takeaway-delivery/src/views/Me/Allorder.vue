@@ -10,26 +10,30 @@
           <van-collapse-item :name="index" icon="shop-o">
             <div slot="title" class="title">
               第{{orderDelive.order.restNum}}饭堂
-              <van-icon name="arrow" class="icon" />{{orderDelive.dormitory}}
+              <van-icon name="arrow" class="icon" />
+              {{orderDelive.dormitory}}
               <div class="end">
-                <van-icon name="clock-o" class="icon" />{{orderDelive.delivedTime}}
+                <van-icon name="clock-o" class="icon" />
+                {{orderDelive.delivedTime}}
               </div>
             </div>
             <div class="foods">
               <ul>
                 <li v-for="(food,indexFood) in orderDelive.order.foodsArr" :key="indexFood">
-                <div class="food">
-                  <div class="name">{{indexFood+1}}.{{food.name}}</div>
-                  <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
-                </div>
-              </li>
+                  <div class="food">
+                    <div class="name">{{indexFood+1}}.{{food.name}}</div>
+                    <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
+                  </div>
+                </li>
               </ul>
             </div>
             <van-divider />
             <div class="bottom">
               <div class="totalMoney">
                 <div class="totalTitle">商品总价：</div>
-                <div class="totalPrice">¥{{parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
+                <div
+                  class="totalPrice"
+                >¥{{parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
               </div>
               <div class="incomeMoney">
                 <div class="totalTitle">已得配送费：</div>
@@ -140,7 +144,7 @@ export default {
           });
         }
       }, 500);
-    },
+    }
   }
 };
 </script>

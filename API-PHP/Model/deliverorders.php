@@ -33,11 +33,19 @@ class deliverorders extends NotORM {
         ->where('deliverID = ?', $deliverID)
         ->where('delivedTime IS NULL')//未送达
         ->limit($limit)
+        ->order('getFoodTime DESC')
         ->fetchAll();
     } 
 
     public function updateGetFoodTime($ID,$time) {
         $data = array('getFoodTime' => $time);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    } 
+
+    public function updatehasComment($ID) {
+        $data = array('hasComment' => 1);
         return $this->getORM()
         ->where('id', $ID)
         ->update($data);
@@ -55,6 +63,16 @@ class deliverorders extends NotORM {
         ->where('id >= ?', $offset)
         ->where('deliverID = ?', $deliverID)
         ->limit($limit)
+        ->fetchAll();
+    }
+
+    public function getAllOrderCountCanComment($deliverID,$offset,$limit) {
+        return $this->getORM()
+        ->where('id >= ?', $offset)
+        ->where('deliverID = ?', $deliverID)
+        ->where('canComment = ?', 1)
+        ->limit($limit)
+        ->order('hasComment')
         ->fetchAll();
     }
 }

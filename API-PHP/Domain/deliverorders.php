@@ -6,6 +6,7 @@ use App\Model\orders as ModelOders;
 use App\Model\restaurant as ModelRestaurant;
 use App\Model\food as ModelFood;
 use App\Model\address as ModelAddress;
+use App\Model\comment as ModelComment;
 
 class deliverorders {
 
@@ -81,6 +82,35 @@ class deliverorders {
             $arr[$i]['dormitory'] = $addrRes['dormitory'];
             $foodsRes = $modelFood->getFoodsByRestID($restID);
             $arr[$i]['food'] = $foodsRes;
+            $i++;
+        }
+        return $arr;
+    }
+
+    public function getAllOrderCountCanComment($deliverID,$offset,$limit) {
+        $modelOrder = new ModelDeliverorders();
+        $arr =  $modelOrder->getAllOrderCountCanComment($deliverID,$offset,$limit);
+        $model = new ModelOders();
+        $modelRest = new ModelRestaurant();
+        $modelFood = new ModelFood();
+        $modelAddr = new ModelAddress();
+        $modelComm = new ModelComment();
+        $i = 0;
+        foreach ($arr as $value){
+            $arr[$i]['order'] = $model->getOnesOneOrder($value['orderID']);
+            $restID = $arr[$i]['order']['restID'];
+            $addrID = $arr[$i]['order']['addressID'];
+            $commentID = $arr[$i]['order']['commentID'];
+            $restRes = $modelRest->getOneRest($restID);
+            $arr[$i]['order']['restName'] = $restRes['name'];
+            $arr[$i]['order']['restLogo'] = $restRes['logo'];
+            $arr[$i]['order']['restNum'] = $restRes['roomNum'];
+            $addrRes = $modelAddr->getOneByAddrById($addrID);
+            $arr[$i]['dormitory'] = $addrRes['dormitory'];
+            $foodsRes = $modelFood->getFoodsByRestID($restID);
+            $arr[$i]['food'] = $foodsRes;
+            $commentRes = $modelComm->getOneComment($commentID);
+            $arr[$i]['comment'] = $commentRes;
             $i++;
         }
         return $arr;
