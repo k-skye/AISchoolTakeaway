@@ -34,7 +34,13 @@ class DeliverUsers extends Api {
             ),
             'getInfoInWechat' => array(
                 'code'  => array('name' => 'code', 'require' => true, 'desc' => '微信CODE'),
-            )
+            ),
+            'changeUserInfoOnChooseByUserId' => array(
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '配送员id'),
+                'chooseAddr'  => array('name' => 'chooseAddr', 'require' => true, 'desc' => '选择宿舍'),
+                'chooseRest'  => array('name' => 'chooseRest', 'require' => true, 'desc' => '选择饭堂'),
+                'chooseNear'  => array('name' => 'chooseNear', 'require' => true, 'desc' => '是否附近宿舍'),
+            ),
         );
     }
 
@@ -52,6 +58,20 @@ class DeliverUsers extends Api {
      */
     public function logout() {
         return "success";
+    }
+
+    /**
+     * 更改筛选
+     * @desc 测试一下
+     */
+    public function changeUserInfoOnChooseByUserId() {
+        $domain = new DomainUsers();
+        $res = $domain->changeUserInfoOnChooseByUserId($this->userID,$this->chooseAddr,$this->chooseRest,$this->chooseNear);
+        if ($res > 0) {
+            return 'ok';
+        }else {
+            throw new InternalServerErrorException("修改筛选错误", 20);
+        }
     }
 
     /**

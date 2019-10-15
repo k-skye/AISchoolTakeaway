@@ -156,4 +156,9 @@ class deliverusers {
             return -2;
         }
     }
+
+    public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear) {
+        $model = new ModelUsers();
+        return $model->changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear);
+    }
 }

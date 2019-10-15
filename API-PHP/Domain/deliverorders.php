@@ -46,7 +46,7 @@ class deliverorders {
             $thatTime = (int)date_format($date,"d");
             if ($thatTime == $createTime){
             	$arr[$i]['order']['shouldDeliveTime'] = '明天 '.$output;
-            }else {
+            }else { 
                 $arr[$i]['order']['shouldDeliveTime'] = $output;
             }
             $restRes = $modelRest->getOneRest($restID);

@@ -1,5 +1,6 @@
 <template>
   <div class="deliver">
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
     <van-list
       v-if="!firstlogin && !nodata"
       v-model="loading"
@@ -96,6 +97,7 @@
         </van-collapse-item>
       </van-collapse>
     </van-list>
+    </van-pull-refresh>
     <div class="nologin" v-if="firstlogin">
       <NoLoginInfo />
     </div>
@@ -123,7 +125,8 @@ export default {
       nodata: false,
       loading: false,
       finished: false,
-      activeNames: []
+      activeNames: [],
+      isLoading: false
     };
   },
   created() {
@@ -210,6 +213,16 @@ export default {
           });
         }
       }, 500);
+    },
+    onRefresh() {
+      this.orders = [];
+      this.orderlist = [];
+      this.size = 5;
+      this.finished = false;
+      this.loading = true;
+      this.firstLoadData();
+      this.onLoad();
+      this.isLoading = false;
     },
     onGetGoodsButtonClick(orderID, iD, indexx) {
       Dialog.confirm({

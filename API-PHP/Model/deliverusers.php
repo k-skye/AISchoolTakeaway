@@ -24,6 +24,13 @@ class deliverusers extends NotORM {
         ->update($data);
     }
 
+    public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear) {
+        $data = array('chooseAddr' => $chooseAddr,'chooseRest' => $chooseRest,'chooseNear' => $chooseNear);
+        return $this->getORM()
+        ->where('id', $userID)
+        ->update($data);
+    }
+
     public function getOneUserByPhone($phoneNo) {
         return $this->getORM()
         ->where('phoneNo', $phoneNo)

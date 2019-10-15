@@ -2,10 +2,10 @@
   <div class="order">
     <div v-if="!firstlogin" class="header">
       <div class="headerContain">
-        <div class="orderButton">
+        <!-- <div class="orderButton">暂时不用，未来可能用到
           <van-switch :value="orderChecked" @input="onOrderInput" />
-          <div class="headerTitle">{{orderChecked ? '接单:开' : '接单:关'}}</div>
-        </div>
+          <div class="headerTitle">{{orderChecked ? '接单提醒:开' : '接单提醒:关'}}</div>
+        </div>-->
         <div class="headerEndButton">
           <van-icon :size="28" name="setting-o" @click="onSetting" />
         </div>
@@ -16,7 +16,7 @@
       v-model="showRule"
       closeable
       position="bottom"
-      :style="{ height: '50%' }"
+      :style="{ height: '38%' }"
     >
       <div class="settings">
         <div class="head">筛选</div>
@@ -35,13 +35,6 @@
             placeholder="选择收货地址"
             :data="addrs"
           />
-          <Choose
-            label="性别"
-            :value="chooseSexValue"
-            @getValue="getSexValue"
-            placeholder="选择同学性别"
-            :data="sexes"
-          />
         </div>
         <div class="isNear">
           <div class="title">包括附近的宿舍</div>
@@ -52,56 +45,58 @@
       </div>
     </van-popup>
     <div v-if="!firstlogin" class="content">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-        <van-collapse v-model="activeNames" v-for="(order,index) in orders" :key="index">
-          <van-collapse-item :name="index" :icon="order.haveSumit == 1 ? 'checked' : 'shop-o'">
-            <div slot="title" class="title">
-              第{{order.restNum}}饭堂
-              <van-icon name="arrow" class="icon" />
-              {{order.dormitory}}
-              <div class="end">
-                <van-icon name="clock-o" class="icon" />
-                {{order.shouldDeliveTime}}
-                <van-icon name="bag-o" class="icon" />
-                x{{order.foodsCount}}
-                <!-- <van-icon name="contact" class="icon" />男 -->
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
+          <van-collapse v-model="activeNames" v-for="(order,index) in orders" :key="index">
+            <van-collapse-item :name="index" :icon="order.haveSumit == 1 ? 'checked' : 'shop-o'">
+              <div slot="title" class="title">
+                第{{order.restNum}}饭堂
+                <van-icon name="arrow" class="icon" />
+                {{order.dormitory}}
+                <div class="end">
+                  <van-icon name="clock-o" class="icon" />
+                  {{order.shouldDeliveTime}}
+                  <van-icon name="bag-o" class="icon" />
+                  x{{order.foodsCount}}
+                  <!-- <van-icon name="contact" class="icon" />男 -->
+                </div>
               </div>
-            </div>
-            <div class="foods">
-              <ul>
-                <li v-for="(food,indexFood) in order.foodsArr" :key="indexFood">
-                  <div class="food">
-                    <div class="name">{{indexFood+1}}.{{food.name}}</div>
-                    <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <van-divider />
-            <div class="bottom">
-              <div class="totalMoney">
-                <div class="totalTitle">商品总价：</div>
-                <div
-                  class="totalPrice"
-                >¥{{parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2)}}</div>
+              <div class="foods">
+                <ul>
+                  <li v-for="(food,indexFood) in order.foodsArr" :key="indexFood">
+                    <div class="food">
+                      <div class="name">{{indexFood+1}}.{{food.name}}</div>
+                      <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
+                    </div>
+                  </li>
+                </ul>
               </div>
-              <div class="incomeMoney">
-                <div class="totalTitle">可得配送费：</div>
-                <div class="totalPrice">¥{{parseFloat(order.deliveFee).toFixed(2)}}</div>
+              <van-divider />
+              <div class="bottom">
+                <div class="totalMoney">
+                  <div class="totalTitle">商品总价：</div>
+                  <div
+                    class="totalPrice"
+                  >¥{{parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2)}}</div>
+                </div>
+                <div class="incomeMoney">
+                  <div class="totalTitle">可得配送费：</div>
+                  <div class="totalPrice">¥{{parseFloat(order.deliveFee).toFixed(2)}}</div>
+                </div>
+                <div class="orderThisButton">
+                  <van-button v-if="order.status == 2 ? true : false" type="info">已接单</van-button>
+                  <van-button
+                    v-else
+                    type="primary"
+                    @click="onOrderButtonClick(order.id,index)"
+                  >&nbsp接单&nbsp</van-button>
+                </div>
               </div>
-              <div class="orderThisButton">
-                <van-button v-if="order.status == 2 ? true : false" type="info">已接单</van-button>
-                <van-button
-                  v-else
-                  type="primary"
-                  @click="onOrderButtonClick(order.id,index)"
-                >&nbsp接单&nbsp</van-button>
-              </div>
-            </div>
-          </van-collapse-item>
-        </van-collapse>
-      </van-list>
+            </van-collapse-item>
+          </van-collapse>
+        </van-list>
+      </van-pull-refresh>
     </div>
     <div class="nologin" v-else>
       <NoLoginInfo />
@@ -128,38 +123,47 @@ export default {
       finished: false,
       showRule: false,
       chooseRestValue: "",
-      rests: ["第一饭堂+第二饭堂", "第三饭堂", "第四饭堂", "门口"],
+      rests: [
+        "全部",
+        "第一饭堂+第二饭堂",
+        "第三饭堂",
+        "第四饭堂",
+        "校门口+其他"
+      ],
       addrs: [
-        "c1",
-        "c2",
-        "c3",
-        "c4",
-        "c5",
-        "c6",
-        "c7",
-        "c8",
-        "c9",
-        "c10",
-        "c11",
-        "c12",
-        "c13",
-        "c14",
-        "c15",
-        "c16",
-        "c17",
-        "c18",
-        "c19",
-        "c20",
-        "c21",
-        "c22",
-        "c23"
+        "全部",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "C15",
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "C20",
+        "C21",
+        "C22",
+        "C23"
       ],
       chooseAddrValue: "",
       nearChecked: true,
-      chooseSexValue: "",
-      sexes: ["男", "女"],
       activeNames: [],
-      firstlogin: false
+      firstlogin: false,
+      isLoading: false,
+      chooseRestNum: 0,
+      chooseAddrNum: 0,
+      chooseNearNum: 1
     };
   },
   created() {
@@ -168,6 +172,40 @@ export default {
   methods: {
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
+      this.chooseRestNum = this.userInfo.chooseRest;
+      this.chooseAddrNum = this.userInfo.chooseAddr;
+      this.chooseNearNum = this.userInfo.chooseNear;
+      //筛选
+      this.nearChecked = this.chooseNearNum == "1" ? true : false;
+      switch (this.chooseRestNum) {
+        case "0":
+          this.chooseRestValue = "全部";
+          break;
+        case "1":
+          this.chooseRestValue = "第一饭堂+第二饭堂";
+          break;
+        case "2":
+          this.chooseRestValue = "第三饭堂";
+          break;
+        case "3":
+          this.chooseRestValue = "第四饭堂";
+          break;
+        case "4":
+          this.chooseRestValue = "校门口+其他";
+          break;
+        default:
+          break;
+      }
+      switch (this.chooseAddrNum) {
+        case "0":
+          this.chooseAddrValue = "全部";
+          break;
+        default:
+          //其他数字-正则匹配
+          const str = "C" + this.chooseAddrNum;
+          this.chooseAddrValue = str;
+          break;
+      }
       this.firstLoadData();
     },
     firstLoadData() {
@@ -178,14 +216,15 @@ export default {
         "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
         {
           params: {
+            deliverID: this.userInfo.id,
             offset: this.offset,
             limit: this.size
           }
         }
       ).then(res => {
-        if (res.data.data.length == 0) {
-          // TODO
+        if (JSON.stringify(res.data.data) == "{}") {
           this.finished = true;
+          this.loading = false;
           return;
         }
         this.orderlist = res.data.data;
@@ -212,6 +251,16 @@ export default {
         i++;
       });
     },
+    onRefresh() {
+      this.orders = [];
+      this.orderlist = [];
+      this.size = 5;
+      this.finished = false;
+      this.loading = true;
+      this.firstLoadData();
+      this.onLoad();
+      this.isLoading = false;
+    },
     onOrderInput(orderChecked) {
       Dialog.confirm({
         title: "是否开/关？",
@@ -231,6 +280,7 @@ export default {
             "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
             {
               params: {
+                deliverID: this.userInfo.id,
                 offset: this.offset,
                 limit: this.size
               }
@@ -258,15 +308,82 @@ export default {
     },
     getRestValue(data) {
       this.chooseRestValue = data;
+      var needNum = 0;
+      switch (data) {
+        case "全部":
+          needNum = 0;
+          break;
+        case "第一饭堂+第二饭堂":
+          needNum = 1;
+          break;
+        case "第三饭堂":
+          needNum = 2;
+          break;
+        case "第四饭堂":
+          needNum = 3;
+          break;
+        case "校门口+其他":
+          needNum = 4;
+          break;
+        default:
+          needNum = 0;
+          break;
+      }
+      this.chooseRestNum = needNum;
+      this.valueChange();
     },
     getAddrValue(data) {
       this.chooseAddrValue = data;
-    },
-    getSexValue(data) {
-      this.chooseSexValue = data;
+      var needNum = 0;
+      switch (data) {
+        case "全部":
+          needNum = 0;
+          break;
+        default:
+          //其他数字-正则匹配
+          const num = data.replace(/[^0-9]/gi, "");
+          needNum = num;
+          break;
+      }
+      this.chooseAddrNum = needNum;
+      this.valueChange();
     },
     onNearInput() {
       this.nearChecked = !this.nearChecked;
+      if (this.nearChecked) {
+        this.chooseNearNum = 1;
+      } else {
+        this.chooseNearNum = 0;
+      }
+      this.valueChange();
+    },
+    valueChange() {
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=DeliverUsers.ChangeUserInfoOnChooseByUserId",
+        {
+          params: {
+            userID: this.userInfo.id,
+            chooseAddr: this.chooseAddrNum,
+            chooseRest: this.chooseRestNum,
+            chooseNear: this.chooseNearNum
+          }
+        }
+      ).then(res => {
+        if (res.data.data == "ok") {
+          Toast.success("修改成功");
+        } else {
+          Toast.fail("失败！" + res.data.msg);
+        }
+      });
+      const openid = localStorage.openid;
+      //用openid去get全部用户信息回来
+      this.$axios("https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
+        params: {
+          openid: openid
+        }
+      }).then(res => {
+        this.$store.dispatch("setUserInfo", res.data.data);
+      });
     },
     onOrderButtonClick(orderID, indexx) {
       Dialog.confirm({
@@ -335,7 +452,8 @@ export default {
       margin-left: 8px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end; //只有一个元素的时候用，让设置按钮居右显示
+      //justify-content: space-between;
       .orderButton {
         display: flex;
         align-items: center;
@@ -361,7 +479,7 @@ export default {
       margin-top: 30px;
     }
     .isNear {
-      margin: 10px 0;
+      margin: 20px 0;
       display: flex;
       justify-content: center;
       align-items: center;
