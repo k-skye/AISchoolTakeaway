@@ -56,12 +56,25 @@ class orders {
             $arr[$i]['restNum'] = $restRes['roomNum'];
             $addrRes = $modelAddr->getOneByAddrById($addrID);
             $arr[$i]['dormitory'] = $addrRes['dormitory'];
+            $arr[$i]['sex'] = $addrRes['gender'];
             $foodsRes = $modelFood->getFoodsByRestID($restID);
             $arr[$i]['food'] = $foodsRes;
             $i++;
         }
         $userInfo = $modelUser->getOneUserByUserID($deliverID);
-        //TODO 去掉性别不一致的
+        $needSex = $userInfo['sex'];
+        //去掉性别不一致的
+        $iisex = 0;
+        $sex = 0;
+        foreach ($arr as $value){
+            $sex = $value['sex'];
+             //把性别不相等的去掉
+             if ($sex != $needSex) {
+                unset($arr[$iisex]);
+             }
+             $iisex++;
+         }
+         $arr = array_values($arr);//重建索引
         if ($userInfo['chooseAddr'] == 0 && $userInfo['chooseRest'] ==0) {//默认
             return $arr;
         }else{

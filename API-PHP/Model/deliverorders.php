@@ -36,7 +36,7 @@ class deliverorders extends NotORM {
         ->order('getFoodTime DESC')
         ->fetchAll();
     } 
-
+    
     public function updateGetFoodTime($ID,$time) {
         $data = array('getFoodTime' => $time);
         return $this->getORM()

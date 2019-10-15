@@ -64,4 +64,18 @@ class deliverusers extends NotORM {
         ->where('openid', $openid)
         ->update($data);
     }
+
+    public function updateCashTimestamp($ID,$time) {
+        $data = array('lastCashTimeStamp' => $time);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    }
+
+    public function updateNounToZero($ID) {
+        $data = array('noun' => 0);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    } 
 }

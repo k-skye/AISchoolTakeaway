@@ -37,4 +37,13 @@ class tradinglog extends NotORM {
         return $orm->insert_id();
     }
 
+    public function addOneCashTradLog($deliverID,$orderWechatID,$money,$date) {
+        $data = array('done' => '1','type' => '提现','deliverID' => $deliverID,'orderWechatID' => $orderWechatID,'money' => $money,'date' => $date);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    }
+
 }

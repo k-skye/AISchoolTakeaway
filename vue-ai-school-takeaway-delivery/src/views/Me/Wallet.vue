@@ -13,7 +13,7 @@
           <van-button slot="button" size="large" type="primary" @click="onChangePassButtonClick">修改</van-button>
         </div>
       </div>
-    </van-popup> -->
+    </van-popup>-->
     <div class="header">
       <van-nav-bar title="钱包" left-arrow @click-left="$router.push('me')" />
     </div>
@@ -27,15 +27,19 @@
         <van-button type="primary" @click="showPopup">提现到零钱</van-button>
       </div>
     </div>
-    <van-popup v-model="show" closeable :style="{ height: '90%',width: '80%' }">
+    <van-popup v-model="show" closeable :style="{ height: '50%',width: '80%' }">
       <div class="popup">
-        <p class="header">请输入验证码</p>
+        <p class="header">提现</p>
         <p class="head">提现到微信零钱</p>
-        <p class="total">¥ {{(parseFloat(userInfo.noun) - (parseFloat(userInfo.income) * 0.2)).toFixed(2)}}</p>
+        <p
+          class="total"
+        >¥ {{(parseFloat(userInfo.noun) - (parseFloat(userInfo.income) * 0.2)).toFixed(2)}}</p>
         <van-divider />
         <div class="foodPay">
           <span class="left">商品原价</span>
-          <span class="right">¥ {{(parseFloat(userInfo.noun) - parseFloat(userInfo.income)).toFixed(2)}}</span>
+          <span
+            class="right"
+          >¥ {{(parseFloat(userInfo.noun) - parseFloat(userInfo.income)).toFixed(2)}}</span>
         </div>
         <div class="income">
           <span class="left">实际收入</span>
@@ -48,27 +52,24 @@
           </span>
           <span class="right">- ¥ {{(parseFloat(userInfo.income) * 0.2).toFixed(2)}}</span>
         </div>
-        <div class="password">
-          <van-password-input
-            :value="value"
-            info="密码为 6 位数字"
-            :focused="showKeyboard"
-            @focus="showKeyboard = true"
-          />
+        <div class="yesButton">
+          <van-button type="primary" size="large" @click="onCashButtonClick">提现</van-button>
         </div>
-        <van-number-keyboard
-          :show="showKeyboard"
-          @input="onInput"
-          @delete="onDelete"
-          @blur="showKeyboard = false"
-        />
       </div>
     </van-popup>
     <div class="cells">
       <van-cell-group title=" ">
-        <van-cell icon="gold-coin-o" title="待确认收货" :value="'¥'+userInfo.notDoneMoney" />
+        <van-cell
+          icon="gold-coin-o"
+          title="待确认收货"
+          :value="'¥'+((parseFloat(userInfo.notDoneMoney)).toFixed(2))"
+        />
         <van-cell icon="newspaper-o" title="账单明细" is-link to="billdetail" />
-        <van-cell icon="balance-o" title="月收入" :value="'¥'+userInfo.thisMonthMoney" />
+        <van-cell
+          icon="balance-o"
+          title="月收入"
+          :value="'¥'+((parseFloat(userInfo.thisMonthMoney)).toFixed(2))"
+        />
         <!-- <van-cell icon="gold-coin-o" title="修改支付密码" is-link @click="onChangePassCellClick" /> -->
       </van-cell-group>
     </div>
@@ -83,11 +84,6 @@ export default {
   data() {
     return {
       show: false,
-      value: "",
-      showKeyboard: true,
-/*       showChangePass: false,
-      oldpass: "",
-      newpass: "" */
       finallyMoney: 0
     };
   },
@@ -95,18 +91,45 @@ export default {
     showPopup() {
       this.show = true;
     },
-    onInput(key) {
-      this.value = (this.value + key).slice(0, 6);
-    },
-    onDelete() {
-      this.value = this.value.slice(0, this.value.length - 1);
+    onCashButtonClick() {
+      this.show = false;
+      //开始提现
+      this.$axios
+        .post("https://takeawayapi.pykky.com/?s=Tradinglog.CashOneUser", {
+          deliverID: this.userInfo.id
+        })
+        .then(res => {
+          //微信支付
+          if (res.data.data == "ok") {
+            //Toast.success("提现成功"); //微信还没接口之前的解决方案
+            Dialog.alert({
+              title: "成功",
+              message: "已提交提现申请！但因为我们是新平台，微信还不允许我们直接转账到你的零钱，所以麻烦加下客服微信：发你的名字来提现吧！"
+            });
+            //刷新userInfo
+            const openid = localStorage.openid;
+            //用openid去get全部用户信息回来
+            this.$axios(
+              "https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo",
+              {
+                params: {
+                  openid: openid
+                }
+              }
+            ).then(res => {
+              this.$store.dispatch("setUserInfo", res.data.data);
+            });
+          } else {
+            Toast.fail("提现失败！" + res.data.msg);
+          }
+        });
     },
     clickLeftInfo() {
       Dialog.alert({
-        message: "服务费是从伙伴的实际收入中收取20%作为我们的运营成本"
+        message: "服务费是从伙伴的实际收入(配送费)中收取20%作为我们的运营成本"
       });
-    },
-/*     onChangePassCellClick() {
+    }
+    /*     onChangePassCellClick() {
       this.showChangePass = true;
     },
     onChangePassButtonClick(){
@@ -136,7 +159,7 @@ export default {
     margin-top: 18px;
   }
   .contain {
-    .cells{
+    .cells {
       margin-top: 5px;
     }
     .changeButton {
@@ -221,9 +244,9 @@ export default {
         display: flex;
       }
     }
-    .password {
-      width: 100vw;
-      margin-top: 5px;
+    .yesButton {
+      margin-top: 10px;
+      width: 90%;
     }
   }
 }

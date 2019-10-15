@@ -24,7 +24,7 @@
           icon="paid"
           title="钱包"
           is-link
-          :value="'¥'+(parseFloat(userInfo.noun)+userInfo.notDoneMoney)"
+          :value="'¥'+((parseFloat(userInfo.noun)+userInfo.notDoneMoney).toFixed(2))"
           to="wallet"
         />
       </van-cell-group>
