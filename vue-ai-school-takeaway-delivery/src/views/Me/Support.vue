@@ -24,13 +24,31 @@ export default {
   name: "support",
   data() {
     return {
-      message: ""
+      message: "",
+      deliverID: ""
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.deliverID = to.params.deliverID;
+    });
   },
   methods:{
     onSendButtonClick(){
-      Toast.success("反馈成功");
-      this.$router.push('me');
+      this.$axios.post(
+        "https://takeawayapi.pykky.com/?s=Feedback.AddOneFeedBackByDeliver",
+        {
+            deliverID: this.deliverID,
+            content: this.message
+        }
+      ).then(res => {
+        if (res.data.data == 'ok') {
+          Toast.success("反馈成功");
+          this.$router.push('me');
+        }else{
+          Toast.fail("反馈失败！"+res.data.msg);
+        }
+      });
     }
   }
 };

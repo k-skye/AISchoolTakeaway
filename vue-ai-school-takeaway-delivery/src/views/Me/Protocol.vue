@@ -3,6 +3,9 @@
     <div class="header">
       <van-nav-bar title="协议" left-arrow @click-left="$router.push('me')" />
     </div>
+    <div class="content">
+      {{data}}
+    </div>
   </div>
 </template>
 
@@ -11,7 +14,22 @@ export default {
   name: "protocol",
   data() {
     return {
+      data: ""
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getData();
+    });
+  },
+  methods: {
+    getData(){
+      this.$axios(
+        "https://takeawayapi.pykky.com/deliverHelp.txt"
+      ).then(res => {
+        this.data = res.data;
+      });
+    }
   }
 };
 </script>
@@ -22,5 +40,8 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
+  .content{
+    padding: 10px;
+  }
 }
 </style>

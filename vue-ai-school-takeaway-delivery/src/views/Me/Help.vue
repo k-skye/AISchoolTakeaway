@@ -4,9 +4,12 @@
       <van-nav-bar title="帮助" left-arrow @click-left="$router.push('me')" />
     </div>
     <van-collapse v-model="activeName" accordion>
-      <van-collapse-item title="标题1" name="1">内容</van-collapse-item>
-      <van-collapse-item title="标题2" name="2">内容</van-collapse-item>
-      <van-collapse-item title="标题3" name="3">内容</van-collapse-item>
+      <van-collapse-item
+        v-for="(help,index) in helpList"
+        :key="index"
+        :title="help.question"
+        :name="index"
+      >{{help.answer}}</van-collapse-item>
     </van-collapse>
   </div>
 </template>
@@ -16,8 +19,26 @@ export default {
   name: "help",
   data() {
     return {
-      activeName: "1"
+      activeName: "0",
+      helpList: null
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getData();
+    });
+  },
+  methods: {
+    getData() {
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=Help.GetDeliverAllHelp"
+      ).then(res => {
+        /* if (JSON.stringify(res.data.data) == "{}") {
+          return;
+        } */
+        this.helpList = res.data.data;
+      });
+    }
   }
 };
 </script>
