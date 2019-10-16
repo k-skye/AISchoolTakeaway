@@ -21,7 +21,8 @@ class DeliverUsers extends Api {
                 'stuID'  => array('name' => 'stuID', 'require' => true, 'desc' => '学号'),
                 'openid'  => array('name' => 'openid', 'require' => true, 'desc' => 'openid'),
                 'realName'  => array('name' => 'realName', 'require' => true, 'desc' => '真实姓名'),
-                'sex'  => array('name' => 'sex', 'require' => true, 'desc' => '性别')
+                'sex'  => array('name' => 'sex', 'require' => true, 'desc' => '性别'),
+                'cardImg'  => array('name' => 'cardImg', 'require' => true, 'desc' => '学生证图片url'),
             ),
             'sendMessage' => array(
                 'phoneNo'  => array('name' => 'phoneNo', 'require' => true, 'desc' => '手机号码'),
@@ -99,7 +100,7 @@ class DeliverUsers extends Api {
      */
     public function userReg() {
         $domain = new DomainUsers();
-        $res = $domain->userReg($this->loginCode,$this->codeID,$this->phoneNo,$this->stuID,$this->openid,$this->realName,$this->sex);
+        $res = $domain->userReg($this->loginCode,$this->codeID,$this->phoneNo,$this->stuID,$this->openid,$this->realName,$this->sex,$this->cardImg);
         switch ($res) {
             case '0':
                 return $res;

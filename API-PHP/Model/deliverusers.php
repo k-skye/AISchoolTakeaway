@@ -10,8 +10,8 @@ class deliverusers extends NotORM {
             ->fetchAll();
     }
 
-    public function changeUserInfo($phoneNo,$stuID,$openid,$realName,$sex) {
-        $data = array('phoneNo' => $phoneNo, 'stuID' => $stuID, 'realName' => $realName, 'sex' => $sex);
+    public function changeUserInfo($phoneNo,$stuID,$openid,$realName,$sex,$cardImg) {
+        $data = array('phoneNo' => $phoneNo, 'stuID' => $stuID, 'realName' => $realName, 'sex' => $sex, 'cardImg' => $cardImg);
         return $this->getORM()
         ->where('openid', $openid)
         ->update($data);

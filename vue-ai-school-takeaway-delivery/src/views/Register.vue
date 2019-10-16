@@ -31,6 +31,15 @@
     <div class="sex" @click="showPicker = true">
       <InputGroup :noinput="true" type="text" :placeholder="placeholdSex" :error="errors.sex" />
     </div>
+    <div class="upload">
+    <van-uploader
+      v-model="fileList"
+      multiple
+      :max-count="1"
+      upload-text="上传学生证"
+      :after-read="afterRead"
+    />
+    </div>
     <!-- 用户服务协议 -->
     <div class="login_des">
       <p>
@@ -47,10 +56,12 @@
 
 <script>
 import InputGroup from "../components/InputGroup";
+import axioskkk from 'axios';
 export default {
   name: "login",
   data() {
     return {
+      fileList: [],
       phone: "",
       verifyCode: "",
       errors: {},
@@ -73,7 +84,7 @@ export default {
         !this.verifyCode ||
         !this.stuID ||
         !this.realName ||
-        !this.sex
+        !this.sex || this.fileList.length != 0
       ) {
         return true;
       } else return false;
@@ -106,18 +117,19 @@ export default {
           stuID: this.stuID,
           openid: this.openid,
           realName: this.realName,
-          sex: this.sex
+          sex: this.sex,
+          cardImg: this.fileList[0].url
         })
         .then(res => {
           // 检验成功 设置登录状态并且跳转到/
           if (res.data.ret === 200) {
             localStorage.setItem("openid", this.openid);
             localStorage.setItem("firstlogin", 0);
-            this.$router.push('me');
-          }else{
-          // 返回错误信息
-          this.errors = {
-            code: res.data.msg
+            this.$router.push("me");
+          } else {
+            // 返回错误信息
+            this.errors = {
+              code: res.data.msg
             };
           }
         });
@@ -182,6 +194,26 @@ export default {
         this.errors = {};
         return true;
       }
+    },
+    afterRead(e) {
+      // 此时可以自行将文件上传至服务器
+      let fd = new FormData();
+      fd.append("file", e.file);
+      axioskkk
+        .post("https://takeawayapi.pykky.com/?s=UploadImg.DeliverCard", fd, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(res => {
+          if (res.data.data.code != 1) {
+            this.errors = {
+              sex: "图片上传失败，请重试！"
+            };
+          } else {
+            this.fileList[0] = { url: res.data.data.url };
+          }
+        });
     }
   },
   components: {
@@ -229,6 +261,9 @@ export default {
     span {
       color: #4d90fe;
     }
+  }
+  .upload{
+    margin-top: 20px;
   }
 }
 </style>

@@ -138,14 +138,14 @@ class deliverusers {
         }
     }
     
-    public function userReg($loginCode,$codeID,$phoneNo,$stuID,$openid,$realName,$sex) {
+    public function userReg($loginCode,$codeID,$phoneNo,$stuID,$openid,$realName,$sex,$cardImg) {
         //检测code是否正确
         $modelPhoneCode = new ModelPhoneCode();
         $modelUser = new ModelUsers();
         $randomCode = $modelPhoneCode->getCode($codeID);
         if ($randomCode == $loginCode) {
             //正确
-                $res = $modelUser->changeUserInfo($phoneNo,$stuID,$openid,$realName,$sex);
+                $res = $modelUser->changeUserInfo($phoneNo,$stuID,$openid,$realName,$sex,$cardImg);
                 if ($res == 0 || $res) {//数据已更新或无变化
                     return 0;
                 }else {

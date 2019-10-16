@@ -38,7 +38,8 @@ class tradinglog extends NotORM {
     }
 
     public function addOneCashTradLog($deliverID,$orderWechatID,$money,$date) {
-        $data = array('done' => '1','type' => '提现','deliverID' => $deliverID,'orderWechatID' => $orderWechatID,'money' => $money,'date' => $date);
+        //'done' => '1',  微信没有权限前暂时解决方案
+        $data = array('type' => '提现','deliverID' => $deliverID,'orderWechatID' => $orderWechatID,'money' => $money,'date' => $date);
         $orm = $this->getORM();
         $orm->insert($data);
 

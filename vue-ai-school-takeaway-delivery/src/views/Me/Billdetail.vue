@@ -7,7 +7,9 @@
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <van-cell-group v-for="(trad,index) in trads" :key="index" >
           <van-cell :title="trad.date" icon="clock-o">
-            {{trad.type}}{{trad.done == 0 ? ' (待确认收货)':''}}
+            {{trad.type}}
+            {{trad.done == 0 && trad.type == '提现' ? ' (待到账)':''}}
+            {{trad.done == 0 && trad.type == '配送费' ? ' (待确认收货)':''}}
             <div class="right-in" v-if="(trad.money > 0)" slot="default">+ ¥{{parseFloat(trad.money).toFixed(2)}}</div>
             <div class="right-out" v-else slot="default">- ¥{{Math.abs(parseFloat(trad.money).toFixed(2))}}</div>
           </van-cell>
