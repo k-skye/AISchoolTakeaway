@@ -154,7 +154,6 @@ export default {
         "C20",
         "C21",
         "C22",
-        "C23"
       ],
       chooseAddrValue: "",
       nearChecked: true,
@@ -286,7 +285,7 @@ export default {
               }
             }
           ).then(res => {
-            if (res.data.length > 0) {
+            if (JSON.stringify(res.data.data) != "{}") {
               this.orderlist = res.data.data;
               this.handleData();
               this.loading = false;

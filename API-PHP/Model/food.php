@@ -12,9 +12,10 @@ class food extends NotORM {
             ->fetchAll();
     }
 
-    public function getFoods($cate) {
+    public function getFoods($cate,$restID) {
         return $this->getORM()
             ->where('category = ?', $cate)
+            ->where('restID = ?', $restID)
             ->fetchAll();
     }
 

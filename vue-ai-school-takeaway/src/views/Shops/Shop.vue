@@ -2,15 +2,15 @@
   <div class="shop" v-if="shopInfo">
     <!-- 头部 -->
     <nav class="header-nav">
-      <div class="nav_bg">
-        <img :src="shopInfo.logo" alt />
-      </div>
+<!--       <div class="nav_bg">
+        <img :src="'https://takeaway.pykky.com/restImgs/'+shopInfo.logo" alt />
+      </div> -->
       <div class="nav_back">
         <i @click="$router.push('/home')" class="fa fa-chevron-left"></i>
       </div>
-      <div class="shop_image">
-        <img :src="shopInfo.logo" alt />
-      </div>
+<!--       <div class="shop_image">
+        <img :src="'https://takeaway.pykky.com/restImgs/'+shopInfo.logo" alt />
+      </div> -->
     </nav>
 
     <!-- 商家信息 -->
@@ -28,12 +28,12 @@
         :showInfoModel="showInfoModel"
       />
 
-      <!-- 评分月售 -->
+<!--       <!-- 评分月售
       <div class="rst-order">
         <span>评分{{shopInfo.stars}}</span>
         <span>月售{{shopInfo.salesNum}}单</span>
         <span>蜂鸟专送约13分钟</span>
-      </div>
+      </div> -->
 
       <!-- 公告 -->
       <p class="rst-promotion">公告: {{shopInfo.note}}</p>
@@ -55,13 +55,17 @@ export default {
   name: "Shop",
   data() {
     return {
-      restID: "1",
+      restID: "",
       shopInfo: null,
       showInfoModel: false
     };
   },
-  created() {
-    this.getData();
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.restID = to.params.restID;
+      vm.getData();
+      vm.$router.push('goods');
+    });
   },
   methods: {
     getData() {
@@ -79,11 +83,6 @@ export default {
     InfoModel,
     NavBar
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.restID = to.params.restID;
-    });
-  }
 };
 </script>
 
@@ -105,15 +104,16 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+  /* width: 100%; */
   height: 26.666667vw;
-  background: rgba(0, 0, 0, 0.5);
+  /* background: rgba(0, 0, 0, 0.5); */
 }
 .nav_back i {
-  color: #fff;
+  color: #323233;
   font-size: 1.3rem;
   margin-left: 1.333333vw;
   margin-top: 1.333333vw;
+  padding-top: 1vw;
 }
 .shop_image {
   position: absolute;
@@ -129,7 +129,7 @@ export default {
 }
 
 .index-rst {
-  padding: 8vw 0 0;
+  padding: 1vw 0 0;
   display: flex;
   flex-direction: column;
   align-items: center;

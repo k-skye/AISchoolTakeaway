@@ -75,7 +75,7 @@ export default {
               }
             }
           ).then(res => {
-            if (res.data.length > 0) {
+            if (JSON.stringify(res.data.data) != "{}") {
               this.trads = res.data.data;
               this.loading = false;
               if (res.data < this.size) {

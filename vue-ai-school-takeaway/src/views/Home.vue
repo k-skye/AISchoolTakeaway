@@ -2,9 +2,10 @@
   <div class="home">
     <div class="header">
       <div class="address_map">
-        <span>下午好！</span>
+        <span>{{wetherMessage}}</span>
       </div>
-      <div class="search_wrap" @click="$router.push('/search')">
+      <!-- @click="$router.push('/search')" -->
+      <div class="search_wrap" @click="onSearchClick">
         <div class="shop_search">
           <i class="fa fa-search"></i>
           搜索商家 商家名称
@@ -31,11 +32,12 @@
       </div>
     </div>
 
-    <van-sticky>
+   
       <div class="chooseRest">
+         <van-sticky>
         <!-- 导航 -->
         <FilterView :filterData="filterData" @update="update" />
-
+        </van-sticky>
         <!-- 商家信息 -->
         <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
             <div class="shoplist">
@@ -43,28 +45,45 @@
             </div>
         </van-list>
       </div>
-    </van-sticky>
+    
   </div>
 </template>
 
 <script>
 import FilterView from "../components/FilterView";
 import IndexShop from "../components/IndexShop";
+import { Toast } from 'vant';
 export default {
   name: "home",
   data() {
     return {
       swipeImgs: [],
+      wetherMessage:"今天吃点什么呢？",
       menu: [
         {
-          name: "美食",
+          name: "一饭",
           image:
-            "https://fuss10.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg"
+            "https://takeawayapi.pykky.com/homeImg/icons8-1-50.png"
         },
         {
-          name: "美食",
+          name: "二饭",
           image:
-            "https://fuss10.elemecdn.com/7/d8/a867c870b22bc74c87c348b75528djpeg.jpeg"
+            "https://takeawayapi.pykky.com/homeImg/icons8-2-50.png"
+        },
+        {
+          name: "门口/其他",
+          image:
+            "https://takeawayapi.pykky.com/homeImg/icons8-8-50.png"
+        },
+        {
+          name: "三饭",
+          image:
+            "https://takeawayapi.pykky.com/homeImg/icons8-3-50.png"
+        },
+        {
+          name: "四饭",
+          image:
+            "https://takeawayapi.pykky.com/homeImg/icons8-4-50.png"
         }
       ],
       filterData: [
@@ -95,10 +114,17 @@ export default {
       ).then(res => {
         this.swipeImgs = JSON.parse(res.data.data).headAdImg;
       }); //加载广告
+      this.$axios(
+        "http://wthrcdn.etouch.cn/weather_mini?city=花都"
+      ).then(res => {
+        const today = res.data.data.forecast[0];
+        const okStr = '今天'+today.type+'天，吃点什么呢？';
+        this.wetherMessage = okStr;
+      }); //加载天气
       this.firstLoadData(); //加载商家
     },
     firstLoadData() {
-      this.offset = 1;
+      this.offset = 7;
       this.allLoaded = false;
       // 拉取商家信息
       this.$axios(
@@ -130,8 +156,8 @@ export default {
               }
             }
           ).then(res => {
-            if (res.data.length > 0) {
-              res.data.forEach(item => {
+            if (JSON.stringify(res.data.data) != "{}") {
+              res.data.data.forEach(item => {
                 this.restaurants.push(item);
               });
               this.loading = false;
@@ -151,6 +177,9 @@ export default {
     update(condition) {
       this.condition = condition.condition;
       this.firstLoadData();
+    },
+    onSearchClick(){
+      Toast('搜索功能完善中...待开放噢～');
     }
   },
   components: {
@@ -167,9 +196,10 @@ export default {
   overflow: auto;
   box-sizing: border-box;
   .header {
-    background-color: #009eef;
+    //background-color: #009eef;
+    background-color: white;
     .address_map {
-      color: #fff;
+      color: #323233;
       font-weight: bold;
       padding: 0 16px;
       padding-top: 10px;
@@ -178,7 +208,7 @@ export default {
       padding: 10px 16px;
       .shop_search {
         /* margin-top: 10px; */
-        background-color: #fff;
+        background-color: #f8f8f8;
         padding: 10px 0;
         border-radius: 4px;
         text-align: center;
@@ -187,11 +217,15 @@ export default {
     }
   }
   .container {
+    background-color: white;
     .swipe {
       height: 100px;
+      border-radius: 15px;
+      padding: 0 10px; 
       img {
         width: 100%;
         height: 100px;
+        border-radius: 15px;
       }
     }
     .entries {
@@ -216,11 +250,12 @@ export default {
           height: 12vw;
           img {
             width: 100%;
-            height: 100%;
+            height: 80%;
           }
         }
       }
     }
+
   }
 }
 </style>

@@ -3,7 +3,7 @@
     <div class="index-shopInfo" @click="$router.push({name: 'shop',params: {restID: restaurant.id}})">
       <!-- 左侧图片 -->
       <div class="logo_container">
-        <img :src="restaurant.logo" alt>
+        <img :src="'https://takeaway.pykky.com/restImgs/'+restaurant.logo" alt>
       </div>
       <!-- 右侧内容 -->
       <div class="index_main">
@@ -24,14 +24,14 @@
         <!-- 第三行 配送 -->
         <div class="index-moneylimit">
           <div>
-            <span>¥10起送</span>
-            |
+<!--             <span>¥10起送</span>
+            | -->
             <span>配送费¥{{restaurant.deliveryFee}}起</span>
           </div>
           <div class="index-distanceWrap">
-            <span>{{restaurant.roomNum}}饭</span>
-            |
-            <span>12分钟</span>
+            <span class="spans"><van-icon name="shop-o" />第{{restaurant.roomNum}}饭堂</span>
+<!--             |
+            <span>平均1分钟</span> -->
           </div>
         </div>
       </div>
@@ -120,5 +120,8 @@ span{
 }
 .index-moneylimit .index-distanceWrap {
   color: #999;
+}
+.spans{
+  display: flex;
 }
 </style>

@@ -10,6 +10,7 @@ Vue.config.productionTip = false
 
 Vue.use(Tabbar).use(TabbarItem).use(Swipe).use(SwipeItem).use(Sticky).use(List).use(NavBar).use(CouponCell).use(CouponList).use(Popup).use(Icon).use(Picker);
 
+
 new Vue({
   router,
   store,

@@ -2,25 +2,23 @@
   <transition name="move">
     <div class="food" v-if="isShow">
       <div class="foodpanel-close" @click="$emit('close')">
-        <img
-          src="https://fuss10.elemecdn.com/8/ba/bcfa8cc62b20e044bd2ea1c1c7f3dpng.png?imageMogr/format/webp/"
-          alt
-        />
+        <van-icon name="close" color="white" size="25px"/>
       </div>
       <div class="foodpanel-body">
         <div class="foodpanel-foodimg">
-          <img :src="food.logo" alt />
+          <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
         </div>
         <div class="foodpanel-foodinfo">
           <h4>{{food.name}}</h4>
           <div class="foodpanel-foodsales">
-            <span>月售{{food.salesNum}} 好评率 11%</span>
+            <span>月售{{food.salesNum}}</span>
+            <!--  好评率 11% -->
           </div>
           <div class="foodpanel-priceLine">
             <span>¥{{food.price}}</span>
             <CartControll class="cart-btn" :food="food" />
           </div>
-          <p>商品描述描述描述</p>
+          <p>{{food.description=='无'?'暂无商品描述噢～':food.description}}</p>
         </div>
       </div>
     </div>

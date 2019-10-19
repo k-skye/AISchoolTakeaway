@@ -1,7 +1,7 @@
 <template>
   <div class="settlement">
     <div class="header">
-      <van-nav-bar title="确认订单" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar title="确认订单" left-arrow @click-left="$router.push({name: 'shop',params: {restID: restInfo.id}})" />
     </div>
     <div class="view-body" v-if="orderInfo">
       <!-- 收货地址 -->
@@ -33,7 +33,7 @@
         <h3>{{restInfo.name}}</h3>
         <ul>
           <li v-for="(food,index) in orderInfo.selectFoods" :key="index">
-            <img :src="food.logo" alt />
+            <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
             <div class="cart-group-info">
               <span>{{food.name}}</span>
               <span>x {{food.count}}</span>

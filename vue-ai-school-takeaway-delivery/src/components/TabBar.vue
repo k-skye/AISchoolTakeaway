@@ -1,6 +1,6 @@
 <template>
   <div class="tabbar">
-    <van-tabbar route>
+    <van-tabbar route safe-area-inset-bottom>
       <van-tabbar-item
         replace
         v-for="(item,index) in data"

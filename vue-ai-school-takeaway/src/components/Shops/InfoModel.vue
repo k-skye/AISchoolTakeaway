@@ -14,13 +14,13 @@
             <h3>{{shopInfo.salesNum}}</h3>
             <p>月售</p>
           </li>
-          <li v-if="shopInfo.delivery_mode">
-            <h3>蜂鸟转送</h3>
-            <p>约13分钟</p>
+          <li>
+            <h3>{{shopInfo.deliveryTime}}分钟</h3>
+            <p>配送时间</p>
           </li>
 
           <li>
-            <h3>¥5元</h3>
+            <h3>¥{{shopInfo.deliveryFee}}元</h3>
             <p>配送费</p>
           </li>
           <li>
@@ -28,17 +28,14 @@
             <p>位置</p>
           </li>
         </ul>
-        <h3 class="promotion">
+<!--         <h3 class="promotion">
           <span>公告</span>
-        </h3>
-        <p class="brief-modal-yx">{{shopInfo.note}}</p>
+        </h3> 
+        <p class="brief-modal-yx">{{shopInfo.note}}</p>-->
       </div>
       <!-- x号 -->
       <div class="brief-modal-close" @click="$emit('close')">
-        <img
-          src="https://fuss10.elemecdn.com/8/ba/bcfa8cc62b20e044bd2ea1c1c7f3dpng.png?imageMogr/format/webp/"
-          alt
-        />
+        <van-icon name="close" color="white" size="25px"/>
       </div>
     </div>
   </transition>
@@ -69,7 +66,7 @@ export default {
 }
 .brief-modal {
   position: relative;
-  width: 80%;
+  width: 90%;
   max-height: 85.333333vw;
   padding: 7.066667vw 6.666667vw 7.466667vw;
   border-radius: 1.066667vw;

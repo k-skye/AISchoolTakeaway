@@ -18,7 +18,7 @@
         <li v-for="(item,index) in evaluation" :key="index">
           <div class="comment-user">
             <img
-              :src="item.userAvatar || 'https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png'"
+              :v-lazy="item.userAvatar || 'https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png'"
               alt
             />
           </div>

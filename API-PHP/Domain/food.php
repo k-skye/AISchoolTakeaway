@@ -12,12 +12,20 @@ class food {
         $arrCate = $model->getCate($restID);
         $i = 0;
         foreach ($arrCate as $value){
-            $arr[$i]['cate'] = $value['category'];
-            $i++;
+            $have = 0;//去重用
+            foreach ($arr as $arrValue) {
+                if($arrValue['cate'] == $value['category']){
+                    $have = 1;
+                }
+            }
+            if ($have == 0) {
+                $arr[$i]['cate'] = $value['category'];
+                $i++;
+            }
         }
         $i = 0;
-        foreach ($arrCate as $value){
-            $arrFood = $model->getFoods($value);
+        foreach ($arr as $value){
+            $arrFood = $model->getFoods($value['cate'],$restID);
             $arr[$i]['food'] = $arrFood;
             $i++;
         }

@@ -11,7 +11,7 @@
             v-for="(item,index) in foodInfo"
             :key="index"
           >
-            <img v-if="item.icon_url" :src="item.icon_url" alt />
+            <!-- <img v-if="item.icon_url" :src="'https://takeaway.pykky.com/goodImgs/'+item.icon_url" alt /> -->
             <span>{{item.cate}}</span>
           </li>
         </ul>
@@ -24,7 +24,7 @@
             <!-- 内容上 -->
             <div class="category-title">
               <strong>{{item.cate}}</strong>
-              <span>不知道是什么的描述</span>
+              <!-- <span>类目描述</span> -->
             </div>
             <!-- 内容下 -->
             <div
@@ -34,12 +34,13 @@
               :key="i"
             >
               <!-- 左 -->
-              <img :src="food.logo" alt />
+              <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
               <!-- 右 -->
               <section class="fooddetails-info">
                 <h4>{{food.name}}</h4>
-                <p class="fooddetails-des">不知道是什么的物品描述</p>
-                <p class="fooddetails-sales">月售{{food.salesNum}}份 好评率123</p>
+                <p class="fooddetails-des">{{food.description=='无'?'暂无商品描述噢～':food.description}}</p>
+                <p class="fooddetails-sales">月售{{food.salesNum}}份</p>
+                <!--  好评率123 -->
                 <div class="fooddetails-price">
                   <span class="price">¥{{food.price}}</span>
                   <CartControll :food="food" />
@@ -79,9 +80,13 @@ export default {
     };
   },
   created() {
+    this.restID = this.restInfo.id;
     this.getData();
   },
   computed: {
+    restInfo() {
+      return this.$store.getters.restInfo;
+    },
     // 根据右侧滚动的位置, 确定对应的索引下标
     currentIndex() {
       for (let i = 0; i < this.listHeight.length; i++) {
@@ -94,7 +99,7 @@ export default {
         }
       }
 
-      return 0;
+      return this.listHeight.length-1;
     }
   },
   methods: {
@@ -120,7 +125,7 @@ export default {
           this.initScroll();
           // 计算12个区的高度
           this.calculateHeight();
-        });
+        }); 
       });
     },
     initScroll() {
@@ -163,7 +168,7 @@ export default {
         height += item.clientHeight;
         this.listHeight.push(height);
       }
-      // console.log(this.listHeight);
+      //console.log(this.listHeight);
     },
     handleFood(food) {
       this.selectedFood = food;
@@ -175,11 +180,6 @@ export default {
     ShopCart,
     Food
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.restID = to.params.restID;
-    });
-  }
 };
 </script>
 
@@ -227,7 +227,7 @@ export default {
   /* height: 100%; */
   height: calc(100% - 12.8vw);
   width: 79.466667vw;
-  padding-bottom: 10.666667vw;
+  padding-bottom: 0.666667vw;
 }
 .category-title {
   margin-left: 2.666667vw;

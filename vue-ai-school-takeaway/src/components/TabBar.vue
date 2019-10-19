@@ -1,8 +1,9 @@
 <template>
   <div class="tabbar">
-    <van-tabbar route>
+    <van-tabbar route safe-area-inset-bottom>
       <van-tabbar-item
         replace
+        safe-area-inset-bottom
         v-for="(item,index) in data"
         :key="index"
         :to="item.path"
