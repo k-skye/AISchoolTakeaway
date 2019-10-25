@@ -189,12 +189,20 @@ class DeliverUsers extends Api {
             $rrs = json_decode($rrs);
             if (property_exists($rrs,'nickname')) {
                 $domain = new DomainUsers();
-                $res = $domain->saveWechatUserInfo($rrs->openid,$rrs->nickname,$rrs->city,$rrs->headimgurl);
+                //去除emoji-bug
+                $okname = $rrs->nickname;
+                $okname = preg_replace_callback(
+                    '/./u',
+                    function (array $match) {
+                        return strlen($match[0]) >= 4 ? '' : $match[0];
+                    },
+                    $okname);
+                $res = $domain->saveWechatUserInfo($rrs->openid,$okname,$rrs->city,$rrs->headimgurl);
                 if ($res == -1) {
                     throw new InternalServerErrorException('更新用户信息失败', 10);
                 }else {
                     //跳转回去前端处理
-                    $to = "location:https://takeawaydeliver.pykky.com/register?isregister=1&openid=".$openid;
+                    $to = "location:http://takeawaydeliver.pykky.com/register?isregister=1&openid=".$openid;
                     header($to);
                 }
             }else {

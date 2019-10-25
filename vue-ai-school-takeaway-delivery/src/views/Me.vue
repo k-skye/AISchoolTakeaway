@@ -5,7 +5,7 @@
         <img :src="logoImgUrl" />
       </div>
       <div v-if="firstlogin" class="reg" @click="handleRes">
-        点击即可注册成为伙伴
+        点击注册
         <van-icon name="arrow" />
       </div>
       <div v-else class="info">
@@ -78,7 +78,7 @@ export default {
     this.logoImgUrl =
       this.firstlogin == false
         ? this.userInfo.avatar
-        : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
+        : "http://takeawaydeliver.pykky.com/newICON.png";
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -86,6 +86,19 @@ export default {
     });
   },
   methods: {
+    handleRes(){
+      const appid = "wx3df92dead7bcd174";
+      const redirectUrl = encodeURI(
+        "https://takeawayapi.pykky.com/?s=DeliverUsers.getInfoInWechat"
+      );
+      const wechatUrl =
+        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
+        appid +
+        "&redirect_uri=" +
+        redirectUrl +
+        "&response_type=code&scope=snsapi_userinfo&state=register#wechat_redirect";
+      window.location.href = wechatUrl;
+    },
     getuserInfo() {
       const openid = localStorage.openid;
       //用openid去get全部用户信息回来

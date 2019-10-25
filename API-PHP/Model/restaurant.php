@@ -8,28 +8,57 @@ class restaurant extends NotORM {
     public function getRestsInNormal($offset,$limit) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
+            ->order('stars and salesNum DESC')
             ->where('id >= ?', $offset)
             ->limit($limit)
-            ->order('stars')
-            ->order('salesNum DESC')
+            ->fetchAll();
+    }
+
+    public function getRestsInNormalWtihRoomNum($offset,$limit,$roomNum) {
+        return $this->getORM()
+            //默认排序筛选条件-评价和销量一起排序
+            ->where('roomNum', $roomNum)
+            ->order('stars and salesNum DESC')
+            ->where('id >= ?', $offset)
+            ->limit($limit)
             ->fetchAll();
     }
 
     public function getRestsInSale($offset,$limit) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
+            ->order('salesNum DESC')
             ->where('id >= ?', $offset)
             ->limit($limit)
+            ->fetchAll();
+    }
+
+    public function getRestsInSaleWithRoomNum($offset,$limit,$roomNum) {
+        return $this->getORM()
+            //默认排序筛选条件-评价和销量一起排序
+            ->where('roomNum', $roomNum)
             ->order('salesNum DESC')
+            ->where('id >= ?', $offset)
+            ->limit($limit)
             ->fetchAll();
     }
 
     public function getRestsInStars($offset,$limit) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
+            ->order('stars DESC')
             ->where('id >= ?', $offset)
             ->limit($limit)
+            ->fetchAll();
+    }
+
+    public function getRestsInStarsWithRoomNum($offset,$limit,$roomNum) {
+        return $this->getORM()
+            //默认排序筛选条件-评价和销量一起排序
+            ->where('roomNum', $roomNum)
             ->order('stars DESC')
+            ->where('id >= ?', $offset)
+            ->limit($limit)
             ->fetchAll();
     }
     

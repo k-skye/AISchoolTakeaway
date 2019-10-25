@@ -23,7 +23,7 @@
       </div>
       <!-- 分类 -->
       <div class="entries">
-        <div class="foodentry" v-for="(item,index) in menu" :key="index">
+        <div class="foodentry" v-for="(item,index) in menu" :key="index" @click="$router.push({name: 'filter',params: {roomNum: item.roomNum}})">
           <div class="img_wrap">
             <img :src="item.image" alt />
           </div>
@@ -63,27 +63,32 @@ export default {
         {
           name: "一饭",
           image:
-            "https://takeawayapi.pykky.com/homeImg/icons8-1-50.png"
+            "https://takeawayapi.pykky.com/homeImg/icons8-1-50.png",
+          roomNum: 1
         },
         {
           name: "二饭",
           image:
-            "https://takeawayapi.pykky.com/homeImg/icons8-2-50.png"
+            "https://takeawayapi.pykky.com/homeImg/icons8-2-50.png",
+          roomNum: 2
         },
         {
           name: "门口/其他",
           image:
-            "https://takeawayapi.pykky.com/homeImg/icons8-8-50.png"
+            "https://takeawayapi.pykky.com/homeImg/icons8-8-50.png",
+          roomNum: 5
         },
         {
           name: "三饭",
           image:
-            "https://takeawayapi.pykky.com/homeImg/icons8-3-50.png"
+            "https://takeawayapi.pykky.com/homeImg/icons8-3-50.png",
+          roomNum: 3
         },
         {
           name: "四饭",
           image:
-            "https://takeawayapi.pykky.com/homeImg/icons8-4-50.png"
+            "https://takeawayapi.pykky.com/homeImg/icons8-4-50.png",
+          roomNum: 4
         }
       ],
       filterData: [
@@ -144,7 +149,12 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.allLoaded) {
-          this.offset += 5;
+          if (this.offset == 27) {//处理数据库id中间有一个id按顺序时候漏了，修复后这里可以去掉
+            this.offset += 6;
+          }
+          else{
+            this.offset += 5;
+          }
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule",

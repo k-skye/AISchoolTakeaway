@@ -16,7 +16,7 @@ class Restaurant extends Api {
             'getRestsByRule' => array(
                 'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
                 'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
-                'condition'  => array('name' => 'condition', 'require' => true, 'desc' => '筛选规则')
+                'condition'  => array('name' => 'condition', 'require' => false, 'desc' => '筛选规则')
             ),
             'getOneRest' => array(
                 'id'  => array('name' => 'id', 'require' => true, 'desc' => '店铺id'),
@@ -34,6 +34,12 @@ class Restaurant extends Api {
                 'roomNum'  => array('name' => 'roomNum', 'require' => true, 'desc' => '第几饭堂'),
                 'location'  => array('name' => 'location', 'require' => true, 'desc' => '具体位置'),
                 'logo'  => array('name' => 'logo', 'require' => true, 'desc' => '图片地址')
+            ),
+            'getRestsByRuleWithRoomNum' => array(
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+                'condition'  => array('name' => 'condition', 'require' => false, 'desc' => '筛选规则'),
+                'roomNum'  => array('name' => 'roomNum', 'require' => true, 'desc' => '餐厅编号'),
             ),
         );
     }
@@ -82,5 +88,13 @@ class Restaurant extends Api {
         }else{
             throw new InternalServerErrorException("添加店铺状态失败", 15);
         }
+    }
+    /**
+     * 拿指定规则排序的店铺信息在某一个餐厅
+     * @desc 测试一下
+     */
+    public function getRestsByRuleWithRoomNum() {
+        $domain = new DomainRestaurant();
+        return $domain->getRestsByRuleWithRoomNum($this->offset,$this->limit,$this->condition,$this->roomNum);
     }
 } 

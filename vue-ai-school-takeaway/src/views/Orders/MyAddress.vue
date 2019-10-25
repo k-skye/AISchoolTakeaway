@@ -7,7 +7,7 @@
     <div class="address-view">
       <div class="address-card" v-for="(address,index) in allAddress" :key="index">
         <div class="address-card-select">
-          <i class="fa fa-check-circle" v-if="selectIndex == index"></i><!-- 这里可以改成默认 -->
+          <!-- <i class="fa fa-check-circle" v-if="selectIndex == index"></i> --><!-- 这里可以改成默认 -->
         </div>
 
         <div class="address-card-body" @click="setAddressInfo(address,index)">

@@ -77,6 +77,11 @@ export default new Router({
       path: '/remark',
       name: 'remark',
       component: () => import('./views/Orders/Remark.vue')
+    },
+    {
+      path: '/filter',
+      name: 'filter',
+      component: () => import('./views/Filter.vue')
     }
   ]
 })

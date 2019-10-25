@@ -8,9 +8,9 @@
         @confirm="onConfirm"
       />
     </van-popup>
-    <div class="logo">
+    <!-- <div class="logo">
       <img src="../assets/logo.png" alt="my login image" />
-    </div>
+    </div>-->
     <!--  学号 -->
     <InputGroup type="number" v-model="stuID" placeholder="学号" :error="errors.stuid" />
     <!-- 手机号 -->
@@ -32,19 +32,26 @@
       <InputGroup :noinput="true" type="text" :placeholder="placeholdSex" :error="errors.sex" />
     </div>
     <div class="upload">
-    <van-uploader
-      v-model="fileList"
-      multiple
-      :max-count="1"
-      upload-text="上传学生证"
-      :after-read="afterRead"
-    />
+      学生证：
+      <van-image
+        width="100px"
+        height="70px"
+        fit="fill"
+        :src="imgUrl"
+        v-show="imgUrl == '' ? false : true"
+      />
+      <vueOssUploader
+        :debug="false"
+        path="/deliverCard/"
+        v-on:success="uploaded"
+        @error="showError"
+      ></vueOssUploader>
     </div>
     <!-- 用户服务协议 -->
     <div class="login_des">
       <p>
         注册即表示您已同意
-        <span>《用户服务协议》</span>
+        <span @click="$router.push('regprotocol')">《用户服务协议》</span>
       </p>
     </div>
     <!-- 登录按钮 -->
@@ -56,12 +63,12 @@
 
 <script>
 import InputGroup from "../components/InputGroup";
-import axioskkk from 'axios';
+import { Toast } from 'vant';
+/* import axioskkk from "axios"; */
 export default {
   name: "login",
   data() {
     return {
-      fileList: [],
       phone: "",
       verifyCode: "",
       errors: {},
@@ -74,7 +81,9 @@ export default {
       placeholdSex: "性别",
       realName: "",
       showPicker: false,
-      columns: ["男", "女"]
+      columns: ["男", "女"],
+      uploadedUrl: "",
+      imgUrl: ""
     };
   },
   computed: {
@@ -84,7 +93,8 @@ export default {
         !this.verifyCode ||
         !this.stuID ||
         !this.realName ||
-        !this.sex || this.fileList.length != 0
+        !this.sex ||
+        !this.uploadedUrl
       ) {
         return true;
       } else return false;
@@ -94,6 +104,16 @@ export default {
     this.openid = this.getQueryVariable("openid");
   },
   methods: {
+    uploaded(res) {
+      this.uploadedUrl = res.ossPath;
+      this.imgUrl = res.ossUrl;
+      Toast('上传成功');
+    },
+    showError(e) {
+      this.errors = {
+        sex: '图片上传失败' + e
+      };
+    },
     getQueryVariable(variable) {
       var query = window.location.search.substring(1);
       var vars = query.split("&");
@@ -118,7 +138,7 @@ export default {
           openid: this.openid,
           realName: this.realName,
           sex: this.sex,
-          cardImg: this.fileList[0].url
+          cardImg: this.uploadedUrl
         })
         .then(res => {
           // 检验成功 设置登录状态并且跳转到/
@@ -180,7 +200,7 @@ export default {
           phone: "手机号码不能为空"
         };
         return false;
-      } else if (!/^1[345678]\d{9}$/.test(this.phone)) {
+      } else if (!/^1[3456789]\d{9}$/.test(this.phone)) {
         this.errors = {
           phone: "请填写正确的手机号码"
         };
@@ -195,7 +215,7 @@ export default {
         return true;
       }
     },
-    afterRead(e) {
+/*     afterRead(e) {
       // 此时可以自行将文件上传至服务器
       let fd = new FormData();
       fd.append("file", e.file);
@@ -214,7 +234,7 @@ export default {
             this.fileList[0] = { url: res.data.data.url };
           }
         });
-    }
+    } */
   },
   components: {
     InputGroup
@@ -262,8 +282,12 @@ export default {
       color: #4d90fe;
     }
   }
-  .upload{
+  .upload {
     margin-top: 20px;
+    padding-left: 8px;
+    display: flex;
+    align-items: center;
+    color: #323233;
   }
 }
 </style>

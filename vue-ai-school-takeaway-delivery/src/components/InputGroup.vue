@@ -49,12 +49,13 @@ export default {
   justify-content: space-between;
   input {
     height: 100%;
-    width: 60%;
+    width: 100%;
     outline: none;
   }
   button {
     border: none;
     outline: none;
+    width: 45%;
     background: #fff;
   }
   button[disabled] {

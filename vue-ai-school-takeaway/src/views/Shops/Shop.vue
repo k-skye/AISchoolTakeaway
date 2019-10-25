@@ -174,5 +174,6 @@ export default {
   margin: 2.266667vw auto 2.666667vw;
   padding: 0;
   white-space: nowrap;
+  text-align: center;
 }
 </style>

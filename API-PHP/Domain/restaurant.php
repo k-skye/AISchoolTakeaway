@@ -59,6 +59,61 @@ class restaurant {
         return $res;
     }
 
+    public function getRestsByRuleWithRoomNum($offset,$limit,$condition,$roomNum) {
+        $model = new ModelRestaurant();
+        switch ($condition) {
+            case 'normal':
+                $arr = $model->getRestsInNormalWtihRoomNum($offset,$limit,$roomNum);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '2';
+                    $i++;
+                }
+                return $arr;
+                break;
+            case 'sale':
+                $arr = $model->getRestsInSaleWithRoomNum($offset,$limit,$roomNum);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '2';
+                    $i++;
+                }
+                return $arr;
+                break;
+            case 'stars':
+                $arr = $model->getRestsInStarsWithRoomNum($offset,$limit,$roomNum);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '2';
+                    $i++;
+                }
+                return $arr;
+                break;
+            default:
+                $arr = $model->getRestsInNormalWtihRoomNum($offset,$limit,$roomNum);
+                $i = 0;
+                foreach ($arr as $value){
+                    //添加配送费一起返回
+                    $arr[$i]['deliveryFee'] = '2';
+                    $i++;
+                }
+                return $arr;
+                break;
+        }
+/*         $i = 0;
+        foreach ($arr as $value) {
+            if ($value['roomNum'] != $roomNum) {
+                //去掉不是这个roomNum条件下的
+                unset($arr[$i]);
+            }
+            $i++;
+        }
+        $arr = array_values($arr);//重建索引 */
+    }
+
     public function getRestsAdmin($page,$limit,$rate,$name,$status,$sort) {
         $model = new ModelRestaurant();
         //SELECT * FROM `restaurant` WHERE `name` LIKE '%牛肉%' AND `status` != '3' AND `stars` <= 5

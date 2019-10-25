@@ -71,6 +71,11 @@ export default new Router({
       path: '/register',
       name: 'register',
       component: () => import('./views/Register.vue')
+    },
+    {
+      path: '/regprotocol',
+      name: 'regprotocol',
+      component: () => import('./views/RegProtocol.vue')
     }
   ]
 })

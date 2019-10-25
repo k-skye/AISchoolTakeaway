@@ -1,6 +1,6 @@
 <template>
-  <div class="nologininfo">
-    <div class="nologin" @click="handleRes">
+  <div class="nologininfo" @click="handleRes">
+    <div class="nologin">
       <div class="content">
       <van-icon name="smile-o" size="50" color="gray"/>
       <span>您还未注册呢～赶紧点击注册吧</span>

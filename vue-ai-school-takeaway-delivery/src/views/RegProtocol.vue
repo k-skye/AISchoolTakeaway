@@ -1,7 +1,7 @@
 <template>
   <div class="protocol">
     <div class="header">
-      <van-nav-bar title="协议" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar title="用户服务协议" left-arrow @click-left="$router.push('me')" />
     </div>
     <div class="content">
       {{data}}
@@ -25,7 +25,7 @@ export default {
   methods: {
     getData(){
       this.$axios(
-        "https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/deliverHelp.txt"
+        "https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/deliverRegProtocal.txt"
       ).then(res => {
         this.data = res.data;
       });
