@@ -1,7 +1,7 @@
 <template>
   <div class="orderInfo">
     <div class="header">
-      <van-nav-bar title="订单详情" left-arrow @click-left="$router.push('order')" />
+      <van-nav-bar title="订单详情" left-arrow @click-left="$router.go(-1)" />
     </div>
     <div class="view-body" v-if="orderDetail">
       <div class="status-head">
@@ -14,7 +14,7 @@
           <h3>{{orderDetail.restName}}</h3>
           <ul v-if="orderDetail.selectFoods">
             <li v-for="(food,index) in orderDetail.selectFoods" :key="index">
-              <img :src="food.logo" alt />
+              <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
               <div class="cart-group-info">
                 <span>{{food.name}}</span>
                 <span>¥{{food.price}}</span>

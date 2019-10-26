@@ -2,7 +2,7 @@
   <div class="order">
     <div class="order-card-body" v-for="(order,index) in orders" :key="index">
       <div class="order-card-wrap" @click="toOrderInfo(order)" v-if="order">
-        <img :src="order.restLogo" alt />
+        <img :src="'https://takeaway.pykky.com/restImgs/'+order.restLogo" alt />
         <div class="order-card-content">
           <div class="order-card-head">
             <div class="title">

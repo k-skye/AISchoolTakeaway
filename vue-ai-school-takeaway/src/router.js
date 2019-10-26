@@ -28,11 +28,6 @@ export default new Router({
           path: '/me',
           name: 'me',
           component: () => import('./views/Me.vue')
-        },
-        {
-          path: '/orderInfo',
-          name: 'orderInfo',
-          component: () => import('./views/Orders/OrderInfo.vue')
         }
       ]
     },
@@ -82,6 +77,26 @@ export default new Router({
       path: '/filter',
       name: 'filter',
       component: () => import('./views/Filter.vue')
+    },
+    {
+      path: '/orderInfo',
+      name: 'orderInfo',
+      component: () => import('./views/Orders/OrderInfo.vue')
+    },
+    {
+      path: '/help',
+      name: 'help',
+      component: () => import('./views/Me/Help.vue')
+    },
+    {
+      path: '/protocol',
+      name: 'protocol',
+      component: () => import('./views/Me/Protocol.vue')
+    },
+    {
+      path: '/support',
+      name: 'support',
+      component: () => import('./views/Me/Support.vue')
     }
   ]
 })

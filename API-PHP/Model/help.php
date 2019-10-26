@@ -11,4 +11,10 @@ class help extends NotORM {
         ->fetchAll();
     }
 
+    public function getUserAllHelp() {
+        return $this->getORM()
+        ->where('inwhere', 0)
+        ->fetchAll();
+    }
+
 }

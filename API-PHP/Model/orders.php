@@ -7,8 +7,8 @@ class orders extends NotORM {
 
     public function getOnesAllOrders($userID,$offset,$limit) {
         return $this->getORM()
-            ->where('id >= ?', $offset)
             ->where('userID = ?', $userID)
+            ->where('id >= ?', $offset)
             ->limit($limit)
             ->fetchAll();
     }

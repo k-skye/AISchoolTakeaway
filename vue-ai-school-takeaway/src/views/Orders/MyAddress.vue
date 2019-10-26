@@ -6,9 +6,9 @@
     <!-- 显示收货地址 -->
     <div class="address-view">
       <div class="address-card" v-for="(address,index) in allAddress" :key="index">
-        <div class="address-card-select">
-          <!-- <i class="fa fa-check-circle" v-if="selectIndex == index"></i> --><!-- 这里可以改成默认 -->
-        </div>
+        <!--<div class="address-card-select">
+           <i class="fa fa-check-circle" v-if="selectIndex == index"></i> --><!-- 这里可以改成默认 
+        </div>-->
 
         <div class="address-card-body" @click="setAddressInfo(address,index)">
           <p class="address-card-title">
@@ -21,8 +21,8 @@
           </p>
         </div>
         <div class="address-card-edit">
-          <i @click="handleEdit(address)" class="fa fa-edit"></i>
-          <i @click="handleDelete(address,index)" class="fa fa-close"></i>
+          <van-icon name="edit" @click="handleEdit(address)" />
+          <van-icon name="delete" @click="handleDelete(address,index)" />
         </div>
       </div>
     </div>
@@ -134,9 +134,9 @@ export default {
 }
 
 .address-view {
-  height: 100%;
+  height: calc(100% - 56px);
   overflow-y: auto;
-  padding-bottom: 13.866667vw;
+  padding-top: 10px;
 }
 .address-card {
   background-color: #fff;
@@ -164,6 +164,9 @@ export default {
   font-weight: 700;
 }
 .address-card-title .gender {
+  padding: 0 1.6vw 0 0.8vw;
+}
+.address-card-title .phone {
   padding: 0 1.6vw 0 0.8vw;
 }
 .address-card-address {

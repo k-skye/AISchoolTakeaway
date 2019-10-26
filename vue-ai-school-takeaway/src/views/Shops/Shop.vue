@@ -6,7 +6,7 @@
         <img :src="'https://takeaway.pykky.com/restImgs/'+shopInfo.logo" alt />
       </div> -->
       <div class="nav_back">
-        <i @click="$router.push('/home')" class="fa fa-chevron-left"></i>
+        <van-icon @click="$router.push('/home')" name="arrow-left" />
       </div>
 <!--       <div class="shop_image">
         <img :src="'https://takeaway.pykky.com/restImgs/'+shopInfo.logo" alt />
@@ -18,7 +18,7 @@
       <div class="rst-name">
         <span @click="showInfoModel = true">
           {{shopInfo.name}}
-          <i class="fa fa-caret-right"></i>
+          <van-icon name="arrow" />
         </span>
       </div>
       <!-- 弹窗信息 -->
@@ -142,7 +142,7 @@ export default {
   font-size: 1.3rem;
   font-weight: 700;
   white-space: nowrap;
-  padding-right: 2.666667vw;
+  /* padding-right: 2.666667vw; */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,6 +152,7 @@ export default {
   text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
 }
 
 .index-rst .rst-order {
@@ -173,6 +174,7 @@ export default {
   text-overflow: ellipsis;
   margin: 2.266667vw auto 2.666667vw;
   padding: 0;
+  padding-right: 12px;
   white-space: nowrap;
   text-align: center;
 }

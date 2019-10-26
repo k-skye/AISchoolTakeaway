@@ -19,4 +19,13 @@ class Help extends Api {
         $domain = new DomainHelp();
         return $domain->getDeliverAllHelp();
     }
+
+    /**
+     * 拿用户端所有帮助
+     * @desc 测试一下
+     */
+    public function getUserAllHelp() {
+        $domain = new DomainHelp();
+        return $domain->getUserAllHelp();
+    }
 } 

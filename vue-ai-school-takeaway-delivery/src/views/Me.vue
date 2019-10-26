@@ -51,8 +51,8 @@
         </van-cell>
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="question-o" @click="$router.push('help')" title="帮助" is-link />
-        <van-cell icon="notes-o" @click="$router.push('protocol')" title="协议" is-link />
+        <van-cell icon="question-o" to="help" title="帮助" is-link />
+        <van-cell icon="notes-o" to="protocol" title="协议" is-link />
         <van-cell icon="bullhorn-o" @click="$router.push({name:'support',params: { deliverID: userInfo.id }})" title="建议反馈" is-link />
       </van-cell-group>
     </div>

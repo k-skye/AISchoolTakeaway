@@ -13,18 +13,51 @@
           <span v-else>{{encryptPhone(userInfo.phoneNo)}}</span>
         </p>
       </div>
-      <i class="fa fa-angle-right"></i>
+      <van-icon name="arrow" />
     </div>
     <div v-if="!firstlogin">
-      <div class="address-cell">
-        <i class="fa fa-map-marker"></i>
-        <div class="address-index" @click="myAddress">
-          <span>我的地址</span>
-          <i class="fa fa-angle-right"></i>
-        </div>
+      
+        <van-cell-group title=" ">
+        <van-cell
+          icon="star-o"
+          is-link
+        >
+          <template slot="title">
+            <span class="custom-title">评价</span>
+          </template>
+        </van-cell>
+        <van-cell
+          icon="location-o"
+          title="地址"
+          is-link
+          @click="myAddress"
+        />
+        <van-cell
+          icon="after-sale"
+          is-link
+          @click="discountButtonClick"
+        >
+          <template slot="title">
+            <span class="custom-title">红包</span>
+          </template>
+        </van-cell>
+      </van-cell-group>
+      <van-cell-group title=" ">
+        <van-cell icon="question-o" title="帮助" is-link to="help"/>
+        <van-cell icon="notes-o"  title="协议" is-link to="protocol"/>
+        <van-cell icon="bullhorn-o"  title="建议反馈" is-link @click="$router.push({name:'support',params: { userID: userInfo.id }})"/>
+      </van-cell-group>
       </div>
+      <van-popup v-model="showList" position="bottom">
+        <van-coupon-list
+          :show-exchange-bar="false"
+          :coupons="coupons"
+          :disabled-coupons="disabledCoupons"
+          @change="onChange"
+          close-button-text="关闭"
+        />
+      </van-popup>
     </div>
-  </div>
 </template>
 
 <script>
@@ -33,7 +66,10 @@ export default {
   data() {
     return {
       firstlogin: true,
-      logoImgUrl: ""
+      logoImgUrl: "",
+      showList: false,
+      coupons: [],
+      disabledCoupons: []
     };
   },
   created() {
@@ -41,6 +77,29 @@ export default {
     this.logoImgUrl = this.firstlogin == false ? this.userInfo.avatar : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
   },
   methods: {
+    onChange() {
+      this.showList = false;
+    },
+    discountButtonClick(){
+      this.showList = true;
+      //拿红包数据
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=Discount.GetOnesAllcounts",
+        {
+          params: {
+            userID: this.userInfo.id
+          }
+        }
+      ).then(res => {
+        res.data.data.forEach(element => {
+          element.forEach(item => {
+            item.condition = item.conditions;
+          });
+        });
+        this.disabledCoupons = res.data.data[0];
+        this.coupons = res.data.data[1];
+      });
+    },
     handleRes() {
       const appid = "wx3df92dead7bcd174";
       const redirectUrl = encodeURI(
@@ -136,34 +195,6 @@ export default {
           margin-right: 0.666667vw;
           font-size: 1rem;
         }
-      }
-    }
-  }
-  .address-cell {
-    margin-top: 2.666667vw;
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    font-size: 1rem;
-    line-height: 4.533333vw;
-    background: #ffffff;
-    display: flex;
-    align-items: center;
-    padding-left: 6.666667vw;
-    color: #333;
-    i {
-      font-size: 1.3rem;
-      color: rgb(74, 165, 240);
-      margin-right: 2.666667vw;
-    }
-    .address-index {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      padding: 3.733333vw 2.666667vw 3.733333vw 0;
-      align-content: center;
-      i {
-        font-size: 1.3rem;
-        color: #ccc;
       }
     }
   }
