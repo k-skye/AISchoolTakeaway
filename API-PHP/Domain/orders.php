@@ -7,6 +7,7 @@ use App\Model\food as ModelFood;
 use App\Model\discount as ModelDiscount;
 use App\Model\address as ModelAddress;
 use App\Model\deliverusers as ModelUsers;
+use App\Model\deliverorders as ModelDeliverorders;
 
 class orders {
 
@@ -16,6 +17,8 @@ class orders {
         $i = 0;
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();
+        $modelUser = new ModelUsers();
+        $modelDeliverOrder = new ModelDeliverorders();
         foreach ($arr as $value){
             $restID = $arr[$i]['restID'];
             $restRes = $modelRest->getOneRest($restID);
@@ -23,6 +26,18 @@ class orders {
             $arr[$i]['restLogo'] = $restRes['logo'];
             $foodsRes = $modelFood->getFoodsByRestID($restID);
             $arr[$i]['food'] = $foodsRes;
+            if((int)$arr[$i]['status'] >= 2){
+                //去deliverorder表查配送信息
+                $deliverOrder = $modelDeliverOrder->getOneOrderByorderID($arr[$i]['id']);
+                $deliID = $deliverOrder['deliverID'];
+                $arr[$i]['deliverID'] = $deliID;
+                $arr[$i]['delivedTime'] = $deliverOrder['delivedTime'];
+                $deliverInfo = $modelUser->getOneUserByUserID($deliID);
+                $arr[$i]['deliverName'] = $deliverInfo['realName'];
+                $arr[$i]['deliverPhone'] = $deliverInfo['phoneNo'];
+            }else {
+                $arr[$i]['deliverID'] = '';
+            }
             $i++;
         }
         return $arr;

@@ -60,7 +60,7 @@ export default {
   border-bottom: 0.133333vw solid #eee;
 }
 .shopname{
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 span{
   font-size: 0.7rem;

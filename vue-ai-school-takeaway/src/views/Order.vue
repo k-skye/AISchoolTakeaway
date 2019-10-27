@@ -142,6 +142,7 @@ export default {
       //切记传值前一定要先建立对应属性为null！！！！！
       toData.deliveryFee = null;
       toData.value = null;
+      toData.addrInfo = null;
       //店铺配送费信息
       //TODO 订单增加配送费信息
       this.$axios("https://takeawayapi.pykky.com/?s=Restaurant.GetOneRest", {
@@ -176,6 +177,13 @@ export default {
       }
       //订单备注信息
       toData.remark = order.remark;
+      toData.status = order.status;
+      toData.shouldDeliveTime = order.shouldDeliveTime;
+      if (order.status >= 2) {
+        toData.deliverName = order.deliverName;
+        toData.delivedTime = order.delivedTime;
+        toData.deliverPhone = order.deliverPhone;
+      }
       this.$router.push({ name: "orderInfo", params: toData });
     }
   },
