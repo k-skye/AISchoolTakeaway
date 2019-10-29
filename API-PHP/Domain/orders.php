@@ -273,4 +273,25 @@ class orders {
         $model = new ModelOders();
         return $model->updateOrderPay($orderNo,$payPrice,$payTime);
     }
+
+    public function cancelOrder($id) {
+        $model = new ModelOders();
+        $res = $model->cancelOrder($id);
+        $orderDetail = $model->getOnesOneOrder($id);
+        $orderNo = $orderDetail['orderNo'];
+        $url = "https://takeawayapi.pykky.com/pay/reverse.php?orderNo=".$orderNo;
+        $rs = $curl->get($url, 10000);
+        return $rs;
+        if ($res && $rs == 'success') {
+            return $res;
+        }else{
+            //把订单状态修改为异常状态
+            $rres = $model->errorOrder($id);
+            if ($rres) {
+                return -1;
+            }else {
+                return -2;
+            }
+        }
+    }
 }

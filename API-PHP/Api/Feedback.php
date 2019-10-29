@@ -21,6 +21,12 @@ class Feedback extends Api {
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
                 'content'  => array('name' => 'content', 'require' => true, 'desc' => '内容'),
             ),
+            'addOneComplaintByUser' => array(
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
+                'content'  => array('name' => 'content', 'require' => true, 'desc' => '内容'),
+                'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
+                'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
+            )
         );
     }
     /**
@@ -47,6 +53,19 @@ class Feedback extends Api {
             return 'ok';
         }else{
             throw new InternalServerErrorException('添加反馈数据失败', 526);
+        }
+    }
+    /**
+     * 添加用户投诉伙伴
+     * @desc 测试一下
+     */
+    public function addOneComplaintByUser() {
+        $domain = new DomainFeedback();
+        $res = $domain->addOneComplaintByUser($this->userID,$this->content,$this->deliverID,$this->orderID);
+        if ($res > 0) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException('添加用户投诉数据失败', 528);
         }
     }
 } 
