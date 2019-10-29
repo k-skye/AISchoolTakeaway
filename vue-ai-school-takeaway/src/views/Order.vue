@@ -179,10 +179,14 @@ export default {
       toData.remark = order.remark;
       toData.status = order.status;
       toData.shouldDeliveTime = order.shouldDeliveTime;
+      toData.id = order.id;
+      toData.hasComplaint = order.hasComplaint;
+      toData.restID = order.restID;
       if (order.status >= 2) {
         toData.deliverName = order.deliverName;
         toData.delivedTime = order.delivedTime;
         toData.deliverPhone = order.deliverPhone;
+        toData.deliverID = order.deliverID;
       }
       this.$router.push({ name: "orderInfo", params: toData });
     }

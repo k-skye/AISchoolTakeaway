@@ -9,7 +9,7 @@
         label="留言"
         type="textarea"
         placeholder="请输入留言"
-        rows="1"
+        rows="2"
         autosize
       >
       <van-button slot="button" size="small" type="primary" @click="onSendButtonClick">留言</van-button>

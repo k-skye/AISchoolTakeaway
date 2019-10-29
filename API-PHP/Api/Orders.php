@@ -39,6 +39,9 @@ class Orders extends Api {
                 'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
                 'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
             ),
+            'cancelOrder' => array(
+                'id'  => array('name' => 'id', 'require' => true, 'desc' => '订单id'),
+            ),
         );
     }
     /**
@@ -102,6 +105,19 @@ class Orders extends Api {
             return 0;
         }else{
             return -1;
+        }
+    }
+    /**
+     * 在伙伴接单前取消订单
+     * @desc 测试一下
+     */
+    public function cancelOrder() {
+        $domain = new DomainOders();
+        $res = $domain->cancelOrder($this->id);
+        if ($res) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException("服务器取消订单失败", 27);
         }
     }
 } 

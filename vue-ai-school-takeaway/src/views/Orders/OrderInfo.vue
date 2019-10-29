@@ -1,5 +1,23 @@
 <template>
   <div class="orderInfo">
+    <van-popup
+    v-model="show"
+    closeable
+    :style="{ height: '30%',width: '80%' }"
+    >
+      <div class="head" v-if="orderDetail.deliverName">投诉伙伴 {{orderDetail.deliverName}}</div>
+      <van-cell-group title=" " >
+      <van-field
+        v-model="message"
+        type="textarea"
+        placeholder="请输入投诉"
+        rows="1"
+        autosize
+      >
+      <van-button slot="button" size="small" type="primary" @click="onSendButtonClick">投诉</van-button>
+      </van-field>
+    </van-cell-group>
+    </van-popup>
     <div class="header">
       <van-nav-bar title="订单详情" left-arrow @click-left="$router.go(-1)" />
     </div>
@@ -9,12 +27,17 @@
         <div class="status-title">{{statusContent}}</div>
         <div class="buttons">
           <!-- 付款后 -->
-          <van-button type="info" v-if="orderDetail.status=1">取消订单</van-button>
-          <!-- 待取餐时 -->
-          <van-button type="info" v-if="orderDetail.status=2">申请退款</van-button>
-          <!-- 待取餐时 -->
-          <van-button type="primary" v-if="orderDetail.status=4">&nbsp评价&nbsp</van-button>
-          <van-button class="Complaint" type="info" v-if="orderDetail.status>=4 && orderDetail.status<=6">&nbsp投诉&nbsp</van-button>
+          <van-button type="info" v-if="orderDetail.status==1" @click="clickCancelOrder">取消订单</van-button>
+          <!--            待取餐时 
+          <van-button type="info" v-if="orderDetail.status==2">申请退款</van-button>-->
+          <!-- 已送达时 -->
+          <van-button type="primary" v-if="orderDetail.status==4" @click="$router.push({name: 'comment',params: {restID: orderDetail.restID, userID: userInfo.id}})">评价</van-button>
+          <van-button
+            class="Complaint"
+            type="info"
+            v-if="orderDetail.status>=4 && orderDetail.status<=6 && orderDetail.hasComplaint==0"
+            @click="showPopup"
+          >投诉伙伴</van-button>
         </div>
       </div>
       <!-- 伙伴信息 -->
@@ -25,7 +48,10 @@
             <span>姓名：{{orderDetail.deliverName}}</span>
           </li>
           <li class="list-item">
-            <span>手机：<a :href="'tel:'+orderDetail.deliverPhone">{{orderDetail.deliverPhone}}</a></span>
+            <span>
+              手机：
+              <a :href="'tel:'+orderDetail.deliverPhone">{{orderDetail.deliverPhone}}</a>
+            </span>
           </li>
         </ul>
       </div>
@@ -73,7 +99,8 @@
             <div v-if="orderDetail.delivedTime">{{orderDetail.delivedTime}}</div>
             <div v-else>{{orderDetail.shouldDeliveTime}}</div>
           </li>
-          <li class="list-item"  v-if="orderDetail.addrInfo"><!-- 因为请求是异步获取数据，所以最先开始addrInfo是一个空对象 -->
+          <li class="list-item" v-if="orderDetail.addrInfo">
+            <!-- 因为请求是异步获取数据，所以最先开始addrInfo是一个空对象 -->
             <span>送货地址：</span>
             <div class="content">
               <span>{{orderDetail.addrInfo.name}} {{orderDetail.addrInfo.gender==1?'先生':'小姐'}}</span>
@@ -101,24 +128,71 @@
 </template>
 
 <script>
+import { Dialog } from "vant";
+import { Toast } from 'vant';
 export default {
   name: "OrderInfo",
   data() {
     return {
+      message: "",
+      show: false,
       orderDetail: {},
       statusText: "订单已送达",
-      statusContent: "感谢您对我们外卖服务的信任, 期待再次光临",
+      statusContent: "感谢您对我们外卖服务的信任, 期待再次光临"
     };
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.orderDetail = to.params;
       vm.getData();
-      console.log(vm.orderDetail);
     });
   },
-  methods:{
-    getData(){
+  methods: {
+    onSendButtonClick(){
+      this.$axios.post(
+        "https://takeawayapi.pykky.com/?s=Feedback.addOneComplaintByUser",
+        {
+            userID: this.userInfo.id,
+            content: this.message,
+            deliverID: this.orderDetail.deliverID,
+            orderID: this.orderDetail.id
+        }
+      ).then(res => {
+        if (res.data.data == 'ok') {
+          Toast.success("投诉成功");
+          this.$router.push('order');
+        }else{
+          Toast.fail("投诉失败！"+res.data.msg);
+        }
+      });
+    },
+    showPopup() {
+      this.show = true;
+    },
+    clickCancelOrder() {
+      Dialog.confirm({
+        title: "取消订单",
+        message: "确定要取消吗？钱将退回您的微信零钱"
+      })
+        .then(() => {
+          this.$axios
+            .post("https://takeawayapi.pykky.com/?s=Orders.CancelOrder", {
+              id: this.orderDetail.id
+            })
+            .then(res => {
+              if (res.data.data == "ok") {
+                Toast.success("取消成功,已退回微信零钱");
+                this.$router.push("order");
+              } else {
+                Toast.fail("取消失败！" + res.data.msg);
+              }
+            });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    getData() {
       const status = parseInt(this.orderDetail.status);
       switch (status) {
         case 0:
@@ -127,7 +201,7 @@ export default {
           break;
         case 1:
           this.statusText = "待接单";
-          this.statusContent = "如在30分钟后仍未被伙伴接单，将自动关闭";
+          this.statusContent = "如在30分钟后仍未被伙伴接单，将自动取消";
           break;
         case 2:
           this.statusText = "待取餐";
@@ -139,7 +213,7 @@ export default {
           break;
         case 4:
           this.statusText = "已送达";
-          this.statusContent = "伙伴已确认送达，如您未收到请点击下方按钮";
+          this.statusContent = "伙伴已确认送达，如您未收到可联系客服";
           break;
         case 5:
           this.statusText = "已评价";
@@ -163,6 +237,11 @@ export default {
           break;
       }
     }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
   }
 };
 </script>
@@ -173,6 +252,10 @@ export default {
   height: 100%;
   box-sizing: border-box;
   overflow: auto;
+  .head{
+    text-align: center;
+    padding-top: 15px;
+  }
   .view-body {
     .status-head {
       margin: 2.666667vw;
@@ -192,9 +275,9 @@ export default {
         color: #333;
         margin-bottom: 1.866667vw;
       }
-      .buttons{
+      .buttons {
         padding: 10px 5px 0;
-        .Complaint{
+        .Complaint {
           margin-left: 5px;
         }
       }

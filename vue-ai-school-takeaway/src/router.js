@@ -97,6 +97,11 @@ export default new Router({
       path: '/support',
       name: 'support',
       component: () => import('./views/Me/Support.vue')
+    },
+    {
+      path: '/comment',
+      name: 'comment',
+      component: () => import('./views/Orders/Comment.vue')
     }
   ]
 })
