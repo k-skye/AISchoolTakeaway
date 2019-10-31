@@ -26,4 +26,13 @@ class comment extends NotORM {
         ->update($data);
     } 
 
+    public function addOneComment($text,$restID,$images,$stars,$userID,$time) {
+        $data = array('content' => $text,'restID' => $restID,'images' => $images,'stars' => $stars,'userID' => $userID,'time' => $time);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    }
+
 }

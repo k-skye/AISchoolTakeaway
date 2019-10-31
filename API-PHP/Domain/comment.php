@@ -4,6 +4,7 @@ namespace App\Domain;
 use App\Model\comment as ModelComment;
 use App\Model\users as ModelUsers;
 use App\Model\deliverorders as ModelDeliverorders;
+use App\Model\orders as ModelOders;
 
 class comment {
 
@@ -29,6 +30,20 @@ class comment {
         $res = $modelDeliveOrder->updatehasComment($deliveOrderID);
         if ($res > 0) {
             return $model->updateCommentDeliveReply($ID,$text);
+        }else{
+            return -1;
+        }
+    }
+
+    public function CommentByUser($userID,$text,$restID,$orderID,$images,$stars) {
+        $model = new ModelComment();
+        $modelOrder = new ModelOders();
+        $t = time();
+        $createTime = date('Y-m-d H:i:s',$t);
+        $res = $model->addOneComment($text,$restID,$images,$stars,$userID,$createTime);
+        $rres = $modelOrder->userCommentOrder($orderID);
+        if ($res && $rres) {
+            return $res;
         }else{
             return -1;
         }

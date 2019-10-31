@@ -77,4 +77,11 @@ class orders extends NotORM {
         ->where('id', $id)
         ->update($data);
     }
+
+    public function userCommentOrder($id) {
+        $data = array('status' => 5);
+        return $this->getORM()
+        ->where('id', $id)
+        ->update($data);
+    }
 }

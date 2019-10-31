@@ -31,7 +31,7 @@
           <!--            待取餐时 
           <van-button type="info" v-if="orderDetail.status==2">申请退款</van-button>-->
           <!-- 已送达时 -->
-          <van-button type="primary" v-if="orderDetail.status==4" @click="$router.push({name: 'comment',params: {restID: orderDetail.restID, userID: userInfo.id}})">评价</van-button>
+          <van-button type="primary" v-if="orderDetail.status==4" @click="$router.push({name: 'comment',params: {restID: orderDetail.restID, userID: userInfo.id, orderID: orderDetail.id}})">评价</van-button>
           <van-button
             class="Complaint"
             type="info"

@@ -22,6 +22,14 @@ class Comment extends Api {
                 'ID'  => array('name' => 'ID', 'require' => true, 'desc' => '评论id'),
                 'text'  => array('name' => 'text', 'require' => true, 'desc' => '回复内容'),
                 'deliveOrderID'  => array('name' => 'deliveOrderID', 'require' => true, 'desc' => '配送订单id'),
+            ),
+            'CommentByUser' => array(
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户ID'),
+                'text'  => array('name' => 'text', 'require' => true, 'desc' => '回复内容'),
+                'restID'  => array('name' => 'restID', 'require' => true, 'desc' => '店铺id'),
+                'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
+                'images'  => array('name' => 'images', 'require' => true, 'desc' => '图片'),
+                'stars'  => array('name' => 'stars', 'require' => true, 'desc' => '评分'),
             )
         );
     }
@@ -44,6 +52,19 @@ class Comment extends Api {
             return 'ok';
         }else{
             throw new InternalServerErrorException("修改配送订单已取餐失败", 19);
+        }
+    }
+    /**
+     * 用户评价
+     * @desc 测试一下
+     */
+    public function CommentByUser() {
+        $domain = new DomainComment();
+        $res = $domain->CommentByUser($this->userID,$this->text,$this->restID,$this->orderID,$this->images,$this->stars);
+        if ($res > 0) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException("用户评论失败", 29);
         }
     }
 } 
