@@ -35,4 +35,12 @@ class comment extends NotORM {
         return $orm->insert_id();
     }
 
+    public function getOnesComment($userID,$offset,$limit) {
+        return $this->getORM()
+            ->where('userID = ?', $userID)
+            ->where('id >= ?', $offset)
+            ->limit($limit)
+            ->fetchAll();
+    }
+
 }

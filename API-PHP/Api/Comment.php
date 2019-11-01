@@ -30,7 +30,12 @@ class Comment extends Api {
                 'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
                 'images'  => array('name' => 'images', 'require' => true, 'desc' => '图片'),
                 'stars'  => array('name' => 'stars', 'require' => true, 'desc' => '评分'),
-            )
+            ),
+            'getOnesComment' => array(
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
+                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
+                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+            ),
         );
     }
     /**
@@ -66,5 +71,13 @@ class Comment extends Api {
         }else{
             throw new InternalServerErrorException("用户评论失败", 29);
         }
+    }
+    /**
+     * 拿用户的所有评论
+     * @desc 测试一下
+     */
+    public function getOnesComment() {
+        $domain = new DomainComment();
+        return $domain->getOnesComment($this->userID,$this->offset,$this->limit);
     }
 } 

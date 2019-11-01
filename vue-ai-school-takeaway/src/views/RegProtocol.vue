@@ -25,7 +25,7 @@ export default {
   methods: {
     getData(){
       this.$axios(
-        "https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/deliverRegProtocal.txt"
+        "https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/Help.txt"
       ).then(res => {
         this.data = res.data;
       });

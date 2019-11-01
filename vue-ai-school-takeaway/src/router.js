@@ -102,6 +102,21 @@ export default new Router({
       path: '/comment',
       name: 'comment',
       component: () => import('./views/Orders/Comment.vue')
+    },
+    {
+      path: '/allcomment',
+      name: 'allcomment',
+      component: () => import('./views/Me/Allcomment.vue')
+    },
+    {
+      path: '/regprotocol',
+      name: 'regprotocol',
+      component: () => import('./views/RegProtocol.vue')
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('./views/Search.vue')
     }
   ]
 })

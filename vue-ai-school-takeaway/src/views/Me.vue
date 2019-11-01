@@ -2,7 +2,7 @@
   <div class="me">
     <div class="headInfo">
       <div class="head-img">
-        <img :src="logoImgUrl">
+        <img :src="logoImgUrl" />
       </div>
       <div class="head-profile">
         <p v-if="firstlogin" class="user-id" @click="handleRes">登陆/注册</p>
@@ -13,54 +13,56 @@
           <span v-else>{{encryptPhone(userInfo.phoneNo)}}</span>
         </p>
       </div>
-      <van-icon name="arrow" />
+      <!-- <van-icon name="arrow" /> 
+      TODO: 后期加改头像和昵称功能
+      -->
     </div>
     <div v-if="!firstlogin">
-      
-        <van-cell-group title=" ">
+      <van-cell-group title=" ">
         <van-cell
           icon="star-o"
           is-link
+          @click="$router.push({name:'allcomment',params: { userID: userInfo.id }})"
         >
           <template slot="title">
             <span class="custom-title">评价</span>
           </template>
         </van-cell>
-        <van-cell
-          icon="location-o"
-          title="地址"
-          is-link
-          @click="myAddress"
-        />
-        <van-cell
-          icon="after-sale"
-          is-link
-          @click="discountButtonClick"
-        >
+        <van-cell icon="location-o" title="地址" is-link @click="myAddress" />
+        <van-cell icon="after-sale" is-link @click="discountButtonClick">
           <template slot="title">
             <span class="custom-title">红包</span>
           </template>
         </van-cell>
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="question-o" title="帮助" is-link to="help"/>
-        <van-cell icon="notes-o"  title="协议" is-link to="protocol"/>
-        <van-cell icon="bullhorn-o"  title="建议反馈" is-link @click="$router.push({name:'support',params: { userID: userInfo.id }})"/>
-      </van-cell-group>
-      </div>
-      <van-popup v-model="showList" position="bottom">
-        <van-coupon-list
-          :show-exchange-bar="false"
-          :coupons="coupons"
-          :disabled-coupons="disabledCoupons"
-          @change="onChange"
-          close-button-text="关闭"
+        <van-cell icon="question-o" title="帮助" is-link to="help" />
+        <van-cell icon="notes-o" title="协议" is-link to="protocol" />
+        <van-cell
+          icon="bullhorn-o"
+          title="建议反馈"
+          is-link
+          @click="$router.push({name:'support',params: { userID: userInfo.id }})"
         />
-      </van-popup>
+      </van-cell-group>
     </div>
+    <van-popup v-model="showList" position="bottom">
+      <van-coupon-list
+        :show-exchange-bar="false"
+        :coupons="coupons"
+        :disabled-coupons="disabledCoupons"
+        @change="onChange"
+        close-button-text="关闭"
+      />
+    </van-popup>
+    <div class="nologin" v-if="firstlogin">
+      <NoLoginInfo />
+    </div>
+  </div>
 </template>
 
 <script>
+import NoLoginInfo from "../components/NoLoginInfo";
 export default {
   name: "me",
   data() {
@@ -74,13 +76,16 @@ export default {
   },
   created() {
     this.firstlogin = localStorage.firstlogin == 0 ? false : true;
-    this.logoImgUrl = this.firstlogin == false ? this.userInfo.avatar : "https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png";
+    this.logoImgUrl =
+      this.firstlogin == false
+        ? this.userInfo.avatar
+        : "http://takeawaydeliver.pykky.com/newICON.png";
   },
   methods: {
     onChange() {
       this.showList = false;
     },
-    discountButtonClick(){
+    discountButtonClick() {
       this.showList = true;
       //拿红包数据
       this.$axios(
@@ -142,6 +147,9 @@ export default {
     userInfo() {
       return this.$store.getters.userInfo;
     }
+  },
+  components: {
+    NoLoginInfo
   }
 };
 </script>
@@ -152,6 +160,11 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
+  .nologin {
+    height: 70%;
+    display: flex;
+    align-items: center;
+  }
   .headInfo {
     display: flex;
     // background-image: linear-gradient(90deg, #0af, #0085ff);
@@ -164,7 +177,7 @@ export default {
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      img{
+      img {
         width: 100%;
         height: 100%;
         border-radius: 50%;

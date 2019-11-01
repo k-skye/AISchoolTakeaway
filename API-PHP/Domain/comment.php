@@ -5,6 +5,7 @@ use App\Model\comment as ModelComment;
 use App\Model\users as ModelUsers;
 use App\Model\deliverorders as ModelDeliverorders;
 use App\Model\orders as ModelOders;
+use App\Model\restaurant as ModelRestaurant;
 
 class comment {
 
@@ -47,6 +48,20 @@ class comment {
         }else{
             return -1;
         }
+    }
+
+    public function getOnesComment($userID,$offset,$limit) {
+        $model = new ModelComment();
+        $modelRest = new ModelRestaurant();
+        $res = $model->getOnesComment($userID,$offset,$limit);
+        $i = 0;
+        foreach ($res as $value) {
+            $restInfo = $modelRest->getOneRest($value['restID']);
+            $res[$i]['restName'] = $restInfo['name'];
+            $res[$i]['restLogo'] = $restInfo['logo'];
+            $i++;
+        }
+        return $res;
     }
 
 }

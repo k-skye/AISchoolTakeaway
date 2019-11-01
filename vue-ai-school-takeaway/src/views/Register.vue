@@ -21,7 +21,7 @@
     <div class="login_des">
       <p>
         注册即表示您已同意
-        <span>《用户服务协议》</span>
+        <span @click="$router.push('regprotocol')">《用户服务协议》</span>
       </p>
     </div>
     <!-- 登录按钮 -->
@@ -163,13 +163,14 @@ export default {
 .login {
   width: 100%;
   height: 100%;
-  padding: 30px;
+  padding: 0 30px;
   box-sizing: border-box;
   background: #fff;
   .logo {
     text-align: center;
     img {
-      width: 150px;
+      width: 200px;
+      margin-bottom: -15px;
     }
   }
   .text_group,

@@ -8,9 +8,9 @@
             <div class="title">
               <a>
                 <span>{{order.restName}}</span>
-                <i class="fa fa-angle-right"></i>
+                <van-icon name="arrow" />
               </a>
-              <p>订单已完成</p>
+              <p>{{order.statusText}}</p>
             </div>
             <p class="date-time">{{order.createTime}}</p>
           </div>
@@ -20,18 +20,31 @@
           </div>
         </div>
       </div>
-      <div class="order-card-bottom">
-        <button class="cardbutton" @click="$router.push('/shop')">再来一单</button>
+      <div class="order-card-bottom" v-show="order.status>=4 || order.status==0">
+        <button
+          class="cardbutton"
+          @click="$router.push({name: 'shop',params: {restID: order.restID}})"
+        >再来一单</button>
       </div>
+    </div>
+    <div class="nologin" v-if="firstlogin">
+      <NoLoginInfo />
+    </div>
+    <div class="nologin" v-if="nodata">
+      <NoDeliveOrderInfo />
     </div>
   </div>
 </template>
 
 <script>
+import NoLoginInfo from "../components/NoLoginInfo";
+import NoDeliveOrderInfo from "../components/NoDeliveOrderInfo";
 export default {
   name: "order",
   data() {
     return {
+      firstlogin: false,
+      nodata: false,
       orderlist: [], //存放当前订单容器
       offset: 1,
       size: 5,
@@ -47,6 +60,7 @@ export default {
   },
   methods: {
     getData() {
+      this.firstlogin = localStorage.firstlogin == 0 ? false : true;
       this.firstLoadData();
     },
     firstLoadData() {
@@ -63,6 +77,7 @@ export default {
         if (res.data.data.length == 0) {
           // TODO
           this.allLoaded = true;
+          this.nodata = true;
           return;
         }
         this.orderlist = res.data.data;
@@ -130,6 +145,41 @@ export default {
           showfood += " 等";
         }
         this.orders[i].showfood = showfood;
+        //状态提示文字
+        this.orders[i].statusText = null;
+        const status = parseInt(order.status);
+        switch (status) {
+          case 0:
+            this.orders[i].statusText = "未支付";
+            break;
+          case 1:
+            this.orders[i].statusText = "待接单";
+            break;
+          case 2:
+            this.orders[i].statusText = "待取餐";
+            break;
+          case 3:
+            this.orders[i].statusText = "配送中";
+            break;
+          case 4:
+            this.orders[i].statusText = "已送达";
+            break;
+          case 5:
+            this.orders[i].statusText = "已评价";
+            break;
+          case 6:
+            this.orders[i].statusText = "已回复评价";
+            break;
+          case 7:
+            this.orders[i].statusText = "退款中";
+            break;
+          case 8:
+            this.orders[i].statusText = "已关闭";
+            break;
+          default:
+            this.orders[i].statusText = "订单异常";
+            break;
+        }
         i++;
       });
     },
@@ -195,6 +245,10 @@ export default {
     userInfo() {
       return this.$store.getters.userInfo;
     }
+  },
+  components: {
+    NoLoginInfo,
+    NoDeliveOrderInfo
   }
 };
 </script>
@@ -206,6 +260,11 @@ export default {
   overflow: auto;
   box-sizing: border-box;
   margin-bottom: 2.666667vw;
+}
+.nologin {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 .order-card-body {
   margin-top: 2.666667vw;
@@ -240,6 +299,8 @@ export default {
   line-height: 1.5em;
   color: #333;
   text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 .order-card-head .title > a > span {
   display: inline-block;
@@ -247,11 +308,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.order-card-head .title > a > i {
-  margin-left: 1.333333vw;
-  color: #ccc;
-  vertical-align: super;
 }
 .order-card-head .title > p {
   font-size: 0.8rem;

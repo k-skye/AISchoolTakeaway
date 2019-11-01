@@ -24,4 +24,11 @@ class food extends NotORM {
             ->where('restID = ?', $restID)
             ->fetchAll();
     }
+
+    public function searchFoodName($text) {
+        $text = '%'.$text.'%';
+        return $this->getORM()
+        ->where('name LIKE ?', $text)
+        ->fetchAll();
+    }
 }
