@@ -27,8 +27,8 @@ class orders extends NotORM {
             ->fetchAll();
     }
 
-    public function insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID,$createTime) {
-        $data = array('userID' => $userID,'foods' => $foodArrID,'remark' => $remark,'discountID' => $discountID,'restID' => $restID,'totalPrice' => $totalPrice,'payPrice' => $payPrice,'addressID' => $addrID,'createTime' => $createTime, 'status' => 0);
+    public function insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID,$createTime,$shouldDeliveTime,$deliveFee,$upstairs) {
+        $data = array('userID' => $userID,'foods' => $foodArrID,'remark' => $remark,'discountID' => $discountID,'restID' => $restID,'totalPrice' => $totalPrice,'payPrice' => $payPrice,'addressID' => $addrID,'createTime' => $createTime, 'status' => 0, 'shouldDeliveTime' => $shouldDeliveTime, 'deliveFee' => $deliveFee, 'upstairs' => $upstairs);
         $orm = $this->getORM();
         $orm->insert($data);
 

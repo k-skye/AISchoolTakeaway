@@ -245,11 +245,11 @@ class orders {
         }
     }
 
-    public function insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID) {
+    public function insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID,$shouldDeliveTime,$deliveFee,$upstairs) {
         $model = new ModelOders();
         $t = time();
         $createTime = date('Y-m-d H:i:s',$t);
-        $res = $model->insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID,$createTime);
+        $res = $model->insertOneOrder($userID,$foodArrID,$remark,$restID,$totalPrice,$payPrice,$addrID,$discountID,$createTime,$shouldDeliveTime,$deliveFee,$upstairs);
         if ($res) {
             //让红包报废
             $modelDisc = new ModelDiscount();

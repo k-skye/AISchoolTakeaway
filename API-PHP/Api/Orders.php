@@ -28,6 +28,9 @@ class Orders extends Api {
                 'addrID'  => array('name' => 'addrID', 'require' => true, 'desc' => '地址id'),
                 'discountID'  => array('name' => 'discountID', 'require' => true, 'desc' => '红包id'),
                 'openID'  => array('name' => 'openID', 'require' => true, 'desc' => 'openid'),
+                'shouldDeliveTime'  => array('name' => 'shouldDeliveTime', 'require' => true, 'desc' => '配送时间'),
+                'deliveFee'  => array('name' => 'deliveFee', 'require' => true, 'desc' => '配送费'),
+                'upstairs'  => array('name' => 'upstairs', 'require' => true, 'desc' => '是否上楼'),
             ),
             'handlePay' => array(
                 'payPrice'  => array('name' => 'payPrice', 'require' => true, 'desc' => '实际支付金额'),
@@ -66,7 +69,7 @@ class Orders extends Api {
      */
     public function createOneOrder() {
         $domain = new DomainOders();
-        $res = $domain->insertOneOrder($this->userID,$this->foodArrID,$this->remark,$this->restID,$this->totalPrice,$this->payPrice,$this->addrID,$this->discountID);
+        $res = $domain->insertOneOrder($this->userID,$this->foodArrID,$this->remark,$this->restID,$this->totalPrice,$this->payPrice,$this->addrID,$this->discountID,$this->shouldDeliveTime,$this->deliveFee,$this->upstairs);
         switch ($res) {
             case '-1':
                 throw new InternalServerErrorException("新增订单失败", 12);

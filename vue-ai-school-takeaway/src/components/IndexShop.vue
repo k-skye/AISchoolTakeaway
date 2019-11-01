@@ -3,7 +3,7 @@
     <div class="index-shopInfo" @click="$router.push({name: 'shop',params: {restID: restaurant.id}})">
       <!-- 左侧图片 -->
       <div class="logo_container">
-        <img :src="'https://takeaway.pykky.com/restImgs/'+restaurant.logo" alt>
+        <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+restaurant.logo" alt>
       </div>
       <!-- 右侧内容 -->
       <div class="index_main">

@@ -13,7 +13,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -23,7 +23,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -33,7 +33,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -43,7 +43,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -54,7 +54,7 @@ class restaurant {
     public function getOneRest($id) {
         $model = new ModelRestaurant();
         $res = $model->getOneRest($id);
-        $res['deliveryFee'] = '2';
+        $res['deliveryFee'] = '1.5';
         $res['deliveryTime'] = '30';
         return $res;
     }
@@ -67,7 +67,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -77,7 +77,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -87,7 +87,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;
@@ -97,7 +97,7 @@ class restaurant {
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
-                    $arr[$i]['deliveryFee'] = '2';
+                    $arr[$i]['deliveryFee'] = '1.5';
                     $i++;
                 }
                 return $arr;

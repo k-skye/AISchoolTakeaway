@@ -34,7 +34,7 @@
               :key="i"
             >
               <!-- 左 -->
-              <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
+              <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo" alt />
               <!-- 右 -->
               <section class="fooddetails-info">
                 <h4>{{food.name}}</h4>

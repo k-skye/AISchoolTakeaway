@@ -38,17 +38,18 @@
           <span v-if="isEmpty">未选购商品</span>
           <span v-else>¥{{totalPrice.toFixed(2)}}</span>
         </p>
-        <p class="bottomNav-cartdelivery">另需伙伴费{{restInfo.deliveryFee}}元</p>
+        <p class="bottomNav-cartdelivery">伙伴费{{restInfo.deliveryFee}}元起</p>
       </div>
-      <button class="submit-btn">
+      <button class="submit-btn" @click="settlement">
         <span v-if="isEmpty">请先点餐</span>
-        <span @click="settlement" v-else>去结算</span>
+        <span v-else>去结算</span>
       </button>
     </div>
   </div>
 </template>
 
 <script>
+import { Toast } from 'vant';
 import CartControll from "../../components/Shops/CartControll";
 export default {
   name: "ShopCart",
@@ -64,7 +65,18 @@ export default {
     foodInfo: Array
   },
   computed: {
+    firstlogin(){
+      return localStorage.firstlogin == 0 ? false : true;
+    },
     isEmpty() {
+      return this.checkEmpty();
+    },
+    restInfo() {
+      return this.$store.getters.restInfo;
+    }
+  },
+  methods: {
+    checkEmpty(){
       let empty = true;
       this.totalCount = 0;
       this.totalPrice = 0;
@@ -81,11 +93,6 @@ export default {
       });
       return empty;
     },
-    restInfo() {
-      return this.$store.getters.restInfo;
-    }
-  },
-  methods: {
     clearFoods() {
       this.foodInfo.forEach(cate => {
         cate.count = 0;
@@ -98,6 +105,10 @@ export default {
       });
     },
     settlement() {
+      if (this.firstlogin) {
+        Toast.fail('要先注册后才可以购买噢～');
+        return;
+      }
       this.$store.dispatch("setOrderInfo", {
         foodInfo: this.foodInfo,
         selectFoods: this.selectFoods,
