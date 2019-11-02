@@ -17,6 +17,7 @@
         <FormBlock v-model="addressInfo.phone" label="电话" placeholder="手机号码" />
         <FormBlock
           v-model="addressInfo.dormitory"
+          :noinput="true"
           @click="showPicker = true"
           label="地址"
           placeholder="选择宿舍"
@@ -58,7 +59,30 @@ export default {
       addressInfo: {},
       sex: "",
       showPicker: false,
-      columns: ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12', 'C13', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19', 'C20', 'C21', 'C22'],
+      columns: [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6",
+        "C7",
+        "C8",
+        "C9",
+        "C10",
+        "C11",
+        "C12",
+        "C13",
+        "C14",
+        "C15",
+        "C16",
+        "C17",
+        "C18",
+        "C19",
+        "C20",
+        "C21",
+        "C22"
+      ],
       userInfo: null
     };
   },
@@ -100,7 +124,7 @@ export default {
       }
 
       // 存储数据
-      if (this.title == "添加地址") {
+      if (this.title == "添加地址" || this.title == "添加地址提交") {
         this.addAddress();
       } else {
         this.editAddress();
@@ -120,9 +144,21 @@ export default {
           this.$store.dispatch("setAddrInfo", this.addressInfo);
           if (this.userInfo.mainAddressID == 0) {
             this.userInfo.mainAddressID == res.data.data;
-            this.$store.dispatch("setUserInfo", this.userInfo);
+            const openid = localStorage.openid;
+            this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
+              params: {
+                openid: openid
+              }
+            }).then(res => {
+              this.$store.dispatch("setUserInfo", res.data.data);
+              if (this.title === "添加地址提交") {
+                this.$router.go(-1);
+              } else {
+                this.$router.push("/myAddress");
+              }
+            });
           }
-          this.$router.push("myAddress");
+                this.$router.push("/myAddress");
         })
         .catch(err => console.log(err));
     },

@@ -35,11 +35,11 @@ class tradinglog {
         if (!empty($lastTime)) {
             $lastTime = date('d',$lastTime);
             $today = date('d',$t);
-            if (($lastTime+1)!=$today) {
-                return -11;
-            }else if ($lastTime != 30 && $today != 1) {
-                return -11;
-            }
+            if($lastTime<28){
+				if (($lastTime+1)!=$today) {
+                    return -11;
+            	}
+			}
         }
         $createTime = date('Y-m-d H:i:s',$t);
         $NoTime = date('YmdHis',$t);
@@ -62,7 +62,7 @@ class tradinglog {
             $model = new ModelTradinglog();
             $res =  $model->addOneCashTradLog($deliverID,$orderNo,-$OKmoney,$createTime);
             if ($res > 0) {
-                //记录账单成功，清空余额
+                //记录账单成功，清空余额和月收入
                 $rres = $modelUser->updateNounToZero($deliverID);
                 if ($rres > 0) {
                     //清空余额成功

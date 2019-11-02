@@ -279,10 +279,14 @@ class orders {
         $res = $model->cancelOrder($id);
         $orderDetail = $model->getOnesOneOrder($id);
         $orderNo = $orderDetail['orderNo'];
-        $url = "https://takeawayapi.pykky.com/pay/reverse.php?orderNo=".$orderNo;
+        //拿金额
+        $totalPrice = ((int)($orderDetail['payPrice']))/100; 
+        $refundPrice = $totalPrice;
+        $curl = new \PhalApi\CUrl();
+        $url = "https://takeawayapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
         $rs = $curl->get($url, 10000);
         return $rs;
-        if ($res && $rs == 'success') {
+        if ($res && $rs == 'refund success') {
             return $res;
         }else{
             //把订单状态修改为异常状态

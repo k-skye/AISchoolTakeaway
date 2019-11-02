@@ -54,6 +54,12 @@
         <van-cell icon="question-o" to="help" title="帮助" is-link />
         <van-cell icon="notes-o" to="protocol" title="协议" is-link />
         <van-cell icon="bullhorn-o" @click="$router.push({name:'support',params: { deliverID: userInfo.id }})" title="建议反馈" is-link />
+        <van-cell
+          icon="service-o"
+          title="联系客服"
+          is-link
+          @click="serviceClick"
+        />
       </van-cell-group>
     </div>
     <div class="nologin" v-else>
@@ -64,7 +70,7 @@
 
 <script>
 import NoLoginInfo from "../components/NoLoginInfo";
-
+import { Dialog } from 'vant';
 export default {
   name: "me",
   data() {
@@ -86,6 +92,9 @@ export default {
     });
   },
   methods: {
+    serviceClick(){
+      Dialog({ message: '请加平台客服微信：17889465893，如紧急可拨打此电话！' });
+    },
     handleRes(){
       const appid = "wx3df92dead7bcd174";
       const redirectUrl = encodeURI(

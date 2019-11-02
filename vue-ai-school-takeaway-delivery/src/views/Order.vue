@@ -54,6 +54,7 @@
                 第{{order.restNum}}饭堂
                 <van-icon name="arrow" class="icon" />
                 {{order.dormitory}}
+                <div class="lou" v-if="order.upstairs">要上楼</div>
                 <div class="end">
                   <van-icon name="clock-o" class="icon" />
                   {{order.shouldDeliveTime}}
@@ -90,7 +91,7 @@
                     v-else
                     type="primary"
                     @click="onOrderButtonClick(order.id,index)"
-                  >&nbsp接单&nbsp</van-button>
+                  >接单</van-button>
                 </div>
               </div>
             </van-collapse-item>
@@ -153,7 +154,7 @@ export default {
         "C19",
         "C20",
         "C21",
-        "C22",
+        "C22"
       ],
       chooseAddrValue: "",
       nearChecked: true,
@@ -273,7 +274,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += 5;
+          this.offset += (parseInt(this.orders[this.orders.length-1].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",

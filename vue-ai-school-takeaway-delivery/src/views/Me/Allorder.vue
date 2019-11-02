@@ -11,7 +11,7 @@
             <div slot="title" class="title">
               第{{orderDelive.order.restNum}}饭堂
               <van-icon name="arrow" class="icon" />
-              {{orderDelive.dormitory}}
+              {{orderDelive.dormitory}}{{orderDelive.order.upstairs>0?'要上楼':''}}
               <div class="end">
                 <van-icon name="clock-o" class="icon" />
                 {{orderDelive.delivedTime}}
@@ -116,7 +116,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += 5;
+          this.offset += (parseInt(this.orders[this.orders.length-1].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",

@@ -79,9 +79,10 @@ export default {
       showFood: false
     };
   },
-  created() {
-    this.restID = this.restInfo.id;
-    this.getData();
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getData();
+    });
   },
   computed: {
     restInfo() {
@@ -104,6 +105,7 @@ export default {
   },
   methods: {
     getData() {
+      this.restID = this.restInfo.id;
       this.$axios("https://takeawayapi.pykky.com/?s=Food.GetFoods", {
         params: {
           restID: this.restID

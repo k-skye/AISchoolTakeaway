@@ -1,32 +1,38 @@
 <template>
   <div class="order">
-    <div class="order-card-body" v-for="(order,index) in orders" :key="index">
-      <div class="order-card-wrap" @click="toOrderInfo(order)" v-if="order">
-        <img :src="'https://takeaway.pykky.com/restImgs/'+order.restLogo" alt />
-        <div class="order-card-content">
-          <div class="order-card-head">
-            <div class="title">
-              <a>
-                <span>{{order.restName}}</span>
-                <van-icon name="arrow" />
-              </a>
-              <p>{{order.statusText}}</p>
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
+        <div class="order-card-body" v-for="(order,index) in orders" :key="index">
+          <div class="order-card-wrap" @click="toOrderInfo(order)" v-if="order">
+            <img
+              :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+order.restLogo"
+              alt
+            />
+            <div class="order-card-content">
+              <div class="order-card-head">
+                <div class="title">
+                  <a>
+                    <span>{{order.restName}}</span>
+                  </a>
+                  <p>{{order.statusText}}</p>
+                </div>
+                <p class="date-time">{{order.createTime}}</p>
+              </div>
+              <div class="order-card-detail">
+                <p class="detail">{{order.showfood}}</p>
+                <p class="price">¥{{(parseFloat(order.payPrice)/100).toFixed(2)}}</p>
+              </div>
             </div>
-            <p class="date-time">{{order.createTime}}</p>
           </div>
-          <div class="order-card-detail">
-            <p class="detail">{{order.showfood}}</p>
-            <p class="price">¥{{order.payPrice}}</p>
+          <div class="order-card-bottom" v-show="order.status>=4 || order.status==0">
+            <button
+              class="cardbutton"
+              @click="$router.push({name: 'shop',params: {restID: order.restID}})"
+            >再来一单</button>
           </div>
         </div>
-      </div>
-      <div class="order-card-bottom" v-show="order.status>=4 || order.status==0">
-        <button
-          class="cardbutton"
-          @click="$router.push({name: 'shop',params: {restID: order.restID}})"
-        >再来一单</button>
-      </div>
-    </div>
+      </van-list>
+    </van-pull-refresh>
     <div class="nologin" v-if="firstlogin">
       <NoLoginInfo />
     </div>
@@ -43,6 +49,7 @@ export default {
   name: "order",
   data() {
     return {
+      isLoading: false,
       firstlogin: false,
       nodata: false,
       orderlist: [], //存放当前订单容器
@@ -59,6 +66,16 @@ export default {
     });
   },
   methods: {
+    onRefresh() {
+      this.orders = [];
+      this.orderlist = [];
+      this.size = 5;
+      this.allLoaded = false;
+      this.loading = true;
+      this.firstLoadData();
+      this.loadMore();
+      this.isLoading = false;
+    },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
       this.firstLoadData();
@@ -74,10 +91,10 @@ export default {
           limit: this.size
         }
       }).then(res => {
-        if (res.data.data.length == 0) {
-          // TODO
+        if (JSON.stringify(res.data.data) == "{}") {
           this.allLoaded = true;
           this.nodata = true;
+          this.loading = false;
           return;
         }
         this.orderlist = res.data.data;
@@ -90,7 +107,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.allLoaded) {
-          this.offset += 5;
+          this.offset += (parseInt(this.orders[0].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Orders.GetOnesAllOrders",
@@ -102,7 +119,7 @@ export default {
               }
             }
           ).then(res => {
-            if (res.data.length > 0) {
+            if (JSON.stringify(res.data.data) != "{}") {
               this.orderlist = res.data.data;
               this.handleData();
               this.loading = false;
@@ -162,7 +179,7 @@ export default {
             this.orders[i].statusText = "配送中";
             break;
           case 4:
-            this.orders[i].statusText = "已送达";
+            this.orders[i].statusText = "待评价";
             break;
           case 5:
             this.orders[i].statusText = "已评价";
@@ -239,12 +256,27 @@ export default {
         toData.deliverID = order.deliverID;
       }
       this.$router.push({ name: "orderInfo", params: toData });
+    },
+    forbidBack() {
+      window.history.pushState("forward", null, "#");
+      window.history.forward(1);
     }
   },
   computed: {
     userInfo() {
       return this.$store.getters.userInfo;
     }
+  },
+  mounted() {
+    // 监听手机物理返回键时禁止返回之前的路由
+    if (window.history && window.history.pushState) {
+      window.addEventListener("popstate", this.forbidBack, false);
+      this.forbidBack();
+    }
+  },
+  destoryed() {
+    // 离开页面时销毁监听
+    window.removeEventListener("popstate", this.forbidBack, false);
   },
   components: {
     NoLoginInfo,

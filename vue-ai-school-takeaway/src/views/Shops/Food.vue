@@ -6,7 +6,7 @@
       </div>
       <div class="foodpanel-body">
         <div class="foodpanel-foodimg">
-          <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
+          <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo" alt />
         </div>
         <div class="foodpanel-foodinfo">
           <h4>{{food.name}}</h4>

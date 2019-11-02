@@ -42,8 +42,10 @@ class comment {
         $t = time();
         $createTime = date('Y-m-d H:i:s',$t);
         $res = $model->addOneComment($text,$restID,$images,$stars,$userID,$createTime);
-        $rres = $modelOrder->userCommentOrder($orderID);
-        if ($res && $rres) {
+        $rres = $modelOrder->userCommentOrder($orderID,$res);
+        $modelDeliveOrder = new ModelDeliverorders();
+        $rrres = $modelDeliveOrder->updateCanComment($res);
+        if ($res && $rres && $rrres) {
             return $res;
         }else{
             return -1;

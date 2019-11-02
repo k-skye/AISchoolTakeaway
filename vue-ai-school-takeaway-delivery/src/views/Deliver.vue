@@ -15,9 +15,9 @@
             <van-tag v-if="orderDelive.order.status == 2 ? true : false" type="danger">待取</van-tag>
             <van-tag v-if="orderDelive.order.status == 3 ? true : false" type="primary">待送达</van-tag>
             <van-tag v-if="orderDelive.order.status == 4 ? true : false" type="success">已完成</van-tag>
-            &nbsp&nbsp第{{orderDelive.order.restNum}}饭堂
+            第{{orderDelive.order.restNum}}饭堂
             <van-icon name="arrow" class="icon" />
-            {{orderDelive.addr.dormitory}}
+            {{orderDelive.addr.dormitory}}<div class="lou" v-if="orderDelive.order.upstairs">要上楼</div>
             <div class="end">
               <van-icon name="clock-o" class="icon" />
               {{orderDelive.order.shouldDeliveTime}}
@@ -34,7 +34,7 @@
                 </div>
                 <div class="userphone">
                   <van-icon name="phone" class="icon" />
-                  <div class="phoneno">{{orderDelive.addr.phone}}</div>
+                  <div class="phoneno"><a :href="'tel:'+orderDelive.addr.phone">{{orderDelive.addr.phone}}</a></div>
                 </div>
               </div>
               <div class="notes">
@@ -51,7 +51,7 @@
               </div>
               <div class="address">
                 <van-icon name="location" class="icon" />
-                <div class="addr">{{orderDelive.addr.dormitory}} {{orderDelive.addr.roomNum}}</div>
+                <div class="addr">{{orderDelive.addr.dormitory}} {{orderDelive.addr.roomNum}}{{orderDelive.order.upstairs>0?'要上楼':''}}</div>
               </div>
             </div>
           </div>
@@ -185,7 +185,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += 5;
+          this.offset += (parseInt(this.orders[this.orders.length-1].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrder",
@@ -304,6 +304,9 @@ export default {
   .title {
     display: flex;
     align-items: center;
+    .van-tag{
+      margin-right: 5px;
+    }
     .icon {
       padding: 0 5px;
     }

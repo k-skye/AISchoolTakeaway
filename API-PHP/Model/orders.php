@@ -7,9 +7,10 @@ class orders extends NotORM {
 
     public function getOnesAllOrders($userID,$offset,$limit) {
         return $this->getORM()
-            ->where('userID = ?', $userID)
             ->where('id >= ?', $offset)
             ->limit($limit)
+            ->where('userID = ?', $userID)
+            ->order('createTime DESC')
             ->fetchAll();
     }
 
@@ -78,8 +79,8 @@ class orders extends NotORM {
         ->update($data);
     }
 
-    public function userCommentOrder($id) {
-        $data = array('status' => 5);
+    public function userCommentOrder($id,$commentID) {
+        $data = array('status' => 5,'hasComment' => 1,'commentID' => $commentID);
         return $this->getORM()
         ->where('id', $id)
         ->update($data);

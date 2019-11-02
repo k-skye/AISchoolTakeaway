@@ -73,7 +73,7 @@ class deliverusers extends NotORM {
     }
 
     public function updateNounToZero($ID) {
-        $data = array('noun' => 0);
+        $data = array('noun' => 0,'income' => 0);
         return $this->getORM()
         ->where('id', $ID)
         ->update($data);

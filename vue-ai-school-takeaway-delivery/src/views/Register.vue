@@ -33,19 +33,20 @@
     </div>
     <div class="upload">
       学生证：
-      <van-image
+<!--       <van-image
         width="100px"
         height="70px"
         fit="fill"
         :src="imgUrl"
         v-show="imgUrl == '' ? false : true"
-      />
-      <vueOssUploader
+      /> -->
+      <!-- <vueOssUploader
         :debug="false"
         path="/deliverCard/"
         v-on:success="uploaded"
         @error="showError"
-      ></vueOssUploader>
+      ></vueOssUploader> -->
+      <van-uploader v-model="imgUrlList" :max-count="1" :after-read="afterRead" />
     </div>
     <!-- 用户服务协议 -->
     <div class="login_des">
@@ -64,6 +65,7 @@
 <script>
 import InputGroup from "../components/InputGroup";
 import { Toast } from 'vant';
+const OSS = require("ali-oss");
 /* import axioskkk from "axios"; */
 export default {
   name: "login",
@@ -82,8 +84,10 @@ export default {
       realName: "",
       showPicker: false,
       columns: ["男", "女"],
-      uploadedUrl: "",
-      imgUrl: ""
+/*       uploadedUrl: "",
+      imgUrl: "", */
+      needUploadedUrls: [],
+      imgUrlList: [],
     };
   },
   computed: {
@@ -94,7 +98,7 @@ export default {
         !this.stuID ||
         !this.realName ||
         !this.sex ||
-        !this.uploadedUrl
+        this.needUploadedUrls == []
       ) {
         return true;
       } else return false;
@@ -104,7 +108,7 @@ export default {
     this.openid = this.getQueryVariable("openid");
   },
   methods: {
-    uploaded(res) {
+    /* uploaded(res) {
       this.uploadedUrl = res.ossPath;
       this.imgUrl = res.ossUrl;
       Toast('上传成功');
@@ -113,6 +117,47 @@ export default {
       this.errors = {
         sex: '图片上传失败' + e
       };
+    }, */
+    afterRead(file) {
+      const toastLoading = Toast.loading({
+        duration: 0,
+        message: "上传中...",
+        forbidClick: true
+      });
+      // 此时可以自行将文件上传至服务器
+      //file分成两部分 一个是base64后的内容 一个是file对象。这里用file对象即可
+      let client = new OSS({
+        accessKeyId: "LTAI4FxYGKep93a9uktmMKKK",
+        accessKeySecret: "R0aVpyguKOlY0AI1D8h2dpNZxvcYDJ",
+        endpoint: "oss-cn-shenzhen.aliyuncs.com", //阿里云oss的新东西
+        bucket: "takeawayschool",
+        secure: true
+      });
+      let date = new Date();
+      let name =
+        "deliverCard/" +
+        date.getFullYear() +
+        (date.getMonth() + 1) +
+        date.getDate() +
+        date.getHours() +
+        date.getMinutes() +
+        date.getSeconds() +
+        date.getMilliseconds() +
+        "." +
+        file.file.name.split(".").pop();
+      client
+        .put(name, file.file)
+        .then(res => {
+          this.needUploadedUrls.push(name);
+          toastLoading.clear();
+          Toast.success("上传成功");
+        })
+        .catch(err => {
+          Toast.fail("上传图片失败！" + err);
+          this.errors = {
+              sex: "图片上传失败，请重试！"
+            };
+        });
     },
     getQueryVariable(variable) {
       var query = window.location.search.substring(1);
@@ -138,7 +183,7 @@ export default {
           openid: this.openid,
           realName: this.realName,
           sex: this.sex,
-          cardImg: this.uploadedUrl
+          cardImg: JSON.stringify(this.needUploadedUrls)
         })
         .then(res => {
           // 检验成功 设置登录状态并且跳转到/

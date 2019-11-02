@@ -4,6 +4,7 @@
     <div class="input-group-wrap" @click="$emit('click')">
       <div class="input-wrap">
         <input
+          :readonly="noinput"
           v-if="!textarea"
           :type="type"
           :value="value"
@@ -42,7 +43,8 @@ export default {
     icon: String,
     textarea: String,
     tags: Array,
-    sex: String
+    sex: String,
+    noinput: Boolean
   },
   methods: {
     checkTag(item) {

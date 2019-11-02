@@ -14,35 +14,40 @@
         </li>
       </ul>-->
       <!-- 内容 -->
-      <ul class="comments-wrap">
-        <li v-for="(item,index) in evaluation" :key="index">
-          <div class="comment-user">
-            <img
-              :v-lazy="item.userAvatar || 'https://shadow.elemecdn.com/faas/h5/static/sprite.3ffb5d8.png'"
-              alt
-            />
-          </div>
-          <div class="comments-info">
-            <div class="comment-name">
-              <h4>{{item.userName}}</h4>
-              <small>{{(item.time).substring(0,(item.time).length-3)}}</small>
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+        <ul class="comments-wrap">
+          <li v-for="(item,index) in evaluation" :key="index">
+            <div class="comment-user">
+              <img :src="item.userAvatar" alt />
             </div>
-            <div class="comment-rating">
-              <Rating :rating="parseFloat(item.stars)" />
-              <span
-                :style="{color: ratingcontent(parseInt(item.stars)).color}"
-              >{{ratingcontent(parseInt(item.stars)).txt}}</span>
+            <div class="comments-info">
+              <div class="comment-name">
+                <h4>{{item.userName}}</h4>
+                <small>{{(item.time).substring(0,(item.time).length-3)}}</small>
+              </div>
+              <div class="comment-rating">
+                <Rating :rating="parseFloat(item.stars)" />
+                <span
+                  :style="{color: ratingcontent(parseInt(item.stars)).color}"
+                >{{ratingcontent(parseInt(item.stars)).txt}}</span>
+              </div>
+              <div class="comment-text">{{item.content}}</div>
+              <div class="comment-reply" v-show="item.reply!='未回复'">{{'伙伴回复：'+item.reply}}</div>
+              <ul class="comment-imgs">
+                <li v-for="(img,i) in item.images" :key="i">
+                  <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/'+img" alt />
+                </li>
+              </ul>
             </div>
-            <div class="comment-text">{{item.content}}</div>
-            <div class="comment-reply">{{item.reply}}</div>
-            <ul class="comment-imgs">
-              <li v-for="(img,i) in item.images" :key="i">
-                <img :src="img" alt />
-              </li>
-            </ul>
-          </div>
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </van-list>
+      <div class="nologin" v-if="nodata">
+        <div class="content">
+          <van-icon name="star-o" size="50" color="gray" />
+          <span>本店暂时没有评论噢，快来抢沙发！</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -53,24 +58,81 @@ export default {
   name: "Comments",
   data() {
     return {
-      restID: "1",
-      evaluation: null
+      restID: "0",
+      evaluation: [], //存放容器
+      loading: false,
+      finished: false,
+      offset: 1,
+      size: 5,
+      nodata: false
     };
+  },
+  computed: {
+    restInfo() {
+      return this.$store.getters.restInfo;
+    }
   },
   created() {
     this.getData();
   },
   methods: {
     getData() {
+      this.restID = this.restInfo.id;
+      this.firstLoadData();
+    },
+    firstLoadData() {
+      this.offset = 1;
+      this.finished = false;
+      // 拉取商家信息
       this.$axios("https://takeawayapi.pykky.com/?s=Comment.GetSomeComment", {
         params: {
           restID: this.restID,
-          offset: 1,
-          limit: 1
+          offset: this.offset,
+          limit: this.size
         }
       }).then(res => {
+        if (JSON.stringify(res.data.data) == "{}") {
+          this.finished = true;
+          this.loading = false;
+          this.nodata = true;
+          return;
+        }
         this.evaluation = res.data.data;
       });
+    },
+    onLoad() {
+      // 异步更新数据
+      setTimeout(() => {
+        if (!this.finished) {
+          this.offset += (parseInt(this.evaluation[this.evaluation.length-1].id));
+          // 拉取商家信息
+          this.$axios(
+            "https://takeawayapi.pykky.com/?s=Comment.GetSomeComment",
+            {
+              params: {
+                restID: this.restInfo.id,
+                offset: this.offset,
+                limit: this.size,
+              }
+            }
+          ).then(res => {
+            if (JSON.stringify(res.data.data) != "{}") {
+              res.data.data.forEach(element => {
+                this.evaluation.push(element);
+              });
+              this.loading = false;
+              if (res.data < this.size) {
+                this.finished = true;
+                this.loading = false;
+              }
+            } else {
+              // 数据为空
+              this.finished = true;
+              this.loading = false;
+            }
+          });
+        }
+      }, 500);
     },
     ratingcontent(rating) {
       const content = [
@@ -94,12 +156,31 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .comment {
   height: calc(100% - 10.666667vw);
   line-height: 1.2;
 }
-
+.nologin{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .content{
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      .van-icon{
+        display: flex;
+        justify-content: center;
+        width: 100vw;
+        padding-bottom: 15px;
+      }
+      span{
+        color: #323233;
+      }
+    }
+  }
 .shop-info {
   background-color: #fff;
   padding: 2.666667vw 3.2vw 0;
@@ -199,7 +280,7 @@ export default {
   margin: 0 0.533333vw;
 }
 .comment-imgs > li img {
-  width: 40vw;
-  height: 40vw;
+  width: 20vw;
+  height: 20vw;
 }
 </style>

@@ -28,7 +28,7 @@
         :showInfoModel="showInfoModel"
       />
 
-<!--       <!-- 评分月售
+<!--  评分月售
       <div class="rst-order">
         <span>评分{{shopInfo.stars}}</span>
         <span>月售{{shopInfo.salesNum}}单</span>

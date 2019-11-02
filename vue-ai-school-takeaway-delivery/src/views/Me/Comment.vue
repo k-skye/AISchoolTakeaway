@@ -1,6 +1,6 @@
 <template>
   <div class="comment">
-    <van-popup v-model="showReply" closeable :style="{ height: '20%',width: '80%' }">
+    <van-popup v-model="showReply" closeable :style="{ height: '30%',width: '80%' }">
       <div class="head">回复评论</div>
       <div class="contain">
         <van-cell-group title=" ">
@@ -22,7 +22,7 @@
               <van-tag v-if="orderDelive.hasComment == 0 ? true : false" type="primary">待回复</van-tag>
               <span
                 v-if="orderDelive.hasComment==0 ? true : false"
-              >&nbsp&nbsp第{{orderDelive.order.restNum}}饭堂</span>
+              >第{{orderDelive.order.restNum}}饭堂</span>
               <span v-else>第{{orderDelive.order.restNum}}饭堂</span>
               <van-icon name="arrow" class="icon" />
               {{orderDelive.dormitory}}
@@ -143,7 +143,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += 5;
+          this.offset += (parseInt(this.orderlist[this.orderlist.length-1].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrderCountCanComment",
@@ -156,7 +156,10 @@ export default {
             }
           ).then(res => {
             if (JSON.stringify(res.data.data) != "{}") {
-              this.orderlist = res.data.data;
+              res.data.data.forEach(element => {
+                element.images = JSON.parse(element.images);
+                this.orderlist.push(element);
+              });
               this.handleData();
               this.loading = false;
               if (res.data < this.size) {
@@ -243,6 +246,9 @@ export default {
   .title {
     display: flex;
     align-items: center;
+    .van-tag{
+      margin-right: 5px;
+    }
     .icon {
       padding: 0 5px;
     }

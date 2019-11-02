@@ -63,29 +63,48 @@ export default {
           stars: this.value
         })
         .then(res => {
-          if (res.data.data == "ok") {
+/*           if (res.data.data == "ok") { */
             Toast.success("评论成功");
             this.$router.push("order");
-          } else {
+/*           } else {
             Toast.fail("评论失败！" + res.data.msg);
-          }
+          } */
         });
     },
     afterRead(file) {
+      const toastLoading = Toast.loading({
+        duration: 0,
+        message: "上传中...",
+        forbidClick: true
+      });
       // 此时可以自行将文件上传至服务器
       //file分成两部分 一个是base64后的内容 一个是file对象。这里用file对象即可
       let client = new OSS({
         accessKeyId: "LTAI4FxYGKep93a9uktmMKKK",
         accessKeySecret: "R0aVpyguKOlY0AI1D8h2dpNZxvcYDJ",
-        endpoint: "oss-cn-shenzhen.aliyuncs.com",//阿里云oss的新东西
-        bucket: "takeawayschool"
+        endpoint: "oss-cn-shenzhen.aliyuncs.com", //阿里云oss的新东西
+        bucket: "takeawayschool",
+        secure: true
       });
       let date = new Date();
-      let name = "commentImg/"+this.userID+date.getFullYear()+(date.getMonth()+1)+date.getDate()+date.getHours()+date.getMinutes()+date.getSeconds()+date.getMilliseconds()+ '.' + file.file.name.split('.').pop();
+      let name =
+        "commentImg/" +
+        this.userID +
+        date.getFullYear() +
+        (date.getMonth() + 1) +
+        date.getDate() +
+        date.getHours() +
+        date.getMinutes() +
+        date.getSeconds() +
+        date.getMilliseconds() +
+        "." +
+        file.file.name.split(".").pop();
       client
         .put(name, file.file)
         .then(res => {
           this.needUploadedUrls.push(name);
+          toastLoading.clear();
+          Toast.success("上传成功");
         })
         .catch(err => {
           Toast.fail("上传图片失败！" + err);

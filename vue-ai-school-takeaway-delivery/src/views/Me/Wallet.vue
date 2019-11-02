@@ -47,7 +47,7 @@
         </div>
         <div class="outcome">
           <span class="left" @click="clickLeftInfo">
-            服务费&nbsp
+            服务费 
             <van-icon name="info-o" />
           </span>
           <span class="right">- ¥ {{(parseFloat(userInfo.income) * 0.2).toFixed(2)}}</span>
@@ -104,7 +104,7 @@ export default {
             //Toast.success("提现成功"); //微信还没接口之前的解决方案
             Dialog.alert({
               title: "成功",
-              message: "已提交提现申请！但因为我们是新平台，微信还不允许我们直接转账到你的零钱，所以麻烦加下客服微信：发你的名字来提现吧！"
+              message: "已提交提现申请！但因为我们是新平台注册未满一个月，微信官方还不允许我们直接转账到你的零钱，所以麻烦加下客服微信：17889465893，发你的名字来提现吧！"
             });
             //刷新userInfo
             const openid = localStorage.openid;
@@ -120,7 +120,10 @@ export default {
               this.$store.dispatch("setUserInfo", res.data.data);
             });
           } else {
-            Toast.fail("提现失败！" + res.data.msg);
+            Dialog.alert({
+              title: "提现失败",
+              message: res.data.msg
+            });
           }
         });
     },

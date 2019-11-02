@@ -44,6 +44,7 @@
           is-link
           @click="$router.push({name:'support',params: { userID: userInfo.id }})"
         />
+        <van-cell icon="service-o" title="联系客服" is-link @click="serviceClick" />
       </van-cell-group>
     </div>
     <van-popup v-model="showList" position="bottom">
@@ -62,6 +63,7 @@
 </template>
 
 <script>
+import { Dialog } from "vant";
 import NoLoginInfo from "../components/NoLoginInfo";
 export default {
   name: "me",
@@ -82,6 +84,11 @@ export default {
         : "http://takeawaydeliver.pykky.com/newICON.png";
   },
   methods: {
+    serviceClick() {
+      Dialog({
+        message: "请加平台客服微信：17889465893，如紧急可拨打此电话！"
+      });
+    },
     onChange() {
       this.showList = false;
     },
@@ -96,13 +103,15 @@ export default {
           }
         }
       ).then(res => {
-        res.data.data.forEach(element => {
-          element.forEach(item => {
-            item.condition = item.conditions;
+        if (res.data.data != 0) {
+          res.data.data.forEach(element => {
+            element.forEach(item => {
+              item.condition = item.conditions;
+            });
           });
-        });
-        this.disabledCoupons = res.data.data[0];
-        this.coupons = res.data.data[1];
+          this.disabledCoupons = res.data.data[0];
+          this.coupons = res.data.data[1];
+        }
       });
     },
     handleRes() {

@@ -63,7 +63,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += 5;
+          this.offset += (parseInt(this.trads[0].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
@@ -76,7 +76,9 @@ export default {
             }
           ).then(res => {
             if (JSON.stringify(res.data.data) != "{}") {
-              this.trads = res.data.data;
+              res.data.data.forEach(element => {
+                this.trads.push(element);
+              });
               this.loading = false;
               if (res.data < this.size) {
                 this.finished = true;

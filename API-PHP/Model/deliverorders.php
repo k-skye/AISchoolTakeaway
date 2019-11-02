@@ -11,6 +11,12 @@ class deliverorders extends NotORM {
             ->count();
     }
 
+    public function getOneOrderByID($deliverID) {
+        return $this->getORM()
+            ->where('deliverID = ?', $deliverID)
+            ->fetchOne();
+    }
+
     public function getOneOrderByorderID($orderID) {
         return $this->getORM()
             ->where('orderID = ?', $orderID)
@@ -81,4 +87,11 @@ class deliverorders extends NotORM {
         ->order('hasComment')
         ->fetchAll();
     }
+
+    public function updateCanComment($ID) {
+        $data = array('canComment' => 1);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    } 
 }

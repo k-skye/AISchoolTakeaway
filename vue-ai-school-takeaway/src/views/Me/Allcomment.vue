@@ -7,7 +7,10 @@
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <div class="order-card-body" v-for="(comment,index) in commentlist" :key="index">
           <div class="order-card-wrap">
-            <img :src="'https://takeaway.pykky.com/restImgs/'+comment.restLogo" alt />
+            <img
+              :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+comment.restLogo"
+              alt
+            />
             <div class="order-card-content">
               <div
                 class="order-card-head"
@@ -86,7 +89,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += 5;
+          this.offset += (parseInt(this.commentlist[this.commentlist.length-1].id));
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Comment.GetOnesComment",
@@ -101,8 +104,8 @@ export default {
             if (JSON.stringify(res.data.data) != "{}") {
               res.data.data.forEach(element => {
                 element.images = JSON.parse(element.images);
+                this.commentlist.push(element);
               });
-              this.commentlist = res.data.data;
               this.loading = false;
               if (res.data < this.size) {
                 this.finished = true;
@@ -190,10 +193,10 @@ export default {
     color: #999;
   }
   .order-card-detail {
-    display: flex;
     justify-content: space-between;
     padding: 4vw 3.466667vw 4vw 0;
     font-size: 0.8rem;
+    color: #323233;
   }
   .order-card-detail .detail {
     color: #323233;
@@ -202,9 +205,7 @@ export default {
   }
   .order-card-detail .price {
     flex-basis: 16vw;
-    text-align: right;
     color: #323233;
-    font-weight: 700;
   }
   .reply {
     display: flex;

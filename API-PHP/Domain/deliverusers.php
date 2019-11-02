@@ -9,6 +9,7 @@ use AlibabaCloud\Client\Exception\ServerException;
 use App\Model\address as ModelAddress;
 use App\Model\deliverorders as ModelDeliverorders;
 use App\Model\tradinglog as ModelTradinglog;
+use App\Model\orders as ModelOders;
 
 class deliverusers {
 
@@ -106,12 +107,17 @@ class deliverusers {
             $modelDeliverOrders = new ModelDeliverorders();
             $res['orderCount'] = $modelDeliverOrders->getOneOrderCountByID($res['id']);
             $res['commentCount'] = $modelDeliverOrders->getOneOrderCountCanComment($res['id']);
-
             $modelTradingLog = new ModelTradinglog();
             $logs = $modelTradingLog->getOneLogsNotDone($res['id']);
             $total = 0.0;
+            $modelorder = new ModelOders();
             foreach ($logs as $value) {
-                $total += $value['money'];
+                if ($value['money']>0) {
+                    //拿deliverID去搜orderID再找到totalPrice
+                    $DeliverOrderInfo = $modelDeliverOrders->getOneOrderByID($value['deliverID']);
+                    $orderInfo = $modelorder->getOnesOneOrder($DeliverOrderInfo['orderID']);
+                    $total += $orderInfo['totalPrice'];
+                }
             }
             $res['notDoneMoney'] = $total;
 
@@ -120,7 +126,9 @@ class deliverusers {
             $months = $modelTradingLog->getOneLogsMonthDone($res['id'],$createTime);
             $monthTotal = 0.0;
             foreach ($months as $value) {
-                $monthTotal += $value['money'];
+                if ($value['money']>0) {
+                    $monthTotal += $value['money'];
+                }
             }
             $res['thisMonthMoney'] = $monthTotal;
 

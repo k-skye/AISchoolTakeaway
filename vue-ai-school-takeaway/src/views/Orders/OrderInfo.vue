@@ -61,7 +61,7 @@
           <h3>{{orderDetail.restName}}</h3>
           <ul v-if="orderDetail.selectFoods">
             <li v-for="(food,index) in orderDetail.selectFoods" :key="index">
-              <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
+              <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo" alt />
               <div class="cart-group-info">
                 <span>{{food.name}}</span>
                 <span>¥{{food.price}}</span>
@@ -83,7 +83,7 @@
                   <span class="red">¥{{(orderDetail.value/100)}}</span>
                 </span>
                 <span>小计 ¥</span>
-                <span class="price">{{orderDetail.payPrice}}</span>
+                <span class="price">{{(parseFloat(orderDetail.payPrice)/100).toFixed(2)}}</span>
               </div>
             </li>
           </ul>

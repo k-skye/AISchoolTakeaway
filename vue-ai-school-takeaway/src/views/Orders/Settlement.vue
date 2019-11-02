@@ -6,6 +6,7 @@
         left-arrow
         @click-left="$router.push({name: 'shop',params: {restID: restInfo.id}})"
       />
+      <!-- @click-left="$router.push({name: 'shop',params: {restID: restInfo.id}})" -->
     </div>
     <van-popup v-model="showPicker" position="bottom">
       <van-picker
@@ -55,7 +56,10 @@
         <h3>{{restInfo.name}}</h3>
         <ul>
           <li v-for="(food,index) in orderInfo.selectFoods" :key="index">
-            <img :src="'https://takeaway.pykky.com/goodImgs/'+food.logo" alt />
+            <img
+              :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo"
+              alt
+            />
             <div class="cart-group-info">
               <span>{{food.name}}</span>
               <span>x {{food.count}}</span>
@@ -206,6 +210,10 @@ export default {
     });
   },
   methods: {
+    forbidBack() {
+      window.history.pushState("forward", null, "#");
+      window.history.forward(1);
+    },
     dateFormat(fmt, date) {
       let ret;
       let opt = {
@@ -239,10 +247,10 @@ export default {
         default:
           this.okFee = this.deliveFee;
           break;
-          if (Math.round(this.okFee) === this.okFee) {
-            //是整数，折扣-0.1
-            this.okFee -= 0.1;
-          }
+      }
+      if (Math.round(this.okFee) === this.okFee) {
+        //是整数，折扣-0.1
+        this.okFee -= 0.1;
       }
     },
     deliveryTime(time) {
@@ -267,7 +275,7 @@ export default {
       this.$router.push({
         name: "addAddress",
         params: {
-          title: "添加地址",
+          title: "添加地址提交",
           userInfo: this.userInfo,
           addressInfo: {
             name: "",
@@ -421,13 +429,15 @@ export default {
           }
         }
       ).then(res => {
-        res.data.data.forEach(element => {
-          element.forEach(item => {
-            item.condition = item.conditions;
+        if (res.data.data != 0) {
+          res.data.data.forEach(element => {
+            element.forEach(item => {
+              item.condition = item.conditions;
+            });
           });
-        });
-        this.disabledCoupons = res.data.data[0];
-        this.coupons = res.data.data[1];
+          this.disabledCoupons = res.data.data[0];
+          this.coupons = res.data.data[1];
+        }
       });
     },
     handlePay() {
@@ -469,7 +479,8 @@ export default {
         //有明天
         nowDate.setDate(nowDate.getDate() + 1);
       }
-      const finalFormatTime = this.dateFormat("YYYY-mm-dd ", nowDate) + finalTime;
+      const finalFormatTime =
+        this.dateFormat("YYYY-mm-dd ", nowDate) + finalTime;
       this.$axios
         .post("https://takeawayapi.pykky.com/?s=Orders.CreateOneOrder", {
           userID: this.userInfo.id,
@@ -492,9 +503,7 @@ export default {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
               // 使用以上方式判断前端返回,微信团队郑重提示：
               //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-              Dialog({
-                message: "支付成功"
-              });
+              Toast.success('支付成功');
               this.$router.push("/order");
             } else {
               Dialog({
@@ -508,6 +517,17 @@ export default {
           });
         });
     }
+  },
+  mounted() {
+    // 监听手机物理返回键时禁止返回之前的路由
+    if (window.history && window.history.pushState) {
+      window.addEventListener("popstate", this.forbidBack, false);
+      this.forbidBack();
+    }
+  },
+  destoryed() {
+    // 离开页面时销毁监听
+    window.removeEventListener("popstate", this.forbidBack, false);
   },
   components: {
     CartItem,
@@ -556,7 +576,7 @@ export default {
         align-items: center;
       }
       span {
-        display: inline-block;
+        /* display: inline-block; */
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -738,6 +758,8 @@ export default {
   }
   .delivery-right {
     text-align: right;
+    display: flex;
+    align-items: center;
   }
   .delivery-select {
     text-align: right;
