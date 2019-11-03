@@ -241,7 +241,8 @@ export default {
       isLoading: false,
       chooseRestNum: 0,
       chooseAddrNum: 0,
-      chooseNearNum: 1
+      chooseNearNum: 1,
+      preUserInfo: null
     };
   },
   computed: {
@@ -249,15 +250,21 @@ export default {
       return this.$store.getters.userInfo;
     }
   },
-  created() {
-    this.getData();
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.preUserInfo = to.params.preUserInfo;
+      vm.getData();
+    });
   },
   methods: {
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
-      this.chooseRestNum = this.userInfo.chooseRest;
-      this.chooseAddrNum = this.userInfo.chooseAddr;
-      this.chooseNearNum = this.userInfo.chooseNear;
+      if (this.preUserInfo == null) {
+        this.preUserInfo = this.userInfo;
+      }
+      this.chooseRestNum = this.preUserInfo.chooseRest;
+      this.chooseAddrNum = this.preUserInfo.chooseAddr;
+      this.chooseNearNum = this.preUserInfo.chooseNear;
       //筛选
       this.nearChecked = this.chooseNearNum == "1" ? true : false;
       switch (this.chooseRestNum) {

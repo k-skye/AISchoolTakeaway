@@ -11,10 +11,7 @@ export default new Router({
       path: '/',
       // name: 'index',
       component: () => import('./views/index.vue'),
-      children: [{
-          path: '',
-          redirect: '/order'
-        },
+      children: [
         {
           path: '/order',
           name: 'order',
