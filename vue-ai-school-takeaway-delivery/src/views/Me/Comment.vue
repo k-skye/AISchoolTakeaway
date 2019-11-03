@@ -1,42 +1,99 @@
 <template>
   <div class="comment">
-    <van-popup v-model="showReply" closeable :style="{ height: '30%',width: '80%' }">
-      <div class="head">回复评论</div>
+    <van-popup
+      v-model="showReply"
+      closeable
+      :style="{ height: '30%',width: '80%' }"
+    >
+      <div class="head">
+        回复评论
+      </div>
       <div class="contain">
         <van-cell-group title=" ">
-          <van-field v-model="message" type="textarea" placeholder="请输入内容" rows="1" autosize>
-            <van-button :disabled="hasText" slot="button" size="small" type="primary" @click="onReplyToButtonClick">回复</van-button>
+          <van-field
+            v-model="message"
+            type="textarea"
+            placeholder="请输入内容"
+            rows="1"
+            autosize
+          >
+            <van-button
+              slot="button"
+              :disabled="hasText"
+              size="small"
+              type="primary"
+              @click="onReplyToButtonClick"
+            >
+              回复
+            </van-button>
           </van-field>
         </van-cell-group>
       </div>
     </van-popup>
     <div class="header">
-      <van-nav-bar title="评价" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar
+        title="评价"
+        left-arrow
+        @click-left="$router.push('me')"
+      />
     </div>
     <div class="contain">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-        <van-collapse v-model="activeNames" v-for="(orderDelive,index) in orders" :key="index">
-          <van-collapse-item :name="index" :icon="orderDelive.hasComment == 0 ? '' : 'shop-o'">
-            <div slot="title" class="title">
-              <van-tag v-if="orderDelive.hasComment == 0 ? true : false" type="primary">待回复</van-tag>
+        <van-collapse
+          v-for="(orderDelive,index) in orders"
+          :key="index"
+          v-model="activeNames"
+        >
+          <van-collapse-item
+            :name="index"
+            :icon="orderDelive.hasComment == 0 ? '' : 'shop-o'"
+          >
+            <div
+              slot="title"
+              class="title"
+            >
+              <van-tag
+                v-if="orderDelive.hasComment == 0 ? true : false"
+                type="primary"
+              >
+                待回复
+              </van-tag>
               <span
                 v-if="orderDelive.hasComment==0 ? true : false"
-              >第{{orderDelive.order.restNum}}饭堂</span>
-              <span v-else>第{{orderDelive.order.restNum}}饭堂</span>
-              <van-icon name="arrow" class="icon" />
-              {{orderDelive.dormitory}}
+              >第{{ orderDelive.order.restNum }}饭堂</span>
+              <span v-else>第{{ orderDelive.order.restNum }}饭堂</span>
+              <van-icon
+                name="arrow"
+                class="icon"
+              />
+              {{ orderDelive.dormitory }}
               <div class="end">
-                <van-icon name="clock-o" class="icon" />
-                {{orderDelive.delivedTime}}
+                <van-icon
+                  name="clock-o"
+                  class="icon"
+                />
+                {{ orderDelive.delivedTime }}
               </div>
             </div>
             <div class="foods">
               <ul>
-                <li v-for="(food,indexFood) in orderDelive.order.foodsArr" :key="indexFood">
+                <li
+                  v-for="(food,indexFood) in orderDelive.order.foodsArr"
+                  :key="indexFood"
+                >
                   <div class="food">
-                    <div class="name">{{indexFood+1}}.{{food.name}}</div>
-                    <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
+                    <div class="name">
+                      {{ indexFood+1 }}.{{ food.name }}
+                    </div>
+                    <div class="price">
+                      ¥{{ parseFloat(food.price).toFixed(2) }}
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -44,19 +101,35 @@
             <van-divider />
             <div class="bottom">
               <div class="userComment">
-                <div class="title">客户评价：</div>
-                <div class="content">{{orderDelive.comment.content}}</div>
+                <div class="title">
+                  客户评价：
+                </div>
+                <div class="content">
+                  {{ orderDelive.comment.content }}
+                </div>
               </div>
               <van-divider />
               <div class="deliver">
                 <div class="deliveComment">
-                  <div class="title">您的回复：</div>
+                  <div class="title">
+                    您的回复：
+                  </div>
                   <div
                     class="content"
-                  >{{orderDelive.comment.deliverReply == "未回复"?'未回复':orderDelive.comment.deliverReply}}</div>
+                  >
+                    {{ orderDelive.comment.deliverReply == "未回复"?'未回复':orderDelive.comment.deliverReply }}
+                  </div>
                 </div>
-                <div class="replayButton" v-if="orderDelive.hasComment == 0 ? true : false">
-                  <van-button type="info" @click="onReplyButtonClick(index,orderDelive.comment.id,orderDelive.id)">回复评价</van-button>
+                <div
+                  v-if="orderDelive.hasComment == 0 ? true : false"
+                  class="replayButton"
+                >
+                  <van-button
+                    type="info"
+                    @click="onReplyButtonClick(index,orderDelive.comment.id,orderDelive.id)"
+                  >
+                    回复评价
+                  </van-button>
                 </div>
               </div>
             </div>
@@ -71,7 +144,7 @@
 import { Toast } from "vant";
 import { Dialog } from "vant";
 export default {
-  name: "comment",
+  name: "Comment",
   data() {
     return {
       orderlist: [], //存放当前订单容器
@@ -94,6 +167,15 @@ export default {
       vm.deliverID = to.params.deliverID;
       vm.firstLoadData();
     });
+  },
+  computed:{
+    hasText(){
+      if (this.message == "") {
+        return true;
+      }else{
+        return false;
+      }
+    }
   },
   methods: {
     firstLoadData() {
@@ -124,7 +206,6 @@ export default {
       //对商品数据处理
       var i = 0;
       this.orderlist.forEach(orders => {
-        var showfood = "";
         var OrderFoods = JSON.parse(orders.order.foods);
         var foodsArr = new Array();
         OrderFoods.forEach(id => {
@@ -218,15 +299,6 @@ export default {
         .catch(() => {
           // on cancel
         });
-    }
-  },
-  computed:{
-    hasText(){
-      if (this.message == "") {
-        return true;
-      }else{
-        return false;
-      }
     }
   }
 };

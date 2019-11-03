@@ -1,6 +1,9 @@
 <template>
   <div class="login">
-    <van-popup v-model="showPicker" position="bottom">
+    <van-popup
+      v-model="showPicker"
+      position="bottom"
+    >
       <van-picker
         show-toolbar
         :columns="columns"
@@ -12,28 +15,51 @@
       <img src="../assets/logo.png" alt="my login image" />
     </div>-->
     <!--  学号 -->
-    <InputGroup type="number" v-model="stuID" placeholder="学号" :error="errors.stuid" />
+    <InputGroup
+      v-model="stuID"
+      type="number"
+      placeholder="学号"
+      :error="errors.stuid"
+    />
     <!-- 手机号 -->
     <InputGroup
-      type="number"
       v-model="phone"
+      type="number"
       placeholder="手机号"
-      :btnTitle="btnTitle"
+      :btn-title="btnTitle"
       :disabled="disabled"
       :error="errors.phone"
       @btnClick="getVerifyCode"
     />
     <!-- 验证码 -->
-    <InputGroup type="number" v-model="verifyCode" placeholder="验证码" :error="errors.code" />
+    <InputGroup
+      v-model="verifyCode"
+      type="number"
+      placeholder="验证码"
+      :error="errors.code"
+    />
     <!-- 真实姓名 -->
-    <InputGroup type="text" v-model="realName" placeholder="真实姓名" :error="errors.realName" />
+    <InputGroup
+      v-model="realName"
+      type="text"
+      placeholder="真实姓名"
+      :error="errors.realName"
+    />
     <!-- 性别 -->
-    <div class="sex" @click="showPicker = true">
-      <InputGroup :noinput="true" type="text" :placeholder="placeholdSex" :error="errors.sex" />
+    <div
+      class="sex"
+      @click="showPicker = true"
+    >
+      <InputGroup
+        :noinput="true"
+        type="text"
+        :placeholder="placeholdSex"
+        :error="errors.sex"
+      />
     </div>
     <div class="upload">
       学生证：
-<!--       <van-image
+      <!--       <van-image
         width="100px"
         height="70px"
         fit="fill"
@@ -46,7 +72,11 @@
         v-on:success="uploaded"
         @error="showError"
       ></vueOssUploader> -->
-      <van-uploader v-model="imgUrlList" :max-count="1" :after-read="afterRead" />
+      <van-uploader
+        v-model="imgUrlList"
+        :max-count="1"
+        :after-read="afterRead"
+      />
     </div>
     <!-- 用户服务协议 -->
     <div class="login_des">
@@ -57,7 +87,12 @@
     </div>
     <!-- 登录按钮 -->
     <div class="login_btn">
-      <button :disabled="isClick" @click="handleLogin">注册</button>
+      <button
+        :disabled="isClick"
+        @click="handleLogin"
+      >
+        注册
+      </button>
     </div>
   </div>
 </template>
@@ -68,7 +103,10 @@ import { Toast } from 'vant';
 const OSS = require("ali-oss");
 /* import axioskkk from "axios"; */
 export default {
-  name: "login",
+  name: "Login",
+  components: {
+    InputGroup
+  },
   data() {
     return {
       phone: "",
@@ -147,7 +185,7 @@ export default {
         file.file.name.split(".").pop();
       client
         .put(name, file.file)
-        .then(res => {
+        .then(() => {
           this.needUploadedUrls.push(name);
           toastLoading.clear();
           Toast.success("上传成功");
@@ -280,9 +318,6 @@ export default {
           }
         });
     } */
-  },
-  components: {
-    InputGroup
   }
 };
 </script>

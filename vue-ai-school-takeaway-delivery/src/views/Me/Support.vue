@@ -1,9 +1,13 @@
 <template>
   <div class="support">
     <div class="header">
-      <van-nav-bar title="建议反馈" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar
+        title="建议反馈"
+        left-arrow
+        @click-left="$router.push('me')"
+      />
     </div>
-    <van-cell-group title=" " >
+    <van-cell-group title=" ">
       <van-field
         v-model="message"
         label="留言"
@@ -12,7 +16,14 @@
         rows="2"
         autosize
       >
-      <van-button slot="button" size="small" type="primary" @click="onSendButtonClick">留言</van-button>
+        <van-button
+          slot="button"
+          size="small"
+          type="primary"
+          @click="onSendButtonClick"
+        >
+          留言
+        </van-button>
       </van-field>
     </van-cell-group>
   </div>
@@ -21,7 +32,7 @@
 <script>
 import { Toast } from "vant";
 export default {
-  name: "support",
+  name: "Support",
   data() {
     return {
       message: "",

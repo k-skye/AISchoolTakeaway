@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <router-view></router-view>
+    <router-view />
     <TabBar :data="tabbarData" />
   </div>
 </template>
@@ -8,7 +8,10 @@
 <script>
 import TabBar from "../components/TabBar";
 export default {
-  name: "index",
+  name: "Index",
+  components: {
+    TabBar
+  },
   data() {
     return {
       tabbarData: [
@@ -81,9 +84,6 @@ export default {
       }
       return false;
     }
-  },
-  components: {
-    TabBar
   }
 };
 </script>

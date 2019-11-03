@@ -1,28 +1,60 @@
 <template>
   <div class="allorder">
     <div class="header">
-      <van-nav-bar title="全部订单" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar
+        title="全部订单"
+        left-arrow
+        @click-left="$router.push('me')"
+      />
     </div>
     <div class="contain">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
         <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-        <van-collapse v-model="activeNames" v-for="(orderDelive,index) in orders" :key="index">
-          <van-collapse-item :name="index" icon="shop-o">
-            <div slot="title" class="title">
-              第{{orderDelive.order.restNum}}饭堂
-              <van-icon name="arrow" class="icon" />
-              {{orderDelive.dormitory}}{{orderDelive.order.upstairs>0?'要上楼':''}}
+        <van-collapse
+          v-for="(orderDelive,index) in orders"
+          :key="index"
+          v-model="activeNames"
+        >
+          <van-collapse-item
+            :name="index"
+            icon="shop-o"
+          >
+            <div
+              slot="title"
+              class="title"
+            >
+              第{{ orderDelive.order.restNum }}饭堂
+              <van-icon
+                name="arrow"
+                class="icon"
+              />
+              {{ orderDelive.dormitory }}{{ orderDelive.order.upstairs>0?'要上楼':'' }}
               <div class="end">
-                <van-icon name="clock-o" class="icon" />
-                {{orderDelive.delivedTime}}
+                <van-icon
+                  name="clock-o"
+                  class="icon"
+                />
+                {{ orderDelive.delivedTime }}
               </div>
             </div>
             <div class="foods">
               <ul>
-                <li v-for="(food,indexFood) in orderDelive.order.foodsArr" :key="indexFood">
+                <li
+                  v-for="(food,indexFood) in orderDelive.order.foodsArr"
+                  :key="indexFood"
+                >
                   <div class="food">
-                    <div class="name">{{indexFood+1}}.{{food.name}}</div>
-                    <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
+                    <div class="name">
+                      {{ indexFood+1 }}.{{ food.name }}
+                    </div>
+                    <div class="price">
+                      ¥{{ parseFloat(food.price).toFixed(2) }}
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -30,14 +62,22 @@
             <van-divider />
             <div class="bottom">
               <div class="totalMoney">
-                <div class="totalTitle">商品总价：</div>
+                <div class="totalTitle">
+                  商品总价：
+                </div>
                 <div
                   class="totalPrice"
-                >¥{{parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
+                >
+                  ¥{{ parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
+                </div>
               </div>
               <div class="incomeMoney">
-                <div class="totalTitle">已得配送费：</div>
-                <div class="totalPrice">¥{{parseFloat(orderDelive.order.deliveFee).toFixed(2)}}</div>
+                <div class="totalTitle">
+                  已得配送费：
+                </div>
+                <div class="totalPrice">
+                  ¥{{ parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
+                </div>
               </div>
             </div>
           </van-collapse-item>
@@ -49,7 +89,7 @@
 
 <script>
 export default {
-  name: "allorder",
+  name: "Allorder",
   data() {
     return {
       orderlist: [], //存放当前订单容器
@@ -97,7 +137,6 @@ export default {
       //对商品数据处理
       var i = 0;
       this.orderlist.forEach(orders => {
-        var showfood = "";
         var OrderFoods = JSON.parse(orders.order.foods);
         var foodsArr = new Array();
         OrderFoods.forEach(id => {

@@ -9,31 +9,51 @@
       @click="show = true"
     />
 
-    <van-popup v-model="show" position="bottom">
-      <van-picker show-toolbar :columns="data" @cancel="show = false" @confirm="onConfirm" />
+    <van-popup
+      v-model="show"
+      position="bottom"
+    >
+      <van-picker
+        show-toolbar
+        :columns="data"
+        @cancel="show = false"
+        @confirm="onConfirm"
+      />
     </van-popup>
   </div>
 </template>
 
 <script>
 export default {
-  name: "choose",
+  name: "Choose",
+  props: {
+    label: {
+      type: String,
+      default: ""
+    },
+    value: {
+      type: String,
+      default: ""
+    },
+    placeholder: {
+      type: String,
+      default: ""
+    },
+    data: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       show: false,
       changeValue: ""
     };
   },
-  props: {
-    label: String,
-    value: String,
-    placeholder: String,
-    data: Array
-  },
   methods: {
     onConfirm(value) {
       this.changeValue = value;
-      this.$emit("getValue",this.changeValue);
+      this.$emit("getValue", this.changeValue);
       this.show = false;
     }
   }

@@ -2,8 +2,12 @@
   <div class="nodeliveorderinfo">
     <div class="nologin">
       <div class="content">
-      <van-icon name="shopping-cart-o" size="50" color="gray"/>
-      <span>您没有待配送的单噢，先去接单吧！</span>
+        <van-icon
+          name="shopping-cart-o"
+          size="50"
+          color="gray"
+        />
+        <span>您没有待配送的单噢，先去接单吧！</span>
       </div>
     </div>
   </div>
@@ -11,7 +15,7 @@
 
 <script>
 export default {
-  name: "nodeliveorderinfo"
+  name: "Nodeliveorderinfo"
 };
 </script>
 

@@ -2,23 +2,33 @@
   <div class="me">
     <div class="header">
       <div class="head-img">
-        <img :src="logoImgUrl" />
+        <img :src="logoImgUrl">
       </div>
-      <div v-if="firstlogin" class="reg" @click="handleRes">
+      <div
+        v-if="firstlogin"
+        class="reg"
+        @click="handleRes"
+      >
         点击注册
         <van-icon name="arrow" />
       </div>
-      <div v-else class="info">
-        {{userInfo.name}}
-        <br />
+      <div
+        v-else
+        class="info"
+      >
+        {{ userInfo.name }}
+        <br>
         <div class="phone">
           <van-icon name="phone" />
-          {{userInfo.phoneNo}}
+          {{ userInfo.phoneNo }}
         </div>
         <!-- <van-icon name="arrow" /> -->
       </div>
     </div>
-    <div class="contain" v-if="!firstlogin">
+    <div
+      v-if="!firstlogin"
+      class="contain"
+    >
       <van-cell-group title=" ">
         <van-cell
           icon="paid"
@@ -36,7 +46,12 @@
         >
           <template slot="title">
             <span class="custom-title">订单</span>
-            <van-tag round type="success">{{userInfo.orderCount}}</van-tag>
+            <van-tag
+              round
+              type="success"
+            >
+              {{ userInfo.orderCount }}
+            </van-tag>
           </template>
         </van-cell>
         <van-cell
@@ -46,14 +61,34 @@
         >
           <template slot="title">
             <span class="custom-title">评价</span>
-            <van-tag round type="warning">{{userInfo.commentCount}}</van-tag>
+            <van-tag
+              round
+              type="warning"
+            >
+              {{ userInfo.commentCount }}
+            </van-tag>
           </template>
         </van-cell>
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="question-o" to="help" title="帮助" is-link />
-        <van-cell icon="notes-o" to="protocol" title="协议" is-link />
-        <van-cell icon="bullhorn-o" @click="$router.push({name:'support',params: { deliverID: userInfo.id }})" title="建议反馈" is-link />
+        <van-cell
+          icon="question-o"
+          to="help"
+          title="帮助"
+          is-link
+        />
+        <van-cell
+          icon="notes-o"
+          to="protocol"
+          title="协议"
+          is-link
+        />
+        <van-cell
+          icon="bullhorn-o"
+          title="建议反馈"
+          is-link
+          @click="$router.push({name:'support',params: { deliverID: userInfo.id }})"
+        />
         <van-cell
           icon="service-o"
           title="联系客服"
@@ -62,7 +97,10 @@
         />
       </van-cell-group>
     </div>
-    <div class="nologin" v-else>
+    <div
+      v-else
+      class="nologin"
+    >
       <NoLoginInfo />
     </div>
   </div>
@@ -72,12 +110,20 @@
 import NoLoginInfo from "../components/NoLoginInfo";
 import { Dialog } from 'vant';
 export default {
-  name: "me",
+  name: "Me",
+  components: {
+    NoLoginInfo
+  },
   data() {
     return {
       firstlogin: false,
       logoImgUrl: ""
     };
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
   },
   created() {
     this.firstlogin = localStorage.firstlogin == 0 ? false : true;
@@ -119,14 +165,6 @@ export default {
         this.$store.dispatch("setUserInfo", res.data.data);
       });
     }
-  },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
-    }
-  },
-  components: {
-    NoLoginInfo
   }
 };
 </script>

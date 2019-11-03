@@ -1,22 +1,30 @@
 <template>
   <div class="tabbar">
-    <van-tabbar route safe-area-inset-bottom>
+    <van-tabbar
+      route
+      safe-area-inset-bottom
+    >
       <van-tabbar-item
-        replace
         v-for="(item,index) in data"
         :key="index"
+        replace
         :to="item.path"
         :icon="item.icon"
-      >{{item.title}}</van-tabbar-item>
+      >
+        {{ item.title }}
+      </van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
 
 <script>
 export default {
-  name: "tabbar",
+  name: "Tabbar",
   props: {
-    data: Array
+    data: {
+      type: Array,
+      default: () => []
+    }
   }
 };
 </script>

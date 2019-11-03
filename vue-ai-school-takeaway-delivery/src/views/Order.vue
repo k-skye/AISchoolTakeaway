@@ -1,13 +1,20 @@
 <template>
   <div class="order">
-    <div v-if="!firstlogin" class="header">
+    <div
+      v-if="!firstlogin"
+      class="header"
+    >
       <div class="headerContain">
         <!-- <div class="orderButton">暂时不用，未来可能用到
           <van-switch :value="orderChecked" @input="onOrderInput" />
           <div class="headerTitle">{{orderChecked ? '接单提醒:开' : '接单提醒:关'}}</div>
         </div>-->
         <div class="headerEndButton">
-          <van-icon :size="28" name="setting-o" @click="onSetting" />
+          <van-icon
+            :size="28"
+            name="setting-o"
+            @click="onSetting"
+          />
         </div>
       </div>
     </div>
@@ -19,56 +26,105 @@
       :style="{ height: '38%' }"
     >
       <div class="settings">
-        <div class="head">筛选</div>
+        <div class="head">
+          筛选
+        </div>
         <div class="chooses">
           <Choose
             label="饭堂"
             :value="chooseRestValue"
-            @getValue="getRestValue"
             placeholder="选择饭堂"
             :data="rests"
+            @getValue="getRestValue"
           />
           <Choose
             label="收货地址"
             :value="chooseAddrValue"
-            @getValue="getAddrValue"
             placeholder="选择收货地址"
             :data="addrs"
+            @getValue="getAddrValue"
           />
         </div>
         <div class="isNear">
-          <div class="title">包括附近的宿舍</div>
+          <div class="title">
+            包括附近的宿舍
+          </div>
           <div class="nearSwitch">
-            <van-switch :value="nearChecked" @input="onNearInput" />
+            <van-switch
+              :value="nearChecked"
+              @input="onNearInput"
+            />
           </div>
         </div>
       </div>
     </van-popup>
-    <div v-if="!firstlogin" class="content">
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <div
+      v-if="!firstlogin"
+      class="content"
+    >
+      <van-pull-refresh
+        v-model="isLoading"
+        @refresh="onRefresh"
+      >
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+        >
           <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
-          <van-collapse v-model="activeNames" v-for="(order,index) in orders" :key="index">
-            <van-collapse-item :name="index" :icon="order.haveSumit == 1 ? 'checked' : 'shop-o'">
-              <div slot="title" class="title">
-                第{{order.restNum}}饭堂
-                <van-icon name="arrow" class="icon" />
-                {{order.dormitory}}
-                <div class="lou" v-if="order.upstairs">要上楼</div>
+          <van-collapse
+            v-for="(order,index) in orders"
+            :key="index"
+            v-model="activeNames"
+          >
+            <van-collapse-item
+              :name="index"
+              :icon="order.haveSumit == 1 ? 'checked' : 'shop-o'"
+            >
+              <div
+                slot="title"
+                class="title"
+              >
+                第{{ order.restNum }}饭堂
+                <van-icon
+                  name="arrow"
+                  class="icon"
+                />
+                {{ order.dormitory }}
+                <div
+                  v-if="order.upstairs"
+                  class="lou"
+                >
+                  要上楼
+                </div>
                 <div class="end">
-                  <van-icon name="clock-o" class="icon" />
-                  {{order.shouldDeliveTime}}
-                  <van-icon name="bag-o" class="icon" />
-                  x{{order.foodsCount}}
+                  <van-icon
+                    name="clock-o"
+                    class="icon"
+                  />
+                  {{ order.shouldDeliveTime }}
+                  <van-icon
+                    name="bag-o"
+                    class="icon"
+                  />
+                  x{{ order.foodsCount }}
                   <!-- <van-icon name="contact" class="icon" />男 -->
                 </div>
               </div>
               <div class="foods">
                 <ul>
-                  <li v-for="(food,indexFood) in order.foodsArr" :key="indexFood">
+                  <li
+                    v-for="(food,indexFood) in order.foodsArr"
+                    :key="indexFood"
+                  >
                     <div class="food">
-                      <div class="name">{{indexFood+1}}.{{food.name}}</div>
-                      <div class="price">¥{{parseFloat(food.price).toFixed(2)}}</div>
+                      <div class="name">
+                        {{ indexFood+1 }}.{{ food.name }}
+                      </div>
+                      <div class="price">
+                        ¥{{ parseFloat(food.price).toFixed(2) }}
+                      </div>
                     </div>
                   </li>
                 </ul>
@@ -76,22 +132,37 @@
               <van-divider />
               <div class="bottom">
                 <div class="totalMoney">
-                  <div class="totalTitle">商品总价：</div>
+                  <div class="totalTitle">
+                    商品总价：
+                  </div>
                   <div
                     class="totalPrice"
-                  >¥{{parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2)}}</div>
+                  >
+                    ¥{{ parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2) }}
+                  </div>
                 </div>
                 <div class="incomeMoney">
-                  <div class="totalTitle">可得配送费：</div>
-                  <div class="totalPrice">¥{{parseFloat(order.deliveFee).toFixed(2)}}</div>
+                  <div class="totalTitle">
+                    可得配送费：
+                  </div>
+                  <div class="totalPrice">
+                    ¥{{ parseFloat(order.deliveFee).toFixed(2) }}
+                  </div>
                 </div>
                 <div class="orderThisButton">
-                  <van-button v-if="order.status == 2 ? true : false" type="info">已接单</van-button>
+                  <van-button
+                    v-if="order.status == 2 ? true : false"
+                    type="info"
+                  >
+                    已接单
+                  </van-button>
                   <van-button
                     v-else
                     type="primary"
                     @click="onOrderButtonClick(order.id,index)"
-                  >接单</van-button>
+                  >
+                    接单
+                  </van-button>
                 </div>
               </div>
             </van-collapse-item>
@@ -99,7 +170,10 @@
         </van-list>
       </van-pull-refresh>
     </div>
-    <div class="nologin" v-else>
+    <div
+      v-else
+      class="nologin"
+    >
       <NoLoginInfo />
     </div>
   </div>
@@ -112,7 +186,11 @@ import { Toast } from "vant";
 import NoLoginInfo from "../components/NoLoginInfo";
 
 export default {
-  name: "deliver",
+  name: "Deliver",
+  components: {
+    Choose,
+    NoLoginInfo
+  },
   data() {
     return {
       orderlist: [], //存放当前订单容器
@@ -166,6 +244,11 @@ export default {
       chooseNearNum: 1
     };
   },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
+  },
   created() {
     this.getData();
   },
@@ -196,13 +279,14 @@ export default {
         default:
           break;
       }
+      var str = "";
       switch (this.chooseAddrNum) {
         case "0":
           this.chooseAddrValue = "全部";
           break;
         default:
           //其他数字-正则匹配
-          const str = "C" + this.chooseAddrNum;
+          str = "C" + this.chooseAddrNum;
           this.chooseAddrValue = str;
           break;
       }
@@ -236,7 +320,6 @@ export default {
       //对商品数据处理
       var i = 0;
       this.orderlist.forEach(order => {
-        var showfood = "";
         var OrderFoods = JSON.parse(order.foods);
         var foodsArr = new Array();
         OrderFoods.forEach(id => {
@@ -274,7 +357,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += (parseInt(this.orders[this.orders.length-1].id));
+          this.offset += parseInt(this.orders[this.orders.length - 1].id);
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
@@ -341,8 +424,7 @@ export default {
           break;
         default:
           //其他数字-正则匹配
-          const num = data.replace(/[^0-9]/gi, "");
-          needNum = num;
+          needNum = data.replace(/[^0-9]/gi, "");
           break;
       }
       this.chooseAddrNum = needNum;
@@ -419,15 +501,6 @@ export default {
           // on cancel
         });
     }
-  },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
-    }
-  },
-  components: {
-    Choose,
-    NoLoginInfo
   }
 };
 </script>

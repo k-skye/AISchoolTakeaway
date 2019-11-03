@@ -15,45 +15,73 @@
       </div>
     </van-popup>-->
     <div class="header">
-      <van-nav-bar title="钱包" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar
+        title="钱包"
+        left-arrow
+        @click-left="$router.push('me')"
+      />
     </div>
     <div class="showMoney">
       <div class="totalMoney">
-        ¥ {{userInfo.noun}}
-        <br />
-        <span>含收入¥ {{userInfo.income}}</span>
+        ¥ {{ userInfo.noun }}
+        <br>
+        <span>含收入¥ {{ userInfo.income }}</span>
       </div>
       <div class="payButton">
-        <van-button type="primary" @click="showPopup">提现到零钱</van-button>
+        <van-button
+          type="primary"
+          @click="showPopup"
+        >
+          提现到零钱
+        </van-button>
       </div>
     </div>
-    <van-popup v-model="show" closeable :style="{ height: '50%',width: '80%' }">
+    <van-popup
+      v-model="show"
+      closeable
+      :style="{ height: '50%',width: '80%' }"
+    >
       <div class="popup">
-        <p class="header">提现</p>
-        <p class="head">提现到微信零钱</p>
+        <p class="header">
+          提现
+        </p>
+        <p class="head">
+          提现到微信零钱
+        </p>
         <p
           class="total"
-        >¥ {{(parseFloat(userInfo.noun) - (parseFloat(userInfo.income) * 0.2)).toFixed(2)}}</p>
+        >
+          ¥ {{ (parseFloat(userInfo.noun) - (parseFloat(userInfo.income) * 0.2)).toFixed(2) }}
+        </p>
         <van-divider />
         <div class="foodPay">
           <span class="left">商品原价</span>
           <span
             class="right"
-          >¥ {{(parseFloat(userInfo.noun) - parseFloat(userInfo.income)).toFixed(2)}}</span>
+          >¥ {{ (parseFloat(userInfo.noun) - parseFloat(userInfo.income)).toFixed(2) }}</span>
         </div>
         <div class="income">
           <span class="left">实际收入</span>
-          <span class="right">¥ {{userInfo.income}}</span>
+          <span class="right">¥ {{ userInfo.income }}</span>
         </div>
         <div class="outcome">
-          <span class="left" @click="clickLeftInfo">
+          <span
+            class="left"
+            @click="clickLeftInfo"
+          >
             服务费 
             <van-icon name="info-o" />
           </span>
-          <span class="right">- ¥ {{(parseFloat(userInfo.income) * 0.2).toFixed(2)}}</span>
+          <span class="right">- ¥ {{ (parseFloat(userInfo.income) * 0.2).toFixed(2) }}</span>
         </div>
         <div class="yesButton">
-          <van-button type="primary" size="large" @click="onCashButtonClick">提现</van-button>
+          <van-button
+            type="primary"
+            size="large"
+            @click="onCashButtonClick"
+          >
+            提现
+          </van-button>
         </div>
       </div>
     </van-popup>
@@ -64,7 +92,12 @@
           title="待确认收货"
           :value="'¥'+((parseFloat(userInfo.notDoneMoney)).toFixed(2))"
         />
-        <van-cell icon="newspaper-o" title="账单明细" is-link to="billdetail" />
+        <van-cell
+          icon="newspaper-o"
+          title="账单明细"
+          is-link
+          to="billdetail"
+        />
         <van-cell
           icon="balance-o"
           title="月收入"
@@ -78,14 +111,18 @@
 
 <script>
 import { Dialog } from "vant";
-import { Toast } from "vant";
 export default {
-  name: "me",
+  name: "Me",
   data() {
     return {
       show: false,
       finallyMoney: 0
     };
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
   },
   methods: {
     showPopup() {
@@ -141,11 +178,6 @@ export default {
       this.oldpass = "";
       this.newpass = "";
     } */
-  },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
-    }
   }
 };
 </script>

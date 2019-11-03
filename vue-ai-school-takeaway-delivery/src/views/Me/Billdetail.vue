@@ -1,17 +1,44 @@
 <template>
   <div class="billdetail">
     <div class="header">
-      <van-nav-bar title="账单明细" left-arrow @click-left="$router.push('wallet')" />
+      <van-nav-bar
+        title="账单明细"
+        left-arrow
+        @click-left="$router.push('wallet')"
+      />
     </div>
     <div class="contain">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-cell-group v-for="(trad,index) in trads" :key="index" >
-          <van-cell :title="trad.date" icon="clock-o">
-            {{trad.type}}
-            {{trad.done == 0 && trad.type == '提现' ? ' (待到账)':''}}
-            {{trad.done == 0 && trad.type == '配送费' ? ' (待确认收货)':''}}
-            <div class="right-in" v-if="(trad.money > 0)" slot="default">+ ¥{{parseFloat(trad.money).toFixed(2)}}</div>
-            <div class="right-out" v-else slot="default">- ¥{{Math.abs(parseFloat(trad.money).toFixed(2))}}</div>
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <van-cell-group
+          v-for="(trad,index) in trads"
+          :key="index"
+        >
+          <van-cell
+            :title="trad.date"
+            icon="clock-o"
+          >
+            {{ trad.type }}
+            {{ trad.done == 0 && trad.type == '提现' ? ' (待到账)':'' }}
+            {{ trad.done == 0 && trad.type == '配送费' ? ' (待确认收货)':'' }}
+            <div
+              v-if="(trad.money > 0)"
+              slot="default"
+              class="right-in"
+            >
+              + ¥{{ parseFloat(trad.money).toFixed(2) }}
+            </div>
+            <div
+              v-else
+              slot="default"
+              class="right-out"
+            >
+              - ¥{{ Math.abs(parseFloat(trad.money).toFixed(2)) }}
+            </div>
           </van-cell>
         </van-cell-group>
       </van-list>
@@ -21,7 +48,7 @@
 
 <script>
 export default {
-  name: "billdetail",
+  name: "Billdetail",
   data() {
     return {
       loading: false,
@@ -35,6 +62,11 @@ export default {
     next(vm => {
       vm.firstLoadData();
     });
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
   },
   methods:{
     firstLoadData() {
@@ -92,11 +124,6 @@ export default {
           });
         }
       }, 500);
-    }
-  },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
     }
   }
 };
