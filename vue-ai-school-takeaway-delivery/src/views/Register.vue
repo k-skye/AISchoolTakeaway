@@ -136,7 +136,8 @@ export default {
         !this.stuID ||
         !this.realName ||
         !this.sex ||
-        this.needUploadedUrls == []
+        this.needUploadedUrls.length == 0 ||
+        this.imgUrlList.length == 0
       ) {
         return true;
       } else return false;
