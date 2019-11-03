@@ -1,16 +1,19 @@
 <template>
   <div @click.self="hideView">
     <!-- 导航 -->
-    <div v-if="filterData" class="filter_wrap">
+    <div
+      v-if="filterData"
+      class="filter_wrap"
+    >
       <aside class="filter">
         <div
-          class="filter-nav"
           v-for="(item,index) in filterData"
           :key="index"
+          class="filter-nav"
           :class="{'filter-bold':currentFilter==index}"
           @click="filterSort(index)"
         >
-          <span>{{item.name}}</span>
+          <span>{{ item.name }}</span>
         </div>
       </aside>
     </div>
@@ -20,13 +23,16 @@
 <script>
 export default {
   name: "FilterView",
+  props: {
+    filterData: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       currentFilter: 0
     };
-  },
-  props: {
-    filterData: Array
   },
   methods: {
     filterSort(index) {
@@ -87,5 +93,4 @@ export default {
   font-weight: 600;
   color: #333;
 }
-
 </style>

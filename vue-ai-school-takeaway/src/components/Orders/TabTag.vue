@@ -6,7 +6,7 @@
       class="form-span"
       :class="{'checked':selectTag == item}"
       @click="$emit('checkTag',item)"
-    >{{item}}</span>
+    >{{ item }}</span>
   </div>
 </template>
 
@@ -14,8 +14,14 @@
 export default {
   name: "TabTag",
   props: {
-    tags: Array,
-    selectTag: String
+    tags: {
+      type: Array,
+      default: () => []
+    },
+    selectTag: {
+      type: String,
+      default: ""
+    }
   }
 };
 </script>

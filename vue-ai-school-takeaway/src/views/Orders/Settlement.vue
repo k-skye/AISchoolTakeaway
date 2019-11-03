@@ -8,7 +8,10 @@
       />
       <!-- @click-left="$router.push({name: 'shop',params: {restID: restInfo.id}})" -->
     </div>
-    <van-popup v-model="showPicker" position="bottom">
+    <van-popup
+      v-model="showPicker"
+      position="bottom"
+    >
       <van-picker
         show-toolbar
         :columns="columns"
@@ -16,71 +19,100 @@
         @confirm="onConfirm"
       />
     </van-popup>
-    <div class="view-body" v-if="orderInfo">
+    <div
+      v-if="orderInfo"
+      class="view-body"
+    >
       <!-- 收货地址 -->
       <section class="cart-address">
-        <p class="title">订单配送至</p>
+        <p class="title">
+          订单配送至
+        </p>
         <p class="address-detail">
           <span
-            @click="$router.push('/myAddress')"
             v-if="addrInfo"
-          >{{addrInfo.dormitory}} {{addrInfo.roomNum}}</span>
+            @click="$router.push('/myAddress')"
+          >{{ addrInfo.dormitory }} {{ addrInfo.roomNum }}</span>
           <span v-else>
-            <span v-if="haveAddress" @click="$router.push('/myAddress')">选择收货地址</span>
-            <span v-else @click="addAddress">新增收货地址</span>
+            <span
+              v-if="haveAddress"
+              @click="$router.push('/myAddress')"
+            >选择收货地址</span>
+            <span
+              v-else
+              @click="addAddress"
+            >新增收货地址</span>
           </span>
-          <i class="fa fa-angle-right"></i>
+          <i class="fa fa-angle-right" />
         </p>
-        <h2 v-if="addrInfo" class="address-name">
-          <span>{{addrInfo.name}}</span>
-          <span v-if="addrInfo.gender">({{addrInfo.gender == 1 ? '先生' : '小姐'}})</span>
-          <span class="phone">{{addrInfo.phone}}</span>
+        <h2
+          v-if="addrInfo"
+          class="address-name"
+        >
+          <span>{{ addrInfo.name }}</span>
+          <span v-if="addrInfo.gender">({{ addrInfo.gender == 1 ? '先生' : '小姐' }})</span>
+          <span class="phone">{{ addrInfo.phone }}</span>
         </h2>
       </section>
 
       <!-- 送达时间 -->
-      <section class="checkout-section" @click="showPicker = true">
+      <section
+        class="checkout-section"
+        @click="showPicker = true"
+      >
         <div class="delivery">
           <div class="deliver-left">
             <span class="delivery-time">送达时间</span>
           </div>
           <div class="delivery-right">
-            <span class="delivery-select">{{okTime}}</span>
-            <i class="fa fa-angle-right"></i>
+            <span class="delivery-select">{{ okTime }}</span>
+            <i class="fa fa-angle-right" />
           </div>
         </div>
       </section>
 
       <!-- 点餐内容 -->
       <section class="checkout-section cart-group">
-        <h3>{{restInfo.name}}</h3>
+        <h3>{{ restInfo.name }}</h3>
         <ul>
-          <li v-for="(food,index) in orderInfo.selectFoods" :key="index">
+          <li
+            v-for="(food,index) in orderInfo.selectFoods"
+            :key="index"
+          >
             <img
               :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo"
               alt
-            />
+            >
             <div class="cart-group-info">
-              <span>{{food.name}}</span>
-              <span>x {{food.count}}</span>
-              <span>¥{{parseFloat((food.price)).toFixed(2)}}</span>
+              <span>{{ food.name }}</span>
+              <span>x {{ food.count }}</span>
+              <span>¥{{ parseFloat((food.price)).toFixed(2) }}</span>
             </div>
           </li>
-          <li class="cart-group-deliveryFee" @click="onBoxClick">
+          <li
+            class="cart-group-deliveryFee"
+            @click="onBoxClick"
+          >
             <div class="deliverTitle">
               包装费
               <van-icon name="info-o" />
             </div>
-            <div>¥{{packgeFee}}</div>
+            <div>¥{{ packgeFee }}</div>
           </li>
-          <li class="cart-group-deliveryFee" @click="onDeliverClick">
+          <li
+            class="cart-group-deliveryFee"
+            @click="onDeliverClick"
+          >
             <div class="deliverTitle">
               伙伴费
               <van-icon name="info-o" />
             </div>
-            <div>¥{{okFee}}</div>
+            <div>¥{{ okFee }}</div>
           </li>
-          <li class="cart-group-discount" @click="showList = true">
+          <li
+            class="cart-group-discount"
+            @click="showList = true"
+          >
             <van-coupon-cell
               title="红包"
               :coupons="coupons"
@@ -89,14 +121,14 @@
             />
           </li>
           <li class="cart-group-total">
-            <div class="discounts"></div>
+            <div class="discounts" />
             <div class="subtotal">
               <span class="discot">
                 已优惠
-                <span class="red">¥{{(orderInfo.discount.value/100).toFixed(2)}}</span>
+                <span class="red">¥{{ (orderInfo.discount.value/100).toFixed(2) }}</span>
               </span>
               <span>小计 ¥</span>
-              <span class="price">{{realPrice.toFixed(2)}}</span>
+              <span class="price">{{ realPrice.toFixed(2) }}</span>
             </div>
           </li>
         </ul>
@@ -104,32 +136,52 @@
 
       <!-- 备注信息 -->
       <section class="checkout-section">
-        <div class="cart-item" @click="$emit('click')">
-          <div class="cart-item-title">送到楼上</div>
+        <div
+          class="cart-item"
+          @click="$emit('click')"
+        >
+          <div class="cart-item-title">
+            送到楼上
+          </div>
           <div class="cart-item-right">
-            <van-radio-group v-model="isUpstairs" @change="radioChange">
-              <van-radio name="0">否</van-radio>
-              <van-radio name="1">1-3楼</van-radio>
-              <van-radio name="2">4-6楼</van-radio>
+            <van-radio-group
+              v-model="isUpstairs"
+              @change="radioChange"
+            >
+              <van-radio name="0">
+                否
+              </van-radio>
+              <van-radio name="1">
+                1-3楼
+              </van-radio>
+              <van-radio name="2">
+                4-6楼
+              </van-radio>
             </van-radio-group>
           </div>
         </div>
         <CartItem
-          @click="showTableware=true"
           title="餐具份数"
-          :subHead="remarkInfo.tableware || '未选择'"
+          :sub-head="remarkInfo.tableware || '未选择'"
+          @click="showTableware=true"
         />
         <CartItem
-          @click="$router.push('/remark')"
           title="订单备注"
-          :subHead="remarkInfo.remark || '口味 偏好'"
+          :sub-head="remarkInfo.remark || '口味 偏好'"
+          @click="$router.push('/remark')"
         />
       </section>
 
       <!-- 显示Tableware -->
-      <Tableware :isShow="showTableware" @close="showTableware=false" />
+      <Tableware
+        :is-show="showTableware"
+        @close="showTableware=false"
+      />
       <!-- 优惠券列表 -->
-      <van-popup v-model="showList" position="bottom">
+      <van-popup
+        v-model="showList"
+        position="bottom"
+      >
         <van-coupon-list
           :show-exchange-bar="false"
           :coupons="coupons"
@@ -142,8 +194,10 @@
 
     <!-- 底部 -->
     <footer class="action-bar">
-      <span>¥ {{realPrice.toFixed(2)}}</span>
-      <button @click="handlePay">微信支付</button>
+      <span>¥ {{ realPrice.toFixed(2) }}</span>
+      <button @click="handlePay">
+        微信支付
+      </button>
     </footer>
   </div>
 </template>
@@ -155,6 +209,10 @@ import { Toast } from "vant";
 import { Dialog } from "vant";
 export default {
   name: "Settlement",
+  components: {
+    CartItem,
+    Tableware
+  },
   data() {
     return {
       isUpstairs: "0",
@@ -208,6 +266,13 @@ export default {
     next(vm => {
       vm.getData();
     });
+  },
+  mounted() {
+    // 监听手机物理返回键时禁止返回之前的路由
+    if (window.history && window.history.pushState) {
+      window.addEventListener("popstate", this.forbidBack, false);
+      this.forbidBack();
+    }
   },
   methods: {
     forbidBack() {
@@ -332,6 +397,7 @@ export default {
             case 4:
               this.deliveFee += 1;
               this.deliverTime += 30;
+              break;
             default:
               break;
           }
@@ -345,9 +411,11 @@ export default {
             case 2:
               this.deliveFee += 1;
               this.deliverTime += 30;
+              break;
             default:
               break;
           }
+          break;
         default:
           break;
       }
@@ -499,6 +567,7 @@ export default {
         .then(res => {
           //微信支付
           const data = JSON.parse(res.data.data);
+          // eslint-disable-next-line no-undef
           WeixinJSBridge.invoke("getBrandWCPayRequest", data, res => {
             if (res.err_msg == "get_brand_wcpay_request:ok") {
               // 使用以上方式判断前端返回,微信团队郑重提示：
@@ -518,20 +587,9 @@ export default {
         });
     }
   },
-  mounted() {
-    // 监听手机物理返回键时禁止返回之前的路由
-    if (window.history && window.history.pushState) {
-      window.addEventListener("popstate", this.forbidBack, false);
-      this.forbidBack();
-    }
-  },
   destoryed() {
     // 离开页面时销毁监听
     window.removeEventListener("popstate", this.forbidBack, false);
-  },
-  components: {
-    CartItem,
-    Tableware
   }
 };
 </script>

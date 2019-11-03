@@ -1,56 +1,98 @@
 <template>
   <div class="orderInfo">
     <van-popup
-    v-model="show"
-    closeable
-    :style="{ height: '30%',width: '80%' }"
+      v-model="show"
+      closeable
+      :style="{ height: '30%',width: '80%' }"
     >
-      <div class="head" v-if="orderDetail.deliverName">投诉伙伴 {{orderDetail.deliverName}}</div>
-      <van-cell-group title=" " >
-      <van-field
-        v-model="message"
-        type="textarea"
-        placeholder="请输入投诉"
-        rows="1"
-        autosize
+      <div
+        v-if="orderDetail.deliverName"
+        class="head"
       >
-      <van-button slot="button" size="small" type="primary" @click="onSendButtonClick">投诉</van-button>
-      </van-field>
-    </van-cell-group>
+        投诉伙伴 {{ orderDetail.deliverName }}
+      </div>
+      <van-cell-group title=" ">
+        <van-field
+          v-model="message"
+          type="textarea"
+          placeholder="请输入投诉"
+          rows="1"
+          autosize
+        >
+          <van-button
+            slot="button"
+            size="small"
+            type="primary"
+            @click="onSendButtonClick"
+          >
+            投诉
+          </van-button>
+        </van-field>
+      </van-cell-group>
     </van-popup>
     <div class="header">
-      <van-nav-bar title="订单详情" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar
+        title="订单详情"
+        left-arrow
+        @click-left="$router.go(-1)"
+      />
     </div>
-    <div class="view-body" v-if="orderDetail">
+    <div
+      v-if="orderDetail"
+      class="view-body"
+    >
       <div class="status-head">
-        <div class="status-text">{{statusText}}</div>
-        <div class="status-title">{{statusContent}}</div>
+        <div class="status-text">
+          {{ statusText }}
+        </div>
+        <div class="status-title">
+          {{ statusContent }}
+        </div>
         <div class="buttons">
           <!-- 付款后 -->
-          <van-button type="info" v-if="orderDetail.status==1" @click="clickCancelOrder">取消订单</van-button>
+          <van-button
+            v-if="orderDetail.status==1"
+            type="info"
+            @click="clickCancelOrder"
+          >
+            取消订单
+          </van-button>
           <!--            待取餐时 
           <van-button type="info" v-if="orderDetail.status==2">申请退款</van-button>-->
           <!-- 已送达时 -->
-          <van-button type="primary" v-if="orderDetail.status==4" @click="$router.push({name: 'comment',params: {restID: orderDetail.restID, userID: userInfo.id, orderID: orderDetail.id}})">评价</van-button>
           <van-button
+            v-if="orderDetail.status==4"
+            type="primary"
+            @click="$router.push({name: 'comment',params: {restID: orderDetail.restID, userID: userInfo.id, orderID: orderDetail.id}})"
+          >
+            评价
+          </van-button>
+          <van-button
+            v-if="orderDetail.status>=4 && orderDetail.status<=6 && orderDetail.hasComplaint==0"
             class="Complaint"
             type="info"
-            v-if="orderDetail.status>=4 && orderDetail.status<=6 && orderDetail.hasComplaint==0"
             @click="showPopup"
-          >投诉伙伴</van-button>
+          >
+            投诉伙伴
+          </van-button>
         </div>
       </div>
       <!-- 伙伴信息 -->
-      <div class="detail-card" v-if="orderDetail.deliverName">
-        <div class="title">伙伴</div>
+      <div
+        v-if="orderDetail.deliverName"
+        class="detail-card"
+      >
+        <div class="title">
+          伙伴
+        </div>
         <ul class="card-list">
           <li class="list-item">
-            <span>姓名：{{orderDetail.deliverName}}</span>
+            <span>姓名：{{ orderDetail.deliverName }}</span>
           </li>
           <li class="list-item">
             <span>
               手机：
-              <a :href="'tel:'+orderDetail.deliverPhone">{{orderDetail.deliverPhone}}</a>
+              <a :href="'tel:'+orderDetail.deliverPhone">{{ orderDetail.deliverPhone }}</a>
             </span>
           </li>
         </ul>
@@ -58,32 +100,42 @@
       <div class="restaurant-card">
         <!-- 点餐内容 -->
         <section class="checkout-section cart-group">
-          <h3>{{orderDetail.restName}}</h3>
+          <h3>{{ orderDetail.restName }}</h3>
           <ul v-if="orderDetail.selectFoods">
-            <li v-for="(food,index) in orderDetail.selectFoods" :key="index">
-              <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo" alt />
+            <li
+              v-for="(food,index) in orderDetail.selectFoods"
+              :key="index"
+            >
+              <img
+                :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo"
+                alt
+              >
               <div class="cart-group-info">
-                <span>{{food.name}}</span>
-                <span>¥{{food.price}}</span>
+                <span>{{ food.name }}</span>
+                <span>¥{{ food.price }}</span>
               </div>
             </li>
             <li class="cart-group-deliveryFee">
-              <div class="deliverTitle">伙伴费</div>
-              <div>¥{{orderDetail.deliveryFee}}</div>
+              <div class="deliverTitle">
+                伙伴费
+              </div>
+              <div>¥{{ orderDetail.deliveryFee }}</div>
             </li>
             <li class="cart-group-discount">
-              <div class="discountTitle">红包</div>
-              <div>- ¥{{(orderDetail.value/100)}}</div>
+              <div class="discountTitle">
+                红包
+              </div>
+              <div>- ¥{{ (orderDetail.value/100) }}</div>
             </li>
             <li class="cart-group-total">
-              <div class="discounts"></div>
+              <div class="discounts" />
               <div class="subtotal">
                 <span class="discot">
                   已优惠
-                  <span class="red">¥{{(orderDetail.value/100)}}</span>
+                  <span class="red">¥{{ (orderDetail.value/100) }}</span>
                 </span>
                 <span>小计 ¥</span>
-                <span class="price">{{(parseFloat(orderDetail.payPrice)/100).toFixed(2)}}</span>
+                <span class="price">{{ (parseFloat(orderDetail.payPrice)/100).toFixed(2) }}</span>
               </div>
             </li>
           </ul>
@@ -92,34 +144,48 @@
 
       <!-- 配送信息 -->
       <div class="detail-card">
-        <div class="title">配送</div>
+        <div class="title">
+          配送
+        </div>
         <ul class="card-list">
           <li class="list-item">
             <span>送达时间：</span>
-            <div v-if="orderDetail.delivedTime">{{orderDetail.delivedTime}}</div>
-            <div v-else>{{orderDetail.shouldDeliveTime}}</div>
+            <div v-if="orderDetail.delivedTime">
+              {{ orderDetail.delivedTime }}
+            </div>
+            <div v-else>
+              {{ orderDetail.shouldDeliveTime }}
+            </div>
           </li>
-          <li class="list-item" v-if="orderDetail.addrInfo">
+          <li
+            v-if="orderDetail.addrInfo"
+            class="list-item"
+          >
             <!-- 因为请求是异步获取数据，所以最先开始addrInfo是一个空对象 -->
             <span>送货地址：</span>
             <div class="content">
-              <span>{{orderDetail.addrInfo.name}} {{orderDetail.addrInfo.gender==1?'先生':'小姐'}}</span>
-              <span>{{orderDetail.addrInfo.phone}}</span>
-              <span>{{orderDetail.addrInfo.dormitory}} {{orderDetail.addrInfo.roomNum}}</span>
+              <span>{{ orderDetail.addrInfo.name }} {{ orderDetail.addrInfo.gender==1?'先生':'小姐' }}</span>
+              <span>{{ orderDetail.addrInfo.phone }}</span>
+              <span>{{ orderDetail.addrInfo.dormitory }} {{ orderDetail.addrInfo.roomNum }}</span>
             </div>
           </li>
         </ul>
       </div>
 
       <!-- 订单信息 -->
-      <div class="detail-card" v-if="orderDetail.remark">
-        <div class="title">订单</div>
+      <div
+        v-if="orderDetail.remark"
+        class="detail-card"
+      >
+        <div class="title">
+          订单
+        </div>
         <ul class="card-list">
           <li class="list-item">
-            <span>下单时间: {{orderDetail.createTime}}</span>
+            <span>下单时间: {{ orderDetail.createTime }}</span>
           </li>
           <li class="list-item">
-            <span>订单备注: {{orderDetail.remark}}</span>
+            <span>订单备注: {{ orderDetail.remark }}</span>
           </li>
         </ul>
       </div>
@@ -146,6 +212,11 @@ export default {
       vm.orderDetail = to.params;
       vm.getData();
     });
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
   },
   methods: {
     onSendButtonClick(){
@@ -236,11 +307,6 @@ export default {
           this.statusContent = "如有疑问请联系客服。";
           break;
       }
-    }
-  },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
     }
   }
 };

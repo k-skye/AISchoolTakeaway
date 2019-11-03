@@ -2,15 +2,26 @@
   <div class="me">
     <div class="headInfo">
       <div class="head-img">
-        <img :src="logoImgUrl" />
+        <img :src="logoImgUrl">
       </div>
       <div class="head-profile">
-        <p v-if="firstlogin" class="user-id" @click="handleRes">登陆/注册</p>
-        <p class="user-id" v-else>{{userInfo.name}}</p>
+        <p
+          v-if="firstlogin"
+          class="user-id"
+          @click="handleRes"
+        >
+          登陆/注册
+        </p>
+        <p
+          v-else
+          class="user-id"
+        >
+          {{ userInfo.name }}
+        </p>
         <p class="user-phone">
-          <i class="fa fa-mobile"></i>
+          <i class="fa fa-mobile" />
           <span v-if="firstlogin">登陆后就能开始点餐咯～</span>
-          <span v-else>{{encryptPhone(userInfo.phoneNo)}}</span>
+          <span v-else>{{ encryptPhone(userInfo.phoneNo) }}</span>
         </p>
       </div>
       <!-- <van-icon name="arrow" /> 
@@ -28,35 +39,65 @@
             <span class="custom-title">评价</span>
           </template>
         </van-cell>
-        <van-cell icon="location-o" title="地址" is-link @click="myAddress" />
-        <van-cell icon="after-sale" is-link @click="discountButtonClick">
+        <van-cell
+          icon="location-o"
+          title="地址"
+          is-link
+          @click="myAddress"
+        />
+        <van-cell
+          icon="after-sale"
+          is-link
+          @click="discountButtonClick"
+        >
           <template slot="title">
             <span class="custom-title">红包</span>
           </template>
         </van-cell>
       </van-cell-group>
       <van-cell-group title=" ">
-        <van-cell icon="question-o" title="帮助" is-link to="help" />
-        <van-cell icon="notes-o" title="协议" is-link to="protocol" />
+        <van-cell
+          icon="question-o"
+          title="帮助"
+          is-link
+          to="help"
+        />
+        <van-cell
+          icon="notes-o"
+          title="协议"
+          is-link
+          to="protocol"
+        />
         <van-cell
           icon="bullhorn-o"
           title="建议反馈"
           is-link
           @click="$router.push({name:'support',params: { userID: userInfo.id }})"
         />
-        <van-cell icon="service-o" title="联系客服" is-link @click="serviceClick" />
+        <van-cell
+          icon="service-o"
+          title="联系客服"
+          is-link
+          @click="serviceClick"
+        />
       </van-cell-group>
     </div>
-    <van-popup v-model="showList" position="bottom">
+    <van-popup
+      v-model="showList"
+      position="bottom"
+    >
       <van-coupon-list
         :show-exchange-bar="false"
         :coupons="coupons"
         :disabled-coupons="disabledCoupons"
-        @change="onChange"
         close-button-text="关闭"
+        @change="onChange"
       />
     </van-popup>
-    <div class="nologin" v-if="firstlogin">
+    <div
+      v-if="firstlogin"
+      class="nologin"
+    >
       <NoLoginInfo />
     </div>
   </div>
@@ -66,7 +107,10 @@
 import { Dialog } from "vant";
 import NoLoginInfo from "../components/NoLoginInfo";
 export default {
-  name: "me",
+  name: "Me",
+  components: {
+    NoLoginInfo
+  },
   data() {
     return {
       firstlogin: true,
@@ -75,6 +119,11 @@ export default {
       coupons: [],
       disabledCoupons: []
     };
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
   },
   created() {
     this.firstlogin = localStorage.firstlogin == 0 ? false : true;
@@ -151,14 +200,6 @@ export default {
         });
       }
     }
-  },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
-    }
-  },
-  components: {
-    NoLoginInfo
   }
 };
 </script>

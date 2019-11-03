@@ -1,6 +1,11 @@
 <template>
   <div class="Rating-gray">
-    <i v-for="(item,index) in itemClasses" :key="index" class="fa" :class="item"></i>
+    <i
+      v-for="(item,index) in itemClasses"
+      :key="index"
+      class="fa"
+      :class="item"
+    />
   </div>
 </template>
 
@@ -15,7 +20,10 @@ const CLS_OFF = "fa-star-o";
 export default {
   name: "Rating",
   props: {
-    rating: Number
+    rating: {
+      type: Number,
+      default: 5
+    }
   },
   computed: {
     itemClasses() {

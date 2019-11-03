@@ -2,25 +2,29 @@
   <div class="shopcart">
     <transition name="fade">
       <div
+        v-if="showCartView && !isEmpty"
         class="cartview-cartmask"
         @click.self="showCartView=false"
-        v-if="showCartView && !isEmpty"
       >
         <div class="cartview-cartbody">
           <div class="cartview-cartheader">
             <span>已选商品</span>
             <button @click="clearFoods">
-              <i class="fa fa-trash-o"></i>
+              <i class="fa fa-trash-o" />
               <span>清空</span>
             </button>
           </div>
           <div class="entityList-cartbodyScroller">
             <ul class="entityList-cartlist">
-              <li class="entityList-entityrow" v-for="(food,index) in selectFoods" :key="index">
+              <li
+                v-for="(food,index) in selectFoods"
+                :key="index"
+                class="entityList-entityrow"
+              >
                 <h4>
-                  <span>{{food.name}}</span>
+                  <span>{{ food.name }}</span>
                 </h4>
-                <span class="entityList-entitytotal">{{food.price}}</span>
+                <span class="entityList-entitytotal">{{ food.price }}</span>
                 <CartControll :food="food" />
               </li>
             </ul>
@@ -28,19 +32,33 @@
         </div>
       </div>
     </transition>
-    <div class="bottomNav-cartfooter" :class="{'bottomNav-carticon-empty':isEmpty}">
-      <span class="bottomNav-carticon" @click="showCartView = !showCartView">
-        <i class="fa fa-cart-plus"></i>
-        <span v-if="totalCount">{{totalCount}}</span>
+    <div
+      class="bottomNav-cartfooter"
+      :class="{'bottomNav-carticon-empty':isEmpty}"
+    >
+      <span
+        class="bottomNav-carticon"
+        @click="showCartView = !showCartView"
+      >
+        <i class="fa fa-cart-plus" />
+        <span v-if="totalCount">{{ totalCount }}</span>
       </span>
-      <div class="bottomNav-cartInfo" @click="showCartView = !showCartView">
+      <div
+        class="bottomNav-cartInfo"
+        @click="showCartView = !showCartView"
+      >
         <p class="bottomNav-carttotal">
           <span v-if="isEmpty">未选购商品</span>
-          <span v-else>¥{{totalPrice.toFixed(2)}}</span>
+          <span v-else>¥{{ totalPrice.toFixed(2) }}</span>
         </p>
-        <p class="bottomNav-cartdelivery">伙伴费{{restInfo.deliveryFee}}元起</p>
+        <p class="bottomNav-cartdelivery">
+          伙伴费{{ restInfo.deliveryFee }}元起
+        </p>
       </div>
-      <button class="submit-btn" @click="settlement">
+      <button
+        class="submit-btn"
+        @click="settlement"
+      >
         <span v-if="isEmpty">请先点餐</span>
         <span v-else>去结算</span>
       </button>
@@ -49,10 +67,19 @@
 </template>
 
 <script>
-import { Toast } from 'vant';
+import { Toast } from "vant";
 import CartControll from "../../components/Shops/CartControll";
 export default {
   name: "ShopCart",
+  components: {
+    CartControll
+  },
+  props: {
+    foodInfo: {
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
       totalCount: 0,
@@ -61,11 +88,8 @@ export default {
       showCartView: false
     };
   },
-  props: {
-    foodInfo: Array
-  },
   computed: {
-    firstlogin(){
+    firstlogin() {
       return localStorage.firstlogin == 0 ? false : true;
     },
     isEmpty() {
@@ -76,7 +100,7 @@ export default {
     }
   },
   methods: {
-    checkEmpty(){
+    checkEmpty() {
       let empty = true;
       this.totalCount = 0;
       this.totalPrice = 0;
@@ -106,19 +130,16 @@ export default {
     },
     settlement() {
       if (this.firstlogin) {
-        Toast.fail('要先注册后才可以购买噢～');
+        Toast.fail("要先注册后才可以购买噢～");
         return;
       }
       this.$store.dispatch("setOrderInfo", {
         foodInfo: this.foodInfo,
         selectFoods: this.selectFoods,
-        discount: {id: null, value: null}
+        discount: { id: null, value: null }
       });
       this.$router.push("/settlement");
     }
-  },
-  components: {
-    CartControll
   }
 };
 </script>

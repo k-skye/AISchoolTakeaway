@@ -123,4 +123,17 @@ class Orders extends Api {
             throw new InternalServerErrorException("服务器取消订单失败", 27);
         }
     }
+    /**
+     * 自动30分钟定时退款
+     * @desc 测试一下
+     */
+    public function autoCancelOrder() {
+        $domain = new DomainOders();
+        $res = $domain->autoCancelOrder();
+        if ($res) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException("服务器取消订单失败", 27);
+        }
+    }
 } 

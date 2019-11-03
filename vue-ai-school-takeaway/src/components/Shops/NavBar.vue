@@ -1,14 +1,20 @@
 <template>
   <div class="nav">
-    <router-link to="/goods" class="nav-item">
+    <router-link
+      to="/goods"
+      class="nav-item"
+    >
       点餐
-      <i class="line"></i>
+      <i class="line" />
     </router-link>
-    <router-link to="/comments" class="nav-item">
+    <router-link
+      to="/comments"
+      class="nav-item"
+    >
       评价
-      <i class="line"></i>
+      <i class="line" />
     </router-link>
-<!--     <router-link to="/seller" class="nav-item">
+    <!--     <router-link to="/seller" class="nav-item">
       商家
       <i class="line"></i> 
     </router-link>-->

@@ -1,17 +1,21 @@
 <template>
   <div class="regprotocol">
     <div class="header">
-      <van-nav-bar title="用户服务协议" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar
+        title="用户服务协议"
+        left-arrow
+        @click-left="$router.go(-1)"
+      />
     </div>
     <div class="content">
-      {{data}}
+      {{ data }}
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "regprotocol",
+  name: "Regprotocol",
   data() {
     return {
       data: ""

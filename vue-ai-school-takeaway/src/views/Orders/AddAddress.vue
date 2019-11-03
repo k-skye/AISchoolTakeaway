@@ -1,27 +1,35 @@
 <template>
   <div class="addAddress">
     <div class="header">
-      <van-nav-bar :title="title" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar
+        :title="title"
+        left-arrow
+        @click-left="$router.go(-1)"
+      />
     </div>
     <!-- 添加地址 -->
     <div class="viewbody">
       <div class="content">
         <FormBlock
+          v-model="addressInfo.name"
           label="联系人"
           placeholder="姓名"
           :tags="sexes"
           :sex="sex"
           @checkSex="checkSex"
-          v-model="addressInfo.name"
         />
-        <FormBlock v-model="addressInfo.phone" label="电话" placeholder="手机号码" />
+        <FormBlock
+          v-model="addressInfo.phone"
+          label="电话"
+          placeholder="手机号码"
+        />
         <FormBlock
           v-model="addressInfo.dormitory"
           :noinput="true"
-          @click="showPicker = true"
           label="地址"
           placeholder="选择宿舍"
           icon="angle-right"
+          @click="showPicker = true"
         />
         <FormBlock
           v-model="addressInfo.roomNum"
@@ -32,11 +40,19 @@
       </div>
       <!-- 确定按钮 -->
       <div class="form-button-wrap">
-        <button @click="handleSave" class="form-button">确定</button>
+        <button
+          class="form-button"
+          @click="handleSave"
+        >
+          确定
+        </button>
       </div>
     </div>
     <!-- 搜索地址 -->
-    <van-popup v-model="showPicker" position="bottom">
+    <van-popup
+      v-model="showPicker"
+      position="bottom"
+    >
       <van-picker
         show-toolbar
         :columns="columns"
@@ -52,6 +68,9 @@ import FormBlock from "../../components/Orders/FormBlock";
 import { Toast } from "vant";
 export default {
   name: "AddAddress",
+  components: {
+    FormBlock
+  },
   data() {
     return {
       title: "",
@@ -158,7 +177,7 @@ export default {
               }
             });
           }
-                this.$router.push("/myAddress");
+          this.$router.push("/myAddress");
         })
         .catch(err => console.log(err));
     },
@@ -168,13 +187,10 @@ export default {
           "https://takeawayapi.pykky.com/?s=Address.ChangeAddr",
           this.addressInfo
         )
-        .then(res => {
+        .then(() => {
           this.$router.push("/myAddress");
         });
     }
-  },
-  components: {
-    FormBlock
   }
 };
 </script>

@@ -1,42 +1,75 @@
 <template>
   <div class="order">
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-      <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
-        <div class="order-card-body" v-for="(order,index) in orders" :key="index">
-          <div class="order-card-wrap" @click="toOrderInfo(order)" v-if="order">
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+    >
+      <van-list
+        v-model="loading"
+        :finished="allLoaded"
+        finished-text="没有更多了"
+        @load="loadMore"
+      >
+        <div
+          v-for="(order,index) in orders"
+          :key="index"
+          class="order-card-body"
+        >
+          <div
+            v-if="order"
+            class="order-card-wrap"
+            @click="toOrderInfo(order)"
+          >
             <img
               :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+order.restLogo"
               alt
-            />
+            >
             <div class="order-card-content">
               <div class="order-card-head">
                 <div class="title">
                   <a>
-                    <span>{{order.restName}}</span>
+                    <span>{{ order.restName }}</span>
                   </a>
-                  <p>{{order.statusText}}</p>
+                  <p>{{ order.statusText }}</p>
                 </div>
-                <p class="date-time">{{order.createTime}}</p>
+                <p class="date-time">
+                  {{ order.createTime }}
+                </p>
               </div>
               <div class="order-card-detail">
-                <p class="detail">{{order.showfood}}</p>
-                <p class="price">¥{{(parseFloat(order.payPrice)/100).toFixed(2)}}</p>
+                <p class="detail">
+                  {{ order.showfood }}
+                </p>
+                <p class="price">
+                  ¥{{ (parseFloat(order.payPrice)/100).toFixed(2) }}
+                </p>
               </div>
             </div>
           </div>
-          <div class="order-card-bottom" v-show="order.status>=4 || order.status==0">
+          <div
+            v-show="order.status>=4 || order.status==0"
+            class="order-card-bottom"
+          >
             <button
               class="cardbutton"
               @click="$router.push({name: 'shop',params: {restID: order.restID}})"
-            >再来一单</button>
+            >
+              再来一单
+            </button>
           </div>
         </div>
       </van-list>
     </van-pull-refresh>
-    <div class="nologin" v-if="firstlogin">
+    <div
+      v-if="firstlogin"
+      class="nologin"
+    >
       <NoLoginInfo />
     </div>
-    <div class="nologin" v-if="nodata">
+    <div
+      v-if="nodata"
+      class="nologin"
+    >
       <NoDeliveOrderInfo />
     </div>
   </div>
@@ -46,7 +79,11 @@
 import NoLoginInfo from "../components/NoLoginInfo";
 import NoDeliveOrderInfo from "../components/NoDeliveOrderInfo";
 export default {
-  name: "order",
+  name: "Order",
+  components: {
+    NoLoginInfo,
+    NoDeliveOrderInfo
+  },
   data() {
     return {
       isLoading: false,
@@ -64,6 +101,18 @@ export default {
     next(vm => {
       vm.getData();
     });
+  },
+  computed: {
+    userInfo() {
+      return this.$store.getters.userInfo;
+    }
+  },
+  mounted() {
+    // 监听手机物理返回键时禁止返回之前的路由
+    if (window.history && window.history.pushState) {
+      window.addEventListener("popstate", this.forbidBack, false);
+      this.forbidBack();
+    }
   },
   methods: {
     onRefresh() {
@@ -262,25 +311,9 @@ export default {
       window.history.forward(1);
     }
   },
-  computed: {
-    userInfo() {
-      return this.$store.getters.userInfo;
-    }
-  },
-  mounted() {
-    // 监听手机物理返回键时禁止返回之前的路由
-    if (window.history && window.history.pushState) {
-      window.addEventListener("popstate", this.forbidBack, false);
-      this.forbidBack();
-    }
-  },
   destoryed() {
     // 离开页面时销毁监听
     window.removeEventListener("popstate", this.forbidBack, false);
-  },
-  components: {
-    NoLoginInfo,
-    NoDeliveOrderInfo
   }
 };
 </script>

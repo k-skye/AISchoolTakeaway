@@ -1,22 +1,35 @@
 <template>
   <div class="login">
     <div class="logo">
-      <img src="../assets/logo.png" alt="my login image" />
+      <img
+        src="../assets/logo.png"
+        alt="my login image"
+      >
     </div>
     <!--  学号 -->
-    <InputGroup type="number" v-model="stuID" placeholder="学号" :error="errors.stuid" />
+    <InputGroup
+      v-model="stuID"
+      type="number"
+      placeholder="学号"
+      :error="errors.stuid"
+    />
     <!-- 手机号 -->
     <InputGroup
-      type="number"
       v-model="phone"
+      type="number"
       placeholder="手机号"
-      :btnTitle="btnTitle"
+      :btn-title="btnTitle"
       :disabled="disabled"
       :error="errors.phone"
       @btnClick="getVerifyCode"
     />
     <!-- 验证码 -->
-    <InputGroup type="number" v-model="verifyCode" placeholder="验证码" :error="errors.code" />
+    <InputGroup
+      v-model="verifyCode"
+      type="number"
+      placeholder="验证码"
+      :error="errors.code"
+    />
     <!-- 用户服务协议 -->
     <div class="login_des">
       <p>
@@ -26,7 +39,12 @@
     </div>
     <!-- 登录按钮 -->
     <div class="login_btn">
-      <button :disabled="isClick" @click="handleLogin">注册</button>
+      <button
+        :disabled="isClick"
+        @click="handleLogin"
+      >
+        注册
+      </button>
     </div>
   </div>
 </template>
@@ -34,7 +52,10 @@
 <script>
 import InputGroup from "../components/InputGroup";
 export default {
-  name: "login",
+  name: "Login",
+  components: {
+    InputGroup
+  },
   data() {
     return {
       phone: "",
@@ -152,9 +173,6 @@ export default {
         return true;
       }
     }
-  },
-  components: {
-    InputGroup
   }
 };
 </script>

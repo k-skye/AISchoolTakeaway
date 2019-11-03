@@ -1,48 +1,68 @@
 <template>
-  <div class="goods" v-if="foodInfo">
+  <div
+    v-if="foodInfo"
+    class="goods"
+  >
     <!-- 商品分类 -->
     <div class="menuview">
       <!-- 左侧分类列表 -->
-      <div class="menu-wrapper" ref="menuScroll">
+      <div
+        ref="menuScroll"
+        class="menu-wrapper"
+      >
         <ul>
           <li
-            :class="{'current':currentIndex === index}"
-            @click="selectMenu(index)"
             v-for="(item,index) in foodInfo"
             :key="index"
+            :class="{'current':currentIndex === index}"
+            @click="selectMenu(index)"
           >
             <!-- <img v-if="item.icon_url" :src="'https://takeaway.pykky.com/goodImgs/'+item.icon_url" alt /> -->
-            <span>{{item.cate}}</span>
+            <span>{{ item.cate }}</span>
           </li>
         </ul>
       </div>
 
       <!-- 右侧商品内容 -->
-      <div class="foods-wrapper" ref="foodScroll">
+      <div
+        ref="foodScroll"
+        class="foods-wrapper"
+      >
         <ul>
-          <li class="food-list-hook" v-for="(item,index) in foodInfo" :key="index">
+          <li
+            v-for="(item,index) in foodInfo"
+            :key="index"
+            class="food-list-hook"
+          >
             <!-- 内容上 -->
             <div class="category-title">
-              <strong>{{item.cate}}</strong>
+              <strong>{{ item.cate }}</strong>
               <!-- <span>类目描述</span> -->
             </div>
             <!-- 内容下 -->
             <div
-              @click="handleFood(food)"
-              class="fooddetails"
               v-for="(food,i) in item.food"
               :key="i"
+              class="fooddetails"
+              @click="handleFood(food)"
             >
               <!-- 左 -->
-              <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo" alt />
+              <img
+                :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo"
+                alt
+              >
               <!-- 右 -->
               <section class="fooddetails-info">
-                <h4>{{food.name}}</h4>
-                <p class="fooddetails-des">{{food.description=='无'?'暂无商品描述噢～':food.description}}</p>
-                <p class="fooddetails-sales">月售{{food.salesNum}}份</p>
+                <h4>{{ food.name }}</h4>
+                <p class="fooddetails-des">
+                  {{ food.description=='无'?'暂无商品描述噢～':food.description }}
+                </p>
+                <p class="fooddetails-sales">
+                  月售{{ food.salesNum }}份
+                </p>
                 <!--  好评率123 -->
                 <div class="fooddetails-price">
-                  <span class="price">¥{{food.price}}</span>
+                  <span class="price">¥{{ food.price }}</span>
                   <CartControll :food="food" />
                 </div>
               </section>
@@ -53,10 +73,14 @@
     </div>
 
     <!-- 购物车 -->
-    <ShopCart :foodInfo="foodInfo" />
+    <ShopCart :food-info="foodInfo" />
 
     <!-- 商品详情 -->
-    <Food :food="selectedFood" :isShow="showFood" @close="showFood=false" />
+    <Food
+      :food="selectedFood"
+      :is-show="showFood"
+      @close="showFood=false"
+    />
   </div>
 </template>
 
@@ -67,6 +91,11 @@ import ShopCart from "./ShopCart";
 import Food from "./Food";
 export default {
   name: "Goods",
+  components: {
+    CartControll,
+    ShopCart,
+    Food
+  },
   data() {
     return {
       restID: "1",
@@ -176,11 +205,6 @@ export default {
       this.selectedFood = food;
       this.showFood = true;
     }
-  },
-  components: {
-    CartControll,
-    ShopCart,
-    Food
   },
 };
 </script>

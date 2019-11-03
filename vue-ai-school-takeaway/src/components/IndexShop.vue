@@ -1,37 +1,46 @@
 <template>
   <section class="index-container">
-    <div class="index-shopInfo" @click="$router.push({name: 'shop',params: {restID: restaurant.id}})">
+    <div
+      class="index-shopInfo"
+      @click="$router.push({name: 'shop',params: {restID: restaurant.id}})"
+    >
       <!-- 左侧图片 -->
       <div class="logo_container">
-        <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+restaurant.logo" alt>
+        <img
+          :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+restaurant.logo"
+          alt
+        >
       </div>
       <!-- 右侧内容 -->
       <div class="index_main">
         <!-- 第一行 店铺名字 -->
         <div class="index_shopname">
-          <span class="shopname">{{restaurant.name}}</span>
+          <span class="shopname">{{ restaurant.name }}</span>
         </div>
 
         <!-- 第二行 星级 -->
         <div class="index-rateWrap">
           <div>
-            <Rating :rating="parseFloat(restaurant.stars)"/>
-            <span class="rate">{{restaurant.stars}}</span>
-            <span>月售{{restaurant.salesNum}}单</span>
+            <Rating :rating="parseFloat(restaurant.stars)" />
+            <span class="rate">{{ restaurant.stars }}</span>
+            <span>月售{{ restaurant.salesNum }}单</span>
           </div>
         </div>
 
         <!-- 第三行 配送 -->
         <div class="index-moneylimit">
           <div>
-<!--             <span>¥10起送</span>
-            | -->
-            <span>配送费¥{{restaurant.deliveryFee}}起</span>
+            <!--             <span>¥10起送</span>
+            |-->
+            <span>配送费¥{{ restaurant.deliveryFee }}起</span>
           </div>
           <div class="index-distanceWrap">
-            <span class="spans"><van-icon name="shop-o" />第{{restaurant.roomNum}}饭堂</span>
-<!--             |
-            <span>平均1分钟</span> -->
+            <span class="spans">
+              <van-icon name="shop-o" />
+              第{{ restaurant.roomNum }}饭堂
+            </span>
+            <!--             |
+            <span>平均1分钟</span>-->
           </div>
         </div>
       </div>
@@ -43,11 +52,14 @@
 import Rating from "./Rating";
 export default {
   name: "IndeShop",
-  props: {
-    restaurant: Object
-  },
   components: {
     Rating
+  },
+  props: {
+    restaurant: {
+      type: Object,
+      default: () => {}
+    }
   }
 };
 </script>
@@ -59,10 +71,10 @@ export default {
   padding: 4vw 0;
   border-bottom: 0.133333vw solid #eee;
 }
-.shopname{
+.shopname {
   font-size: 0.95rem;
 }
-span{
+span {
   font-size: 0.7rem;
 }
 .index-shopInfo {
@@ -121,7 +133,7 @@ span{
 .index-moneylimit .index-distanceWrap {
   color: #999;
 }
-.spans{
+.spans {
   display: flex;
 }
 </style>

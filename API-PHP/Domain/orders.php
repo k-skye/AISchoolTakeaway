@@ -298,4 +298,10 @@ class orders {
             }
         }
     }
+
+    public function autoCancelOrder() {
+        $model = new ModelOders();
+        
+        return $model->autoCancelOrder();
+    }
 }

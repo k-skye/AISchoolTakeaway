@@ -1,22 +1,31 @@
 <template>
   <div class="help">
     <div class="header">
-      <van-nav-bar title="帮助" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar
+        title="帮助"
+        left-arrow
+        @click-left="$router.push('me')"
+      />
     </div>
-    <van-collapse v-model="activeName" accordion>
+    <van-collapse
+      v-model="activeName"
+      accordion
+    >
       <van-collapse-item
         v-for="(help,index) in helpList"
         :key="index"
         :title="help.question"
         :name="index"
-      >{{help.answer}}</van-collapse-item>
+      >
+        {{ help.answer }}
+      </van-collapse-item>
     </van-collapse>
   </div>
 </template>
 
 <script>
 export default {
-  name: "help",
+  name: "Help",
   data() {
     return {
       activeName: "0",

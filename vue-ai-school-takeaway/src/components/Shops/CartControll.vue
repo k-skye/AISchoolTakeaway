@@ -1,11 +1,21 @@
 <template>
   <div class="cartcontroll">
-    <span @click.stop="decreaseCount" class="cartbutton button-minus" v-if="food.count>0">
-      <i class="fa fa-minus"></i>
+    <span
+      v-if="food.count>0"
+      class="cartbutton button-minus"
+      @click.stop="decreaseCount"
+    >
+      <i class="fa fa-minus" />
     </span>
-    <span class="cartcount" v-if="food.count>0">{{food.count}}</span>
-    <span @click.stop="increaseCount" class="cartbutton">
-      <i class="fa fa-plus-circle"></i>
+    <span
+      v-if="food.count>0"
+      class="cartcount"
+    >{{ food.count }}</span>
+    <span
+      class="cartbutton"
+      @click.stop="increaseCount"
+    >
+      <i class="fa fa-plus-circle" />
     </span>
   </div>
 </template>
@@ -14,7 +24,10 @@
 export default {
   name: "CartControll",
   props: {
-    food: Object
+    food: {
+      type: Object,
+      default: () => {}
+    }
   },
   methods: {
     decreaseCount() {

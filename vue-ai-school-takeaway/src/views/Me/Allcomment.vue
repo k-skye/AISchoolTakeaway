@@ -1,16 +1,29 @@
 <template>
   <div class="allcomment">
     <div class="header">
-      <van-nav-bar title="评价" left-arrow @click-left="$router.push('me')" />
+      <van-nav-bar
+        title="评价"
+        left-arrow
+        @click-left="$router.push('me')"
+      />
     </div>
     <div class="contain">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <div class="order-card-body" v-for="(comment,index) in commentlist" :key="index">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
+        <div
+          v-for="(comment,index) in commentlist"
+          :key="index"
+          class="order-card-body"
+        >
           <div class="order-card-wrap">
             <img
               :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+comment.restLogo"
               alt
-            />
+            >
             <div class="order-card-content">
               <div
                 class="order-card-head"
@@ -18,22 +31,37 @@
               >
                 <div class="title">
                   <a>
-                    <span>{{comment.restName}}</span>
+                    <span>{{ comment.restName }}</span>
                     <van-icon name="arrow" />
                   </a>
-                  <p>{{comment.deliverReply=='未回复'?'伙伴未回复':'伙伴已回复'}}</p>
+                  <p>{{ comment.deliverReply=='未回复'?'伙伴未回复':'伙伴已回复' }}</p>
                 </div>
-                <p class="date-time">{{comment.time}}</p>
+                <p class="date-time">
+                  {{ comment.time }}
+                </p>
               </div>
               <div class="order-card-detail">
-                <p class="price">{{comment.content}}</p>
+                <p class="price">
+                  {{ comment.content }}
+                </p>
               </div>
               <ul class="comment-imgs">
-                <li v-for="(img,i) in comment.images" :key="i">
-                  <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/'+img" alt />
+                <li
+                  v-for="(img,i) in comment.images"
+                  :key="i"
+                >
+                  <img
+                    :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/'+img"
+                    alt
+                  >
                 </li>
               </ul>
-              <div class="reply" v-show="comment.deliverReply!='未回复'">伙伴：{{comment.deliverReply}}</div>
+              <div
+                v-show="comment.deliverReply!='未回复'"
+                class="reply"
+              >
+                伙伴：{{ comment.deliverReply }}
+              </div>
             </div>
           </div>
         </div>
@@ -44,7 +72,7 @@
 
 <script>
 export default {
-  name: "allcomment",
+  name: "Allcomment",
   data() {
     return {
       commentlist: [], //存放容器

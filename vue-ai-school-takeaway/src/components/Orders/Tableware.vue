@@ -1,20 +1,28 @@
 <template>
   <transition>
-    <div class="tableware" v-if="isShow">
+    <div
+      v-if="isShow"
+      class="tableware"
+    >
       <div class="actions-sheet">
-        <i class="fa fa-remove" @click="$emit('close')"></i>
+        <i
+          class="fa fa-remove"
+          @click="$emit('close')"
+        />
         <h2 class="actions-sheet-header">
-          <span class="tag"></span>
+          <span class="tag" />
           <span class="title">餐具份数</span>
-          <span class="tag"></span>
+          <span class="tag" />
         </h2>
         <ul>
           <li
-            :class="{'selected': selectItem == item}"
-            @click="clickItem(item)"
             v-for="(item,index) in tablewareList"
             :key="index"
-          >{{item}}</li>
+            :class="{'selected': selectItem == item}"
+            @click="clickItem(item)"
+          >
+            {{ item }}
+          </li>
         </ul>
       </div>
     </div>
@@ -24,14 +32,14 @@
 <script>
 export default {
   name: "Tableware",
+  props: {
+    isShow: Boolean
+  },
   data() {
     return {
       tablewareList: ["1", "2", "3", "4", "5", "6"],
       selectItem: ""
     };
-  },
-  props: {
-    isShow: Boolean
   },
   methods: {
     clickItem(item) {

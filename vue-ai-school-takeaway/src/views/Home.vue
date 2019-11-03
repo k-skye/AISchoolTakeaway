@@ -2,13 +2,13 @@
   <div class="home">
     <div class="header">
       <div class="address_map">
-        <span>{{wetherMessage}}</span>
+        <span>{{ wetherMessage }}</span>
       </div>
       <!-- @click="$router.push('/search')" -->
       <div class="search_wrap">
         <van-search
-          placeholder="搜索一下"
           v-model="value"
+          placeholder="搜索一下"
           shape="round"
           @search="onSearch"
           @input="onInput"
@@ -16,7 +16,10 @@
           @blur="onBlur"
           @focus="onFocus"
         />
-        <div class="serachlist" v-show="showResult">
+        <div
+          v-show="showResult"
+          class="serachlist"
+        >
           <div class="searchcells">
             <van-cell
               v-for="(result,index) in serachResult"
@@ -32,24 +35,38 @@
     <div class="container">
       <!-- 轮播 -->
       <div class="swipe">
-        <van-swipe :autoplay="3000" indicator-color="white" @change="swipeOnChange">
-          <van-swipe-item v-for="(img,index) in swipeImgs" :key="index" @click="swipeClick">
-            <img :src="img" alt />
+        <van-swipe
+          :autoplay="3000"
+          indicator-color="white"
+          @change="swipeOnChange"
+        >
+          <van-swipe-item
+            v-for="(img,index) in swipeImgs"
+            :key="index"
+            @click="swipeClick"
+          >
+            <img
+              :src="img"
+              alt
+            >
           </van-swipe-item>
         </van-swipe>
       </div>
       <!-- 分类 -->
       <div class="entries">
         <div
-          class="foodentry"
           v-for="(item,index) in menu"
           :key="index"
+          class="foodentry"
           @click="entriesClick(item.roomNum)"
         >
           <div class="img_wrap">
-            <img :src="item.image" alt />
+            <img
+              :src="item.image"
+              alt
+            >
           </div>
-          <span>{{item.name}}</span>
+          <span>{{ item.name }}</span>
         </div>
       </div>
     </div>
@@ -57,12 +74,24 @@
     <div class="chooseRest">
       <van-sticky>
         <!-- 导航 -->
-        <FilterView :filterData="filterData" @update="update" />
+        <FilterView
+          :filter-data="filterData"
+          @update="update"
+        />
       </van-sticky>
       <!-- 商家信息 -->
-      <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
+      <van-list
+        v-model="loading"
+        :finished="allLoaded"
+        finished-text="没有更多了"
+        @load="loadMore"
+      >
         <div class="shoplist">
-          <IndexShop v-for="(item,index) in restaurants" :key="index" :restaurant="item" />
+          <IndexShop
+            v-for="(item,index) in restaurants"
+            :key="index"
+            :restaurant="item"
+          />
         </div>
       </van-list>
     </div>
@@ -72,10 +101,13 @@
 <script>
 import FilterView from "../components/FilterView";
 import IndexShop from "../components/IndexShop";
-import { Toast } from "vant";
 import { Dialog } from "vant";
 export default {
-  name: "home",
+  name: "Home",
+  components: {
+    FilterView,
+    IndexShop
+  },
   data() {
     return {
       homeData: null,
@@ -254,10 +286,6 @@ export default {
       this.condition = condition.condition;
       this.firstLoadData();
     }
-  },
-  components: {
-    FilterView,
-    IndexShop
   }
 };
 </script>

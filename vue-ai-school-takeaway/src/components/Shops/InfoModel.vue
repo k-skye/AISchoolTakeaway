@@ -1,41 +1,51 @@
 <template>
   <transition name="fade">
-    <div class="info-model" v-show="showInfoModel">
+    <div
+      v-show="showInfoModel"
+      class="info-model"
+    >
       <div class="brief-modal">
         <h2>
-          <span>{{shopInfo.name}}</span>
+          <span>{{ shopInfo.name }}</span>
         </h2>
         <ul>
           <li>
-            <h3>{{shopInfo.stars}}</h3>
+            <h3>{{ shopInfo.stars }}</h3>
             <p>评分</p>
           </li>
           <li>
-            <h3>{{shopInfo.salesNum}}</h3>
+            <h3>{{ shopInfo.salesNum }}</h3>
             <p>月售</p>
           </li>
           <li>
-            <h3>{{shopInfo.deliveryTime}}分钟</h3>
+            <h3>{{ shopInfo.deliveryTime }}分钟</h3>
             <p>配送时间</p>
           </li>
 
           <li>
-            <h3>¥{{shopInfo.deliveryFee}}元</h3>
+            <h3>¥{{ shopInfo.deliveryFee }}元</h3>
             <p>配送费</p>
           </li>
           <li>
-            <h3>{{shopInfo.location}}</h3>
+            <h3>{{ shopInfo.location }}</h3>
             <p>位置</p>
           </li>
         </ul>
-<!--         <h3 class="promotion">
+        <!--         <h3 class="promotion">
           <span>公告</span>
         </h3> 
         <p class="brief-modal-yx">{{shopInfo.note}}</p>-->
       </div>
       <!-- x号 -->
-      <div class="brief-modal-close" @click="$emit('close')">
-        <van-icon name="close" color="white" size="25px"/>
+      <div
+        class="brief-modal-close"
+        @click="$emit('close')"
+      >
+        <van-icon
+          name="close"
+          color="white"
+          size="25px"
+        />
       </div>
     </div>
   </transition>
@@ -44,7 +54,10 @@
 <script>
 export default {
   props: {
-    shopInfo: Object,
+    shopInfo: {
+      type: Object,
+      default: () => {}
+    },
     showInfoModel: Boolean
   }
 };

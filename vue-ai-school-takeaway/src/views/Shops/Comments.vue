@@ -1,5 +1,8 @@
 <template>
-  <div class="comment" v-if="evaluation">
+  <div
+    v-if="evaluation"
+    class="comment"
+  >
     <!-- 评论区 -->
     <div class="shop-info">
       <!-- 标签 
@@ -14,37 +17,68 @@
         </li>
       </ul>-->
       <!-- 内容 -->
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+      >
         <ul class="comments-wrap">
-          <li v-for="(item,index) in evaluation" :key="index">
+          <li
+            v-for="(item,index) in evaluation"
+            :key="index"
+          >
             <div class="comment-user">
-              <img :src="item.userAvatar" alt />
+              <img
+                :src="item.userAvatar"
+                alt
+              >
             </div>
             <div class="comments-info">
               <div class="comment-name">
-                <h4>{{item.userName}}</h4>
-                <small>{{(item.time).substring(0,(item.time).length-3)}}</small>
+                <h4>{{ item.userName }}</h4>
+                <small>{{ (item.time).substring(0,(item.time).length-3) }}</small>
               </div>
               <div class="comment-rating">
                 <Rating :rating="parseFloat(item.stars)" />
                 <span
                   :style="{color: ratingcontent(parseInt(item.stars)).color}"
-                >{{ratingcontent(parseInt(item.stars)).txt}}</span>
+                >{{ ratingcontent(parseInt(item.stars)).txt }}</span>
               </div>
-              <div class="comment-text">{{item.content}}</div>
-              <div class="comment-reply" v-show="item.reply!='未回复'">{{'伙伴回复：'+item.reply}}</div>
+              <div class="comment-text">
+                {{ item.content }}
+              </div>
+              <div
+                v-show="item.reply!='未回复'"
+                class="comment-reply"
+              >
+                {{ '伙伴回复：'+item.reply }}
+              </div>
               <ul class="comment-imgs">
-                <li v-for="(img,i) in item.images" :key="i">
-                  <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/'+img" alt />
+                <li
+                  v-for="(img,i) in item.images"
+                  :key="i"
+                >
+                  <img
+                    :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/'+img"
+                    alt
+                  >
                 </li>
               </ul>
             </div>
           </li>
         </ul>
       </van-list>
-      <div class="nologin" v-if="nodata">
+      <div
+        v-if="nodata"
+        class="nologin"
+      >
         <div class="content">
-          <van-icon name="star-o" size="50" color="gray" />
+          <van-icon
+            name="star-o"
+            size="50"
+            color="gray"
+          />
           <span>本店暂时没有评论噢，快来抢沙发！</span>
         </div>
       </div>
@@ -56,6 +90,9 @@
 import Rating from "../../components/Rating";
 export default {
   name: "Comments",
+  components: {
+    Rating
+  },
   data() {
     return {
       restID: "0",
@@ -144,9 +181,6 @@ export default {
       ];
       return content[rating - 1];
     }
-  },
-  components: {
-    Rating
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {

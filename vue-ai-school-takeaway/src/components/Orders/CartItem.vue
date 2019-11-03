@@ -1,9 +1,17 @@
 <template>
-  <div class="cart-item" @click="$emit('click')">
-    <div class="cart-item-title">{{title}}</div>
-    <div class="cart-item-right" v-if="subHead">
-      <span>{{subHead}}</span>
-      <i class="fa fa-angle-right"></i>
+  <div
+    class="cart-item"
+    @click="$emit('click')"
+  >
+    <div class="cart-item-title">
+      {{ title }}
+    </div>
+    <div
+      v-if="subHead"
+      class="cart-item-right"
+    >
+      <span>{{ subHead }}</span>
+      <i class="fa fa-angle-right" />
     </div>
   </div>
 </template>
@@ -12,8 +20,14 @@
 export default {
   name: "CartItem",
   props: {
-    title: String,
-    subHead: String
+    title: {
+      type: String,
+      default: ""
+    },
+    subHead: {
+      type: String,
+      default: ""
+    }
   }
 };
 </script>

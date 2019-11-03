@@ -1,30 +1,47 @@
 <template>
   <div class="remark">
     <div class="header">
-      <van-nav-bar title="确认订单" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar
+        title="确认订单"
+        left-arrow
+        @click-left="$router.go(-1)"
+      />
     </div>
     <!-- 订单备注 -->
     <div class="view-body">
       <section>
-        <textarea placeholder="填写额外对餐厅或骑手小哥备注的信息" v-model="text" maxlength="100"></textarea>
+        <textarea
+          v-model="text"
+          placeholder="填写额外对餐厅或骑手小哥备注的信息"
+          maxlength="100"
+        />
         <div class="switch">
           <span
-            @click="handleRadioItem(item)"
-            :class="{'selected': item.select}"
             v-for="(item,index) in radioItem"
             :key="index"
+            :class="{'selected': item.select}"
             class="switch-item item-line"
-          >{{item.name}}</span>
+            @click="handleRadioItem(item)"
+          >{{ item.name }}</span>
         </div>
-        <div class="switch" v-for="(item,index) in switchItem" :key="index">
+        <div
+          v-for="(item,index) in switchItem"
+          :key="index"
+          class="switch"
+        >
           <span
             :class="{'selected': item.select}"
-            @click="item.select = !item.select"
             class="switch-item"
-          >{{item.name}}</span>
+            @click="item.select = !item.select"
+          >{{ item.name }}</span>
         </div>
       </section>
-      <button @click="submitClick" class="btn-submit">确定</button>
+      <button
+        class="btn-submit"
+        @click="submitClick"
+      >
+        确定
+      </button>
     </div>
   </div>
 </template>

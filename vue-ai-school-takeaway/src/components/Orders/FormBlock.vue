@@ -1,11 +1,16 @@
 <template>
   <div class="formblock">
-    <div class="label-wrap">{{label}}</div>
-    <div class="input-group-wrap" @click="$emit('click')">
+    <div class="label-wrap">
+      {{ label }}
+    </div>
+    <div
+      class="input-group-wrap"
+      @click="$emit('click')"
+    >
       <div class="input-wrap">
         <input
-          :readonly="noinput"
           v-if="!textarea"
+          :readonly="noinput"
           :type="type"
           :value="value"
           :placeholder="placeholder"
@@ -17,13 +22,21 @@
           :type="type"
           :value="value"
           :placeholder="placeholder"
-          @input="$emit('input',$event.target.value)"
           rows="2"
           maxlength="100"
-        ></textarea>
-        <i v-if="icon" :class="'fa fa-'+icon"></i>
+          @input="$emit('input',$event.target.value)"
+        />
+        <i
+          v-if="icon"
+          :class="'fa fa-'+icon"
+        />
       </div>
-      <TabTag v-if="tags" :tags="tags" :selectTag="sex" @checkTag="checkTag"/>
+      <TabTag
+        v-if="tags"
+        :tags="tags"
+        :select-tag="sex"
+        @checkTag="checkTag"
+      />
     </div>
   </div>
 </template>
@@ -32,18 +45,42 @@
 import TabTag from "./TabTag";
 export default {
   name: "FormBlock",
+  components: {
+    TabTag
+  },
   props: {
     type: {
       type: String,
       default: "text"
     },
-    label: String,
-    value: String,
-    placeholder: String,
-    icon: String,
-    textarea: String,
-    tags: Array,
-    sex: String,
+    label: {
+      type: String,
+      default: ""
+    },
+    value: {
+      type: String,
+      default: ""
+    },
+    placeholder: {
+      type: String,
+      default: ""
+    },
+    icon: {
+      type: String,
+      default: ""
+    },
+    textarea: {
+      type: String,
+      default: ""
+    },
+    tags: {
+      type: Array,
+      default: () => []
+    },
+    sex: {
+      type: String,
+      default: ""
+    },
     noinput: Boolean
   },
   methods: {
@@ -51,9 +88,6 @@ export default {
       // console.log(item);
       this.$emit("checkSex", item);
     }
-  },
-  components: {
-    TabTag
   }
 };
 </script>

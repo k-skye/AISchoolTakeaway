@@ -1,12 +1,24 @@
 <template>
-  <div v-if="showSearch" class="addressSearch">
+  <div
+    v-if="showSearch"
+    class="addressSearch"
+  >
     <div class="search-view">
       <div class="search-box">
         <div class="search-box-input">
-          <i class="fa fa-search"></i>
-          <input type="text" placeholder="请输入小区/写字楼/学校等" v-model="search_address">
+          <i class="fa fa-search" />
+          <input
+            v-model="search_address"
+            type="text"
+            placeholder="请输入小区/写字楼/学校等"
+          >
         </div>
-        <button @click="$emit('close')" class="search-box-btn">取消</button>
+        <button
+          class="search-box-btn"
+          @click="$emit('close')"
+        >
+          取消
+        </button>
       </div>
       <ul class="search-list">
         <li
@@ -15,8 +27,12 @@
           class="search-row"
           @click="selectAddress(item)"
         >
-          <p class="search-row-title">{{item.name}}</p>
-          <p class="search-row-location">{{item.district}}{{item.address}}</p>
+          <p class="search-row-title">
+            {{ item.name }}
+          </p>
+          <p class="search-row-location">
+            {{ item.district }}{{ item.address }}
+          </p>
         </li>
       </ul>
     </div>
@@ -26,6 +42,13 @@
 <script>
 export default {
   name: "AddressSearch",
+  props: {
+    showSearch: Boolean,
+    addressInfo: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       search_address: "",
@@ -46,12 +69,8 @@ export default {
       this.searchPlace(val);
     }
   },
-  props: {
-    showSearch: Boolean,
-    addressInfo: Object
-  },
   methods: {
-    searchPlace(val) {
+    /* searchPlace(val) {
       // console.log(this.city);
       // 调用高德地图的搜索
       AMap.plugin("AMap.Autocomplete", () => {
@@ -67,7 +86,7 @@ export default {
           this.areaList = result.tips;
         });
       });
-    },
+    }, */
     selectAddress(item) {
       // console.log(item);
       this.addressInfo.address = item.name + item.district + item.address;

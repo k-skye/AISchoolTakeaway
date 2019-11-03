@@ -1,7 +1,11 @@
 <template>
   <div class="comment">
     <div class="header">
-      <van-nav-bar title="评价" left-arrow @click-left="$router.push('order')" />
+      <van-nav-bar
+        title="评价"
+        left-arrow
+        @click-left="$router.push('order')"
+      />
     </div>
     <van-cell-group title=" ">
       <van-field
@@ -19,11 +23,21 @@
       </div>
       <div class="upload">
         图片：
-        <van-uploader v-model="imgUrlList" :max-count="3" :after-read="afterRead" />
+        <van-uploader
+          v-model="imgUrlList"
+          :max-count="3"
+          :after-read="afterRead"
+        />
       </div>
     </van-cell-group>
     <div class="button">
-      <van-button type="primary" size="large" @click="handleClick">提交</van-button>
+      <van-button
+        type="primary"
+        size="large"
+        @click="handleClick"
+      >
+        提交
+      </van-button>
     </div>
   </div>
 </template>
@@ -32,7 +46,7 @@
 import { Toast } from "vant";
 const OSS = require("ali-oss");
 export default {
-  name: "comment",
+  name: "Comment",
   data() {
     return {
       message: "",
@@ -62,11 +76,11 @@ export default {
           images: JSON.stringify(this.needUploadedUrls),
           stars: this.value
         })
-        .then(res => {
-/*           if (res.data.data == "ok") { */
-            Toast.success("评论成功");
-            this.$router.push("order");
-/*           } else {
+        .then(() => {
+          /*           if (res.data.data == "ok") { */
+          Toast.success("评论成功");
+          this.$router.push("order");
+          /*           } else {
             Toast.fail("评论失败！" + res.data.msg);
           } */
         });
@@ -101,7 +115,7 @@ export default {
         file.file.name.split(".").pop();
       client
         .put(name, file.file)
-        .then(res => {
+        .then(() => {
           this.needUploadedUrls.push(name);
           toastLoading.clear();
           Toast.success("上传成功");

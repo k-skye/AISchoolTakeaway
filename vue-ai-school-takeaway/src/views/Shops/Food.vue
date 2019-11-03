@@ -1,24 +1,40 @@
 <template>
   <transition name="move">
-    <div class="food" v-if="isShow">
-      <div class="foodpanel-close" @click="$emit('close')">
-        <van-icon name="close" color="white" size="25px"/>
+    <div
+      v-if="isShow"
+      class="food"
+    >
+      <div
+        class="foodpanel-close"
+        @click="$emit('close')"
+      >
+        <van-icon
+          name="close"
+          color="white"
+          size="25px"
+        />
       </div>
       <div class="foodpanel-body">
         <div class="foodpanel-foodimg">
-          <img :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo" alt />
+          <img
+            :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/goodImgs/'+food.logo"
+            alt
+          >
         </div>
         <div class="foodpanel-foodinfo">
-          <h4>{{food.name}}</h4>
+          <h4>{{ food.name }}</h4>
           <div class="foodpanel-foodsales">
-            <span>月售{{food.salesNum}}</span>
+            <span>月售{{ food.salesNum }}</span>
             <!--  好评率 11% -->
           </div>
           <div class="foodpanel-priceLine">
-            <span>¥{{food.price}}</span>
-            <CartControll class="cart-btn" :food="food" />
+            <span>¥{{ food.price }}</span>
+            <CartControll
+              class="cart-btn"
+              :food="food"
+            />
           </div>
-          <p>{{food.description=='无'?'暂无商品描述噢～':food.description}}</p>
+          <p>{{ food.description=='无'?'暂无商品描述噢～':food.description }}</p>
         </div>
       </div>
     </div>
@@ -29,12 +45,15 @@
 import CartControll from "../../components/Shops/CartControll";
 export default {
   name: "Food",
-  props: {
-    food: Object,
-    isShow: Boolean
-  },
   components: {
     CartControll
+  },
+  props: {
+    food: {
+      type: Object,
+      default: () => {}
+    },
+    isShow: Boolean
   }
 };
 </script>

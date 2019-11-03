@@ -1,21 +1,36 @@
 <template>
   <div class="filter">
     <div class="header">
-      <van-nav-bar :title="title" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar
+        :title="title"
+        left-arrow
+        @click-left="$router.go(-1)"
+      />
     </div>
-      <div class="chooseRest">
-         <van-sticky>
+    <div class="chooseRest">
+      <van-sticky>
         <!-- 导航 -->
-        <FilterView :filterData="filterData" @update="update" />
-        </van-sticky>
-        <!-- 商家信息 -->
-        <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
-            <div class="shoplist">
-              <IndexShop v-for="(item,index) in restaurants" :key="index" :restaurant="item" />
-            </div>
-        </van-list>
-      </div>
-    
+        <FilterView
+          :filter-data="filterData"
+          @update="update"
+        />
+      </van-sticky>
+      <!-- 商家信息 -->
+      <van-list
+        v-model="loading"
+        :finished="allLoaded"
+        finished-text="没有更多了"
+        @load="loadMore"
+      >
+        <div class="shoplist">
+          <IndexShop
+            v-for="(item,index) in restaurants"
+            :key="index"
+            :restaurant="item"
+          />
+        </div>
+      </van-list>
+    </div>
   </div>
 </template>
 
@@ -23,7 +38,11 @@
 import FilterView from "../components/FilterView";
 import IndexShop from "../components/IndexShop";
 export default {
-  name: "filter",
+  name: "Filter",
+  components: {
+    FilterView,
+    IndexShop
+  },
   data() {
     return {
       title: "第一饭堂",
@@ -131,10 +150,6 @@ export default {
       this.condition = condition.condition;
       this.firstLoadData();
     },
-  },
-  components: {
-    FilterView,
-    IndexShop
   }
 };
 </script>

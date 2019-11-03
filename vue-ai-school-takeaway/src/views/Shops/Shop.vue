@@ -1,14 +1,20 @@
 <template>
-  <div class="shop" v-if="shopInfo">
+  <div
+    v-if="shopInfo"
+    class="shop"
+  >
     <!-- 头部 -->
     <nav class="header-nav">
-<!--       <div class="nav_bg">
+      <!--       <div class="nav_bg">
         <img :src="'https://takeaway.pykky.com/restImgs/'+shopInfo.logo" alt />
       </div> -->
       <div class="nav_back">
-        <van-icon @click="$router.push('/home')" name="arrow-left" />
+        <van-icon
+          name="arrow-left"
+          @click="$router.push('/home')"
+        />
       </div>
-<!--       <div class="shop_image">
+      <!--       <div class="shop_image">
         <img :src="'https://takeaway.pykky.com/restImgs/'+shopInfo.logo" alt />
       </div> -->
     </nav>
@@ -17,18 +23,18 @@
     <div class="index-rst">
       <div class="rst-name">
         <span @click="showInfoModel = true">
-          {{shopInfo.name}}
+          {{ shopInfo.name }}
           <van-icon name="arrow" />
         </span>
       </div>
       <!-- 弹窗信息 -->
       <InfoModel
+        :shop-info="shopInfo"
+        :show-info-model="showInfoModel"
         @close="showInfoModel = false"
-        :shopInfo="shopInfo"
-        :showInfoModel="showInfoModel"
       />
 
-<!--  评分月售
+      <!--  评分月售
       <div class="rst-order">
         <span>评分{{shopInfo.stars}}</span>
         <span>月售{{shopInfo.salesNum}}单</span>
@@ -36,13 +42,15 @@
       </div> -->
 
       <!-- 公告 -->
-      <p class="rst-promotion">公告: {{shopInfo.note}}</p>
+      <p class="rst-promotion">
+        公告: {{ shopInfo.note }}
+      </p>
     </div>
 
     <!-- 导航 -->
     <NavBar />
     <keep-alive>
-      <router-view></router-view>
+      <router-view />
     </keep-alive>
   </div>
 </template>
@@ -53,6 +61,10 @@ import NavBar from "../../components/Shops/NavBar";
 
 export default {
   name: "Shop",
+  components: {
+    InfoModel,
+    NavBar
+  },
   data() {
     return {
       restID: "",
@@ -78,10 +90,6 @@ export default {
         this.$store.dispatch("setRestInfo", this.shopInfo);
       });
     }
-  },
-  components: {
-    InfoModel,
-    NavBar
   },
 };
 </script>

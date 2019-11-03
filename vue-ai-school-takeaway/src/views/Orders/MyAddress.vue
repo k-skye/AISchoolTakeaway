@@ -1,35 +1,59 @@
 <template>
   <div class="myAddress">
     <div class="header">
-      <van-nav-bar :title="title" left-arrow @click-left="$router.go(-1)" />
+      <van-nav-bar
+        :title="title"
+        left-arrow
+        @click-left="$router.go(-1)"
+      />
     </div>
     <!-- 显示收货地址 -->
     <div class="address-view">
-      <div class="address-card" v-for="(address,index) in allAddress" :key="index">
+      <div
+        v-for="(address,index) in allAddress"
+        :key="index"
+        class="address-card"
+      >
         <!--<div class="address-card-select">
-           <i class="fa fa-check-circle" v-if="selectIndex == index"></i> --><!-- 这里可以改成默认 
+        <i class="fa fa-check-circle" v-if="selectIndex == index"></i>-->
+        <!-- 这里可以改成默认 
         </div>-->
 
-        <div class="address-card-body" @click="setAddressInfo(address,index)">
+        <div
+          class="address-card-body"
+          @click="setAddressInfo(address,index)"
+        >
           <p class="address-card-title">
-            <span class="username">{{address.name}}</span>
-            <span v-if="address.gender" class="gender">{{address.gender == 1 ? '先生' : '小姐'}}</span>
-            <span class="phone">{{address.phone}}</span>
+            <span class="username">{{ address.name }}</span>
+            <span
+              v-if="address.gender"
+              class="gender"
+            >{{ address.gender == 1 ? '先生' : '小姐' }}</span>
+            <span class="phone">{{ address.phone }}</span>
           </p>
           <p class="address-card-address">
-            <span class="address-text">{{address.dormitory}} {{address.roomNum}}</span>
+            <span class="address-text">{{ address.dormitory }} {{ address.roomNum }}</span>
           </p>
         </div>
         <div class="address-card-edit">
-          <van-icon name="edit" @click="handleEdit(address)" />
-          <van-icon name="delete" @click="handleDelete(address,index)" />
+          <van-icon
+            name="edit"
+            @click="handleEdit(address)"
+          />
+          <van-icon
+            name="delete"
+            @click="handleDelete(address,index)"
+          />
         </div>
       </div>
     </div>
 
     <!-- 新增收货地址 -->
-    <div class="address-view-bottom" @click="addAddress">
-      <i class="fa fa-plus-circle"></i>
+    <div
+      class="address-view-bottom"
+      @click="addAddress"
+    >
+      <i class="fa fa-plus-circle" />
       <span>新增收货地址</span>
     </div>
   </div>
@@ -91,9 +115,9 @@ export default {
     handleDelete(address, index) {
       this.$axios
         .post("https://takeawayapi.pykky.com/?s=Address.RemoveAddr", {
-            id: address.id
+          id: address.id
         })
-        .then(res => {
+        .then(() => {
           this.allAddress.splice(index, 1);
         });
     },
