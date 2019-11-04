@@ -3,6 +3,7 @@ namespace App\Api;
 use PhalApi\Api;
 use App\Domain\deliverorders as DomainDeliverorders;
 use PhalApi\Exception\InternalServerErrorException;
+use PhalApi\Exception\BadRequestException;
 
 /**
  * 配送订单接口
@@ -52,8 +53,10 @@ class Deliverorders extends Api {
         $res = $domain->addOneOrder($this->orderID,$this->deliverID);
         if ($res > 0 ) {
             return 'ok';
-        }else{
+        }else if ($res == -1){
             throw new InternalServerErrorException("新增配送订单失败", 16);
+        }else {
+            throw new BadRequestException('抱歉！此单已被其他伙伴抢单。', 5);
         }
     }
     /**

@@ -64,6 +64,14 @@ class orders extends NotORM {
         ->update($data);
     }
 
+    public function updateStatusOnJieDan($id,$statusNum) {
+        $data = array('status' => $statusNum);
+        return $this->getORM()
+        ->where('status = 1')
+        ->where('id', $id)
+        ->update($data);
+    }
+
     public function cancelOrder($id) {
         $data = array('status' => 8);
         return $this->getORM()

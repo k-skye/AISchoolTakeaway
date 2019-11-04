@@ -17,9 +17,14 @@ class deliverorders {
         $createTime = date('Y-m-d H:i:s',$t);
         //修改原订单状态为2-接单状态
         $modelOrder = new ModelOders();
-        $res = $modelOrder->updateStatus($orderID,2);
+        $res = $modelOrder->updateStatusOnJieDan($orderID,2);
+        if ($res) {
+            //
+        }else {
+            return -2;
+        }
         $rres = $model->addOneOrder($orderID,$deliverID,$createTime);
-        if ($rres && $res) {
+        if ($rres) {
             return $rres;
         }else {
             return -1;
