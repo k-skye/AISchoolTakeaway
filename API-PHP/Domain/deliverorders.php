@@ -122,7 +122,30 @@ class deliverorders {
         $rres = $model->addOneOrder($orderID,$deliverID,$createTime);
         if ($rres) {
             //开始推送给用户已接单
-            
+            $t = time();
+            $createTime = date('Y-m-d H:i:s',$t);
+
+            $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+            $url='http://takeawaydeliver.pykky.com/';
+            $first='订单已被接单，小伙伴正在前往店铺';
+            $remark='若不想接收此消息可在配送端更改筛选规则（更新通知：明天5号将支持自己关闭接单提醒噢～）';
+            //测试用
+            //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+            $modid='Tbr9oI-fefuJplg6WOfn0oeHT9HAlKNPy-NICycgiwg';
+            $data = array(
+                'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                'keyword1'=>array('value'=>urlencode('美食跑腿'),'color'=>'#0000FF'),
+                'keyword2'=>array('value'=>urlencode((((float)$payPrice)/100).' 元'),'color'=>"#0000FF"),
+                'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
+                'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+            );
+            //发送
+            $orderInfo = $modelOrder->getOnesOneOrder($orderID);
+            $userid = $orderInfo['userID'];
+            $modelTureUser = new ModelUsers();
+            $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+            $openid = $trueUserInfo['openid'];
+            $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
             return $rres;
         }else {
             return -1;

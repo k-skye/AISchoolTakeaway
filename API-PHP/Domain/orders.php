@@ -573,7 +573,7 @@ class orders {
         $t = time();
         $createTime = date('Y-m-d H:i:s',$t);
 
-        $url='http://takeawaydeliver.pykky.com/';
+        $url='';
         $first='订单已发布，等待有空的小伙伴接单';
         $remark='因为是跑腿任务，不能保证您的订单一定会有小伙伴接单噢～若30分钟后仍未被接单会自动退款(并且返2元无门槛红包)';
         //测试用
