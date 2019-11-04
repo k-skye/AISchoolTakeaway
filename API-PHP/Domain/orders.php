@@ -449,98 +449,97 @@ class orders {
                     $needNum = $chooseAddr;
                     if ($chooseNear == 1) {//包括附近宿舍
                     if ($needNum <= 6) {
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把大于6的都去掉
                              if ($dormitoryNum > 6) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                            
+                         
                          
                     }else if ($needNum <= 10){
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
+                        
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把大于10和小于7的都去掉
                              if ($dormitoryNum > 10 || $dormitoryNum < 7) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                             
+                         
                     }else if ($needNum <= 15){
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
+                        
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把大于15和小于11的都去掉
                              if ($dormitoryNum > 15 || $dormitoryNum < 11) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                            
+                         
                     }else if ($needNum <= 17){
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
+                        
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把大于17和小于16的都去掉
                              if ($dormitoryNum > 17 || $dormitoryNum < 16) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                             
+                         
                     }else if ($needNum <= 20){
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
+                        
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把大于20和小于18的都去掉
                              if ($dormitoryNum > 20 || $dormitoryNum < 18) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                             
+                         
                     }else if ($needNum <= 22){
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
+                        
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把大于22和小于20的都去掉
                              if ($dormitoryNum > 22 || $dormitoryNum < 20) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                             
+                         
                     }
                     }else if ($chooseNear == 0) {
-                        $ii = 0;
+                        
                         $dormitoryNum = 0;
-                        foreach ($allDeliverArr as $value){
+                        
                         if(preg_match('/\d+/',$dormitory,$arrMath)){
                             $dormitoryNum = $arrMath[0];
                          }//这次循环拿宿舍楼的数字
                              //把不等于的去掉
                              if ($dormitoryNum != $needNum) {
-                                unset($allDeliverArr[$ii]);
+                                unset($allDeliverArr[$iiRest]);
                              }
-                             $ii++;
-                         }
+                            
+                         
                     }
                 }
                 if ($chooseRest > 0) {
@@ -553,17 +552,18 @@ class orders {
             $iiRest++;
          }
         
+        $allDeliverArr = array_values($allDeliverArr);//重建索引
         //发送
         foreach ($allDeliverArr as $value) {
-            if ((!empty($value['cardImg'])) && $value['openid'] != 'oAMY6uDvgBa5GmRVLsRSeMavgDu8'){
+                if ((!empty($value['cardImg'])) && $value['openid'] != 'oAMY6uDvgBa5GmRVLsRSeMavgDu8'){
 
-                //测试用
-                //if ($value['openid'] == 'oAMY6uLSkezkVmGf2M27o07Xfthg') {
-                    $openid = $value['openid'];
-                    $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
-                //}
-
-            }
+                    //测试用
+                    //if ($value['openid'] == 'oAMY6uLSkezkVmGf2M27o07Xfthg') {
+                        $openid = $value['openid'];
+                        $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+                    //}
+    
+                }
         }
         return $res;
     }
