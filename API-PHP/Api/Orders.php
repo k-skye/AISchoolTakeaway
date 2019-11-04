@@ -129,11 +129,25 @@ class Orders extends Api {
      */
     public function autoCancelOrder() {
         $domain = new DomainOders();
-        $res = $domain->autoCancelOrder();
-        if ($res) {
-            return 'ok';
+        //取60分钟前的订单
+        $theTime = strtotime("-60 minute");
+        $needCancelOrderArr = $domain->getNeedCancelOrder($theTime);
+        $res = "";
+        foreach ($needCancelOrderArr as $value) {
+            //对每一个订单，请求退款接口
+            //支付时间
+            $paytimeUnixTime = (int)date(strtotime($value['payTime']));
+            $nowtimeUnix = (int)strtotime("now");
+            if ((($nowtimeUnix-$paytimeUnixTime)>1800) && (((int)$value['status'])==1)){
+                $res += $value['id'].$domain->cancelOrder($value['id']).';';
+                //测试$res = $value['id'];
+            }
+        }
+        if (!empty($res)) {
+            //return 'ok';
+            return $res;
         }else{
-            throw new InternalServerErrorException("服务器取消订单失败", 27);
+            throw new InternalServerErrorException("自动取消订单失败", 30);
         }
     }
 } 

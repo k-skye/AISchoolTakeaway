@@ -101,4 +101,12 @@ class orders extends NotORM {
         ->where('id', $id)
         ->update($data);
     }
+
+    public function getNeedCancelOrder($theTime) {
+        $query = 'payTime >= '.$theTime;
+        return $this->getORM()
+        ->where($query)
+        ->fetchAll();
+    }
+    
 }

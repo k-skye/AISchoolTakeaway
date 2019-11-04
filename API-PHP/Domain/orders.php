@@ -621,8 +621,8 @@ class orders {
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
 
             $url='';
-            $first='订单超时被关闭，已返2元无门槛红包到您账户上';
-            $remark='如有疑问可联系客服：17889465893';
+            $first='订单超时被关闭，稍后将返2元无门槛红包到您账户上';
+            $remark='平台前期伙伴可能不充足，希望您能谅解，如有疑问可联系客服：17889465893';
             //测试用
             //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
             $modid='3LIHebvXA-lvn0pZHt9vPH7a5a2Ezc9ggO3NeQhfa94';
@@ -630,7 +630,7 @@ class orders {
                 'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
                 'keyword1'=>array('value'=>urlencode('原路退回'),'color'=>'#0000FF'),
                 'keyword2'=>array('value'=>urlencode($refundPrice.' 元'),'color'=>"#0000FF"),
-                'keyword3'=>array('value'=>urlencode('具体到账时间以微信支付通知为准'),'color'=>"#743A3A"),
+                'keyword3'=>array('value'=>urlencode('具体以微信支付通知为准'),'color'=>"#743A3A"),
                 'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
             );
             //发送
@@ -653,9 +653,8 @@ class orders {
         }
     }
 
-    public function autoCancelOrder() {
+    public function getNeedCancelOrder($theTime) {
         $model = new ModelOders();
-        
-        return $model->autoCancelOrder();
+        return $model->getNeedCancelOrder($theTime);
     }
 }
