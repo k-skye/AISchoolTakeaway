@@ -20,6 +20,12 @@ class orders extends NotORM {
             ->fetchOne();
     }
 
+    public function getOnesOneOrderByWechatNo($ID) {
+        return $this->getORM()
+            ->where('orderNo = ?', $ID)
+            ->fetchOne();
+    }
+
     public function getAllOrdersOnNeedDelive($offset,$limit) {
         return $this->getORM()
             ->where('id >= ?', $offset)

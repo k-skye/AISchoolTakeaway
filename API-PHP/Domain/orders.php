@@ -8,6 +8,101 @@ use App\Model\discount as ModelDiscount;
 use App\Model\address as ModelAddress;
 use App\Model\deliverusers as ModelUsers;
 use App\Model\deliverorders as ModelDeliverorders;
+class WeixinPush
+{
+    protected $appid;
+    protected $secret;
+    protected $accessToken;
+    function  __construct($appid, $secret)
+    {
+        if ($appid && $secret) {
+            $this->appid = $appid;
+            $this->secret = $secret;
+            $this->accessToken = $this->getToken($appid, $secret);
+        }
+        
+    }
+    /**
+     * 发送post请求
+     * @param string $url
+     * @param string $param
+     * @return bool|mixed
+     */
+    function http_request($url, $data = null){
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        if (!empty($data)){
+            curl_setopt($curl, CURLOPT_POST, 1);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        }
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $output = curl_exec($curl);
+        curl_close($curl);
+        return $output;
+    }
+    /**
+     * 发送get请求
+     * @param string $url
+     * @return bool|mixed
+     */
+    function request_get($url = '')
+    {
+        if (empty($url)) {
+            return false;
+        }
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+    /**
+     * 获取token
+     * @param $appid
+     * @param $appsecret
+     * @return mixed
+     */
+    protected function getToken($appid, $appsecret)
+    {
+		$token_access_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $appid . "&secret=" . $appsecret;
+		$res = file_get_contents($token_access_url);    //获取文件内容或获取网络请求的内容
+		//echo $res;
+		$result = json_decode($res, true);   //接受一个 JSON 格式的字符串并且把它转换为 PHP 变量
+		$access_token = $result['access_token'];
+		return $access_token;
+    }
+    /**
+     * 发送自定义的模板消息
+     * @param $touser
+     * @param $template_id
+     * @param $url
+     * @param $data
+     * @param string $topcolor
+     * @return bool
+     */
+    public function doSend($touser, $template_id, $url,$sdata, $topcolor = '#7B68EE')
+    {   
+        $template = array(
+            'touser' => $touser,
+            'template_id' => $template_id,
+            'url' => $url,
+            'topcolor' => $topcolor,
+            'data' => $sdata
+        );
+        $json_template = json_encode($template);
+        $url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=" . $this->accessToken;
+        $dataRes = $this->http_request($url, urldecode($json_template));
+        return true;
+/*         if (((int)$dataRes['errcode']) == 0) {
+            return true;
+        } else {
+            return false;
+        } */
+    }
+}
 
 class orders {
 
@@ -83,10 +178,13 @@ class orders {
         $sex = 0;
         foreach ($arr as $value){
             $sex = $value['sex'];
-             //把性别不相等的去掉
-             if ($sex != $needSex) {
-                unset($arr[$iisex]);
-             }
+            //当要送上楼的时候
+            if (((int)$value['upstairs']) != 0) {
+                //把性别不相等的去掉
+                if ($sex != $needSex) {
+                    unset($arr[$iisex]);
+                }
+            }
              $iisex++;
          }
          $arr = array_values($arr);//重建索引
@@ -271,7 +369,203 @@ class orders {
 
     public function updateOrderPay($orderNo,$payPrice,$payTime) {
         $model = new ModelOders();
-        return $model->updateOrderPay($orderNo,$payPrice,$payTime);
+        $res = $model->updateOrderPay($orderNo,$payPrice,$payTime);
+        //开始推送微信消息给所有配送员
+        $orderInfo = $model->getOnesOneOrderByWechatNo($orderNo);
+        $upstairs = $orderInfo['upstairs'];
+        $addrID = $orderInfo['addressID'];
+        $restID = $orderInfo['restID'];
+        $deliveTime = $orderInfo['shouldDeliveTime'];
+        $deliverFee = $orderInfo['deliveFee'];
+        //找地址
+        $modelAddr = new ModelAddress();
+        $addrRes = $modelAddr->getOneByAddrById($addrID);
+        $dormitory = $addrRes['dormitory'];
+        $needSex = (int)$addrRes['gender'];
+        //找店铺
+        $modelRest = new ModelRestaurant();
+        $restRes = $modelRest->getOneRest($restID);
+        $restNum = (int)$restRes['roomNum'];
+        $needUpstair = '送楼下';
+        if (((int)$upstairs) == 1){
+            $needUpstair = '送上门(1-3楼)';
+        }else if (((int)$upstairs) == 2) {
+            $needUpstair = '送上门(4-6楼)';
+        }
+        $addr = $restNum.'饭 - '.$dormitory;
+        
+        $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+        $url='http://takeawaydeliver.pykky.com/';
+        $first='您有 '.$restNum.'饭 新订单可接';
+        $remark='若不想接收此消息可在配送端更改筛选规则';
+        //测试用
+        //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+        $modid='2ufY9x3kvO8gLJsTzc7IgSPPipBbu-MkBEfXIvjkFZ4';
+        $data = array(
+            'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+            'tradeDateTime'=>array('value'=>urlencode($deliveTime.'（预计送达）'),'color'=>'#743A3A'),
+            'orderType'=>array('value'=>urlencode($needUpstair),'color'=>"#0000FF"),
+            'customerInfo'=>array('value'=>urlencode($addr),'color'=>"#0000FF"),
+            'orderItemName'=>array('value'=>urlencode('可得配送费'),'color'=>"#000000"),
+            'orderItemData'=>array('value'=>urlencode($deliverFee.' 元'),'color'=>"#0000FF"),
+            'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+        );
+        //所有配送员
+        $modelAllUser = new ModelUsers();
+        $allDeliverArr = $modelAllUser->getAllUsers();
+        
+        $iisex = 0;
+        $iiRest = 0;
+        $iimessage = 0;
+        foreach ($allDeliverArr as $value){
+
+            //去掉性别不一致的
+            $sex = (int)$value['sex'];
+            //当要送上楼的时候
+            if (((int)$upstairs) != 0) {
+                //把性别不相等的去掉
+                if ($sex != $needSex) {
+                    unset($allDeliverArr[$iisex]);
+                }
+            }
+            $iisex++;
+
+            $sendMessage = (int)$value['sendMessage'];
+            if ($sendMessage == 0) {
+                //设置了不想接消息
+                unset($allDeliverArr[$iimessage]);
+            }
+            $iimessage++;
+            
+            //筛选
+            $chooseAddr = (int)$value['chooseAddr'];
+            $chooseRest = (int)$value['chooseRest'];
+            $chooseNear = (int)$value['chooseNear'];
+
+            if ($chooseAddr == 0 && $chooseRest ==0) {//默认
+                //
+            }else{
+                if ($chooseAddr > 0){
+                    $needNum = $chooseAddr;
+                    if ($chooseNear == 1) {//包括附近宿舍
+                    if ($needNum <= 6) {
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于6的都去掉
+                             if ($dormitoryNum > 6) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                         
+                    }else if ($needNum <= 10){
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于10和小于7的都去掉
+                             if ($dormitoryNum > 10 || $dormitoryNum < 7) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                    }else if ($needNum <= 15){
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于15和小于11的都去掉
+                             if ($dormitoryNum > 15 || $dormitoryNum < 11) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                    }else if ($needNum <= 17){
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于17和小于16的都去掉
+                             if ($dormitoryNum > 17 || $dormitoryNum < 16) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                    }else if ($needNum <= 20){
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于20和小于18的都去掉
+                             if ($dormitoryNum > 20 || $dormitoryNum < 18) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                    }else if ($needNum <= 22){
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于22和小于20的都去掉
+                             if ($dormitoryNum > 22 || $dormitoryNum < 20) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                    }
+                    }else if ($chooseNear == 0) {
+                        $ii = 0;
+                        $dormitoryNum = 0;
+                        foreach ($allDeliverArr as $value){
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把不等于的去掉
+                             if ($dormitoryNum != $needNum) {
+                                unset($allDeliverArr[$ii]);
+                             }
+                             $ii++;
+                         }
+                    }
+                }
+                if ($chooseRest > 0) {
+                    $needNum = $chooseRest;//配送员需要的饭堂  restNum下单的饭堂
+                    if ($needNum != $restNum) {
+                        unset($allDeliverArr[$iiRest]);
+                    }
+                }
+            }
+            $iiRest++;
+         }
+        
+        //发送
+        foreach ($allDeliverArr as $value) {
+            if ((!empty($value['cardImg'])) && $value['openid'] != 'oAMY6uDvgBa5GmRVLsRSeMavgDu8'){
+
+                //测试用
+                //if ($value['openid'] == 'oAMY6uLSkezkVmGf2M27o07Xfthg') {
+                    $openid = $value['openid'];
+                    $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+                //}
+
+            }
+        }
+        return $res;
     }
 
     public function cancelOrder($id) {

@@ -7,6 +7,7 @@ class deliverusers extends NotORM {
 
     public function getAllUsers() {
         return $this->getORM()
+            ->where('cardImg IS NOT NULL')
             ->fetchAll();
     }
 

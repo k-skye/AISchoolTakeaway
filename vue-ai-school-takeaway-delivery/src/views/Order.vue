@@ -93,7 +93,7 @@
                 />
                 {{ order.dormitory }}
                 <div
-                  v-if="order.upstairs"
+                  v-if="order.upstairs != 0"
                   class="lou"
                 >
                   要上楼

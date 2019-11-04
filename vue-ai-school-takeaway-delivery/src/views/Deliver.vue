@@ -46,7 +46,7 @@
                 class="icon"
               />
               {{ orderDelive.addr.dormitory }}<div
-                v-if="orderDelive.order.upstairs"
+                v-if="orderDelive.order.upstairs != 0"
                 class="lou"
               >
                 要上楼
