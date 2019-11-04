@@ -261,6 +261,38 @@ class deliverorders {
         $res = $modelOrder->updateStatus($orderID,3);
         $rres = $model->updateGetFoodTime($ID,$createTime);
         if ($rres && $res) {
+            //开始推送给用户已接单
+            $t = time();
+            $createTime = date('Y-m-d H:i:s',$t);
+            //拿配送员信息
+            $modelDeliverUser = new ModelDeliverUser();
+            $DeliverOrderInfo = $model->getOneByID($ID);
+            $DeliverUserInfo = $modelDeliverUser->getOneUserByUserID($DeliverOrderInfo['deliverID']);
+            $realName = $DeliverUserInfo['realName'];
+            $phoneNo = $DeliverUserInfo['phoneNo'];
+
+            $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+            $url='';
+            $first='小伙伴已取到商品，正在飞速前往您的宿舍';
+            $remark='';
+            //测试用
+            //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+            $modid='8wvvEwBuVFQBo9Yu_6SzWQsPjIZIgnBKjBWt2ZItrTk';
+            $data = array(
+                'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                'keyword1'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
+                'keyword2'=>array('value'=>urlencode($realName),'color'=>'#0000FF'),
+                'keyword3'=>array('value'=>urlencode($phoneNo),'color'=>"#0000FF"),
+                'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+            );
+            //发送
+            $orderInfo = $modelOrder->getOnesOneOrder($orderID);
+            $userid = $orderInfo['userID'];
+            $modelTureUser = new ModelUsers();
+            $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+            $openid = $trueUserInfo['openid'];
+            $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
             return $rres;
         }else {
             return -1;

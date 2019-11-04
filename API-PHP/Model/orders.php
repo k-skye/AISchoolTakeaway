@@ -53,6 +53,7 @@ class orders extends NotORM {
     public function updateOrderPay($orderNo,$payPrice,$payTime) {
         $data = array('payTime' => $payTime,'payPrice' => $payPrice,'status' => 1);
         return $this->getORM()
+        ->where('status = 0')
         ->where('orderNo', $orderNo)
         ->update($data);
     }
@@ -75,6 +76,7 @@ class orders extends NotORM {
     public function cancelOrder($id) {
         $data = array('status' => 8);
         return $this->getORM()
+        ->where('status = 1')
         ->where('id', $id)
         ->update($data);
     }

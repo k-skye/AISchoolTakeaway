@@ -17,6 +17,12 @@ class deliverorders extends NotORM {
             ->fetchOne();
     }
 
+    public function getOneByID($ID) {
+        return $this->getORM()
+            ->where('ID = ?', $ID)
+            ->fetchOne();
+    }
+
     public function getOneOrderByorderID($orderID) {
         return $this->getORM()
             ->where('orderID = ?', $orderID)

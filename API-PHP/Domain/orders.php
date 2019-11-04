@@ -372,7 +372,8 @@ class orders {
     public function updateOrderPay($orderNo,$payPrice,$payTime) {
         $model = new ModelOders();
         $res = $model->updateOrderPay($orderNo,$payPrice,$payTime);
-        //开始推送微信消息给所有配送员
+        if ($res) {
+            //开始推送微信消息给所有配送员
         $orderInfo = $model->getOnesOneOrderByWechatNo($orderNo);
         $upstairs = $orderInfo['upstairs'];
         $addrID = $orderInfo['addressID'];
@@ -592,9 +593,13 @@ class orders {
         $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
         $openid = $trueUserInfo['openid'];
         $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
-
-
         return $res;
+        }else{
+            return -1;
+        }
+
+
+        
     }
 
     public function cancelOrder($id) {
@@ -608,8 +613,34 @@ class orders {
         $curl = new \PhalApi\CUrl();
         $url = "https://takeawayapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
         $rs = $curl->get($url, 10000);
-        return $rs;
+        //return $rs;
+
+        
         if ($res && $rs == 'refund success') {
+            //发退款消息
+            $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+
+            $url='';
+            $first='订单超时被关闭，已返2元无门槛红包到您账户上';
+            $remark='如有疑问可联系客服：17889465893';
+            //测试用
+            //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+            $modid='3LIHebvXA-lvn0pZHt9vPH7a5a2Ezc9ggO3NeQhfa94';
+            $data = array(
+                'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                'keyword1'=>array('value'=>urlencode('原路退回'),'color'=>'#0000FF'),
+                'keyword2'=>array('value'=>urlencode($refundPrice.' 元'),'color'=>"#0000FF"),
+                'keyword3'=>array('value'=>urlencode('具体到账时间以微信支付通知为准'),'color'=>"#743A3A"),
+                'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+            );
+            //发送
+            $userid = $orderDetail['userID'];
+            $modelTureUser = new ModelUsers();
+            $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+            $openid = $trueUserInfo['openid'];
+            $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
+
             return $res;
         }else{
             //把订单状态修改为异常状态
