@@ -8,6 +8,9 @@ use App\Model\food as ModelFood;
 use App\Model\address as ModelAddress;
 use App\Model\comment as ModelComment;
 use App\Model\tradinglog as ModelTradinglog;
+use App\Model\deliverusers as ModelDeliverUser;
+use App\Model\users as ModelUsers;
+
 class WeixinPush
 {
     protected $appid;
@@ -124,18 +127,23 @@ class deliverorders {
             //开始推送给用户已接单
             $t = time();
             $createTime = date('Y-m-d H:i:s',$t);
+            //拿配送员信息
+            $modelDeliverUser = new ModelDeliverUser();
+            $DeliverUserInfo = $modelDeliverUser->getOneUserByUserID($deliverID);
+            $realName = $DeliverUserInfo['realName'];
+            $phoneNo = $DeliverUserInfo['phoneNo'];
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='http://takeawaydeliver.pykky.com/';
+            $url='';
             $first='订单已被接单，小伙伴正在前往店铺';
-            $remark='若不想接收此消息可在配送端更改筛选规则（更新通知：明天5号将支持自己关闭接单提醒噢～）';
+            $remark='';
             //测试用
             //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
             $modid='Tbr9oI-fefuJplg6WOfn0oeHT9HAlKNPy-NICycgiwg';
             $data = array(
                 'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
-                'keyword1'=>array('value'=>urlencode('美食跑腿'),'color'=>'#0000FF'),
-                'keyword2'=>array('value'=>urlencode((((float)$payPrice)/100).' 元'),'color'=>"#0000FF"),
+                'keyword1'=>array('value'=>urlencode($realName),'color'=>'#0000FF'),
+                'keyword2'=>array('value'=>urlencode($phoneNo),'color'=>"#0000FF"),
                 'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
                 'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
             );
@@ -146,6 +154,7 @@ class deliverorders {
             $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
             $openid = $trueUserInfo['openid'];
             $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
             return $rres;
         }else {
             return -1;

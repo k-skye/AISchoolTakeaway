@@ -1,7 +1,7 @@
 <?php
 namespace App\Domain;
 
-use App\Model\deliverusers as ModelUsers;
+use App\Model\deliverusers as ModelDeliverUser;
 use App\Model\phonecode as ModelPhoneCode;
 use AlibabaCloud\Client\AlibabaCloud;
 use AlibabaCloud\Client\Exception\ClientException;
@@ -14,7 +14,7 @@ use App\Model\orders as ModelOders;
 class deliverusers {
 
     public function getAllUsers() {
-        $model = new ModelUsers();
+        $model = new ModelDeliverUser();
         return $model->getAllUsers();
     }
 
@@ -64,7 +64,7 @@ class deliverusers {
 
     public function checkFirstByOpenid($openid) {
         //检测是否存在这个openid，存在就返回openid对应用户信息
-        $modelUser = new ModelUsers();
+        $modelUser = new ModelDeliverUser();
         $res = $modelUser->getOneUserByOpenid($openid);
         if (empty($res)) {
             //不存在就插入新的用户，把openid存进去
@@ -87,7 +87,7 @@ class deliverusers {
 
     public function checkPhoneExist($phoneNo) {
         //检测是否存在这个openid，存在就返回openid对应用户信息
-        $modelUser = new ModelUsers();
+        $modelUser = new ModelDeliverUser();
         $res = $modelUser->getOneUserByPhone($phoneNo);
         if (!empty($res)) {
             return -1;
@@ -96,7 +96,7 @@ class deliverusers {
 
     public function getOneUserInfo($openid) {
         //检测是否存在这个openid，存在就返回openid对应用户信息
-        $modelUser = new ModelUsers();
+        $modelUser = new ModelDeliverUser();
         $res = $modelUser->getOneUserByOpenid($openid);
         if (empty($res['phoneNo'])) {
             $res['firstlogin'] = 1;
@@ -137,7 +137,7 @@ class deliverusers {
     }
 
     public function saveWechatUserInfo($openid,$nickname,$city,$headimgurl) {
-        $modelUser = new ModelUsers();
+        $modelUser = new ModelDeliverUser();
         $res = $modelUser->saveWechatUserInfo($openid,$nickname,$city,$headimgurl);
         if ($res == 0 || $res) {//数据已更新或无变化
             return 0;
@@ -149,7 +149,7 @@ class deliverusers {
     public function userReg($loginCode,$codeID,$phoneNo,$stuID,$openid,$realName,$sex,$cardImg) {
         //检测code是否正确
         $modelPhoneCode = new ModelPhoneCode();
-        $modelUser = new ModelUsers();
+        $modelUser = new ModelDeliverUser();
         $randomCode = $modelPhoneCode->getCode($codeID);
         if ($randomCode == $loginCode) {
             //正确
@@ -166,7 +166,7 @@ class deliverusers {
     }
 
     public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear) {
-        $model = new ModelUsers();
+        $model = new ModelDeliverUser();
         return $model->changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear);
     }
 }
