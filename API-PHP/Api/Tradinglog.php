@@ -63,4 +63,18 @@ class TradingLog extends Api {
                 break;
         }
     }
+
+    /**
+     * 自动3小时更新配送余额
+     * @desc 测试一下
+     */
+    public function autoDoneLog() {
+        $domain = new DomainTradinglog();
+        $res = $domain->autoDoneLog();
+        if ($res != -1) {
+            return 'ok';
+        }else{
+            throw new InternalServerErrorException("自动更新配送余额失败", 31);
+        }
+    }
 } 

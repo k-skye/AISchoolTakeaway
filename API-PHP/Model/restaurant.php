@@ -86,4 +86,11 @@ class restaurant extends NotORM {
         // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
         return $orm->insert_id();
     }
+
+    public function updateSalesNum($ID,$salesNum) {
+        $data = array('salesNum' => $salesNum);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    }
 }

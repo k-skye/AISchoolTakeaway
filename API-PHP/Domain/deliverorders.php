@@ -308,10 +308,35 @@ class deliverorders {
         $res = $modelOrder->updateStatus($orderID,4);
         $orderInfo = $modelOrder->getOnesOneOrder($orderID);
         $money = $orderInfo['deliveFee'];
+        $okmoney = (float)$orderInfo['payPrice'];
+        $okmoney = ($okmoney/100);
         $modelTradLog = new ModelTradinglog();
         $rres = $modelTradLog->addOneTradLogWithDeliver($deliverID,$money,$createTime,$ID);
         $rrres = $model->updatedelivedTime($ID,$createTime);
         if ($rrres && $res && $rres) {
+
+            $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+            $url='';
+            $first='伙伴报告已送达至您手中，给他/她和店铺一个评价吧～';
+            $remark='如有疑问可联系客服：17889465893';
+            //测试用
+            //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+            $modid='KABBNyp3tEWy4MpcL5GCTzjwhX1vpPHpnmlaqaz58tE';
+            $data = array(
+                'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                'keyword1'=>array('value'=>urlencode('美食跑腿'),'color'=>"#0000FF"),
+                'keyword2'=>array('value'=>urlencode($okmoney),'color'=>'#0000FF'),
+                'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
+                'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+            );
+            //发送
+            $userid = $orderInfo['userID'];
+            $modelTureUser = new ModelUsers();
+            $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+            $openid = $trueUserInfo['openid'];
+            $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
+
             return $rrres;
         }else {
             return -1;

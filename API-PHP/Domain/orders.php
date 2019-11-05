@@ -380,6 +380,7 @@ class orders {
         $restID = $orderInfo['restID'];
         $deliveTime = $orderInfo['shouldDeliveTime'];
         $deliverFee = $orderInfo['deliveFee'];
+        $foodArr = $orderInfo['foods'];
         //找地址
         $modelAddr = new ModelAddress();
         $addrRes = $modelAddr->getOneByAddrById($addrID);
@@ -593,13 +594,29 @@ class orders {
         $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
         $openid = $trueUserInfo['openid'];
         $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
+        //店铺数和商品数销量增加
+        $foodArr = json_decode($foodArr);
+        $modelFood = new ModelFood();
+        $foodres = null;
+        foreach ($foodArr as $value) {
+            //对每一个商品
+            //在food数据库里找当前数，再update++
+            $foodInfo = $modelFood->getOneFoodByID($value);
+            $salesNum = (int)$foodInfo['salesNum'];
+            $salesNum++;
+            $foodres = $modelFood->updateSalesNum($value,$salesNum);
+        }
+        //对店铺
+        $salesNumRest = (int)$restRes['salesNum'];
+        $salesNumRest++;
+        $restres = $modelRest->updateSalesNum($restID,$salesNumRest);
+
+
         return $res;
         }else{
             return -1;
         }
-
-
-        
     }
 
     public function cancelOrder($id) {

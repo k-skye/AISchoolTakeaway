@@ -12,6 +12,20 @@ class tradinglog extends NotORM {
             ->fetchAll();
     }
 
+    public function updateDone($ID) {
+        $data = array('done' => 1);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    }
+
+    public function getAllLogsNotDone() {
+        return $this->getORM()
+            ->where('type LIKE ?', '%配送费%')
+            ->where('done = ?', 0)
+            ->fetchAll();
+    }
+
     public function getOneLogsMonthDone($deliverID,$date) {
         return $this->getORM()
             ->where('deliverID = ?', $deliverID)

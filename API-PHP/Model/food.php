@@ -31,4 +31,17 @@ class food extends NotORM {
         ->where('name LIKE ?', $text)
         ->fetchAll();
     }
+
+    public function getOneFoodByID($foodID) {
+        return $this->getORM()
+            ->where('id = ?', $foodID)
+            ->fetchAll();
+    }
+
+    public function updateSalesNum($ID,$salesNum) {
+        $data = array('salesNum' => $salesNum);
+        return $this->getORM()
+        ->where('id', $ID)
+        ->update($data);
+    }
 }

@@ -3,12 +3,62 @@ namespace App\Domain;
 
 use App\Model\tradinglog as ModelTradinglog;
 use App\Model\deliverusers as ModelUsers;
+use App\Model\deliverorders as ModelDeliverorders;
+use App\Model\orders as ModelOders;
+use App\Model\deliverusers as ModelDeliverUser;
 
 class tradinglog {
 
-     public function getOnesAllTradLog($deliverID,$offset,$limit) {
+    public function getOnesAllTradLog($deliverID,$offset,$limit) {
         $model = new ModelTradinglog();
         return $model->getOnesAllTradLog($deliverID,$offset,$limit);
+    }
+
+    public function autoDoneLog() {
+        $model = new ModelTradinglog();
+        $notDoneLogArr = $model->getAllLogsNotDone();
+        $rrres = "";
+        $modelDeliveOrder = new ModelDeliverorders();
+        $modelOrder = new ModelOders();
+        $modelDeliverUser = new ModelDeliverUser();
+        foreach ($notDoneLogArr as $value) {
+            //对每一个订单，请求退款接口
+            //支付时间
+            $paytimeUnixTime = (int)date(strtotime($value['date']));
+            $nowtimeUnix = (int)strtotime("now");
+            if ((($nowtimeUnix-$paytimeUnixTime)>7200)){
+                //通过配送订单id查order订单
+                $deliveOrderInfo = $modelDeliveOrder->getOneByID($value['deliverorderID']);
+                //查order
+                $OrderInfo = $modelOrder->getOnesOneOrder($deliveOrderInfo['orderID']);
+                //拿总原价 加到deliverUser余额和配送费里
+                $deliveUserInfo = $modelDeliverUser->getOneUserByUserID($deliveOrderInfo['deliverID']);
+                $totalprice = ((float)$OrderInfo['totalPrice']);
+                $deliverFee = (float)$OrderInfo['deliveFee'];
+                //现在的余额和配送费
+                $noun = (float)$deliveUserInfo['noun'];
+                $income = (float)$deliveUserInfo['income'];
+                //计算
+                $noun+=$totalprice;
+                $income+=$deliverFee;
+                //更新余额和配送费
+                $res = $modelDeliverUser->updateNounAndIncome($noun,$income,$deliveOrderInfo['deliverID']);
+                //更新Done状态为1
+                $rres = null;
+                if ($res) {
+                    $rres = $model->updateDone($value['id']);
+                }
+                if ($res && $rres) {
+                    $rrres = "ok";
+                }
+            }
+        }
+        if (!empty($rrres)) {
+            //return 'ok';
+            return 1;
+        }else{
+            return -1;
+        }
     }
 
     public function addCashTradLog($deliverID) {
