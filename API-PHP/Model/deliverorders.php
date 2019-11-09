@@ -94,10 +94,10 @@ class deliverorders extends NotORM {
         ->fetchAll();
     }
 
-    public function updateCanComment($ID) {
+    public function updateCanComment($orderID) {
         $data = array('canComment' => 1);
         return $this->getORM()
-        ->where('id', $ID)
+        ->where('orderID', $orderID)
         ->update($data);
     } 
 }

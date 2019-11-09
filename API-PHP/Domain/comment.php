@@ -167,7 +167,7 @@ class comment {
         $res = $model->addOneComment($text,$restID,$images,$stars,$userID,$createTime);
         $rres = $modelOrder->userCommentOrder($orderID,$res);
         $modelDeliveOrder = new ModelDeliverorders();
-        $rrres = $modelDeliveOrder->updateCanComment($res);
+        $rrres = $modelDeliveOrder->updateCanComment($orderID);
         if ($res && $rres && $rrres) {
             return $res;
         }else{

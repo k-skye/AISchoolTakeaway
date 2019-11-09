@@ -78,14 +78,14 @@ class Orders extends Api {
                 throw new InternalServerErrorException("变更红包状态失败", 13);
                 break;
             default:
-                $curl = new \PhalApi\CUrl();
+                $curl = new \PhalApi\CUrl(3);//失败重试3次
                 $t = time();
                 $createTime = date('YmdHis'.$res,$t);
                 $orderNo = $createTime.$res;
                 $rres = $domain->updateOrderNo($res,$orderNo);
                 if ($rres) {
                     $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广饭堂外卖&notifyUrl=https://takeawayapi.pykky.com/pay/notifyOrder.php&openID=".$this->openID;
-                    $rs = $curl->get($url, 10000);
+                    $rs = $curl->get($url, 5000);
                     return $rs;
                 }else{
                     throw new InternalServerErrorException("添加商户订单号失败", 14);
@@ -130,15 +130,17 @@ class Orders extends Api {
     public function autoCancelOrder() {
         $domain = new DomainOders();
         //取60分钟前的订单
-        $theTime = strtotime("-60 minute");
+        $theTime = strtotime("-48 hour");
         $needCancelOrderArr = $domain->getNeedCancelOrder($theTime);
         $res = "";
         foreach ($needCancelOrderArr as $value) {
             //对每一个订单，请求退款接口
             //支付时间
             $paytimeUnixTime = (int)date(strtotime($value['payTime']));
+            //预约单
+            $shouldDelivetimeUnixTime = (int)date(strtotime($value['shouldDeliveTime']));
             $nowtimeUnix = (int)strtotime("now");
-            if ((($nowtimeUnix-$paytimeUnixTime)>1800) && (((int)$value['status'])==1)){
+            if ((($nowtimeUnix-$paytimeUnixTime)>1800) && (((int)$value['status'])==1) && (($shouldDelivetimeUnixTime-$nowtimeUnix)<3600)){
                 $res += $value['id'].$domain->cancelOrder($value['id']).';';
                 //测试$res = $value['id'];
             }

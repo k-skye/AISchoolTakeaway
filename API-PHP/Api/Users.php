@@ -167,14 +167,14 @@ class Users extends Api {
             if (property_exists($rrs,'nickname')) {
                 $domain = new DomainUsers();
                 //去除emoji-bug
-                $okname = $rrs->nickname;
+                /* $okname = $rrs->nickname;
                 $okname = preg_replace_callback(
                     '/./u',
                     function (array $match) {
                         return strlen($match[0]) >= 4 ? '' : $match[0];
                     },
-                    $okname);
-                $res = $domain->saveWechatUserInfo($rrs->openid,$okname,$rrs->city,$rrs->headimgurl);
+                    $okname); */
+                $res = $domain->saveWechatUserInfo($rrs->openid,$rrs->nickname,$rrs->city,$rrs->headimgurl);
                 if ($res == -1) {
                     throw new InternalServerErrorException('更新用户信息失败', 10);
                 }else {
