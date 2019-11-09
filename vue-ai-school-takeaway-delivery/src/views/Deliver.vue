@@ -45,7 +45,8 @@
                 name="arrow"
                 class="icon"
               />
-              {{ orderDelive.addr.dormitory }}<div
+              {{ orderDelive.addr.dormitory }}
+              <div
                 v-if="orderDelive.order.upstairs != 0"
                 class="lou"
               >
@@ -110,7 +111,9 @@
                     name="location"
                     class="icon"
                   />
-                  <div class="addr">
+                  <div
+                    class="addr"
+                  >
                     {{ orderDelive.addr.dormitory }} {{ orderDelive.addr.roomNum }}{{ orderDelive.order.upstairs>0?'要上楼':'' }}
                   </div>
                 </div>
@@ -290,7 +293,7 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += (parseInt(this.orders[this.orders.length-1].id));
+          this.offset += parseInt(this.orders[this.orders.length - 1].id);
           // 拉取商家信息
           this.$axios(
             "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrder",
@@ -355,7 +358,7 @@ export default {
           // on cancel
         });
     },
-    onDeliveButtonClick(orderID, iD, indexx,deID) {
+    onDeliveButtonClick(orderID, iD, indexx, deID) {
       Dialog.confirm({
         title: "确定已送达到客户手上了吗？"
       })
@@ -397,10 +400,13 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
+  .van-list {
+    height: calc(100vh - 50px);
+  }
   .title {
     display: flex;
     align-items: center;
-    .van-tag{
+    .van-tag {
       margin-right: 5px;
     }
     .icon {

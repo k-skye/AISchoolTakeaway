@@ -36,7 +36,7 @@ export default {
           havefirstlogin = true;
           if (firstloginReq == 0) {
             //用openid去get全部用户信息回来
-            this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
+            this.$axios("http://123.207.230.132:1203/?s=Users.GetUserInfo", {
               params: {
                 openid: openidReq
               }
@@ -48,7 +48,7 @@ export default {
         if (!havefirstlogin) {//缓存中没有fistlogin
           const appid = "wx3df92dead7bcd174";
           const redirectUrl = encodeURI(
-            "https://takeawayapi.pykky.com/?s=Users.GetOpenid"
+            "http://123.207.230.132:1203/?s=Users.GetOpenid"
           );
           const wechatUrl =
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
@@ -61,7 +61,7 @@ export default {
       } else {
         //用openid去get全部用户信息回来
         const openid = localStorage.openid;
-        this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
+        this.$axios("http://123.207.230.132:1203/?s=Users.GetUserInfo", {
           params: {
             openid: openid
           }

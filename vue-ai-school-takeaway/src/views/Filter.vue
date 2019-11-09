@@ -89,15 +89,14 @@ export default {
       this.firstLoadData(); //加载商家
     },
     firstLoadData() {
-      this.offset = 7;
+      this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRuleWithRoomNum",
+        "http://123.207.230.132:1203/?s=Restaurant.GetRestsByRuleWithRoomNum",
         {
           params: {
-            offset: this.offset,
-            limit: this.size,
+            page: this.offset,
             condition: this.condition,
             roomNum: this.roomNum
           }
@@ -110,19 +109,13 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.allLoaded) {
-          if (this.offset == 27) {//处理数据库id中间有一个id按顺序时候漏了，修复后这里可以去掉
-            this.offset += 6;
-          }
-          else{
-            this.offset += 5;
-          }
+          this.offset++;
           // 拉取商家信息
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRuleWithRoomNum",
+            "http://123.207.230.132:1203/?s=Restaurant.GetRestsByRuleWithRoomNum",
             {
               params: {
-                offset: this.offset,
-                limit: this.size,
+                page: this.offset,
                 condition: this.condition,
                 roomNum: this.roomNum
               }

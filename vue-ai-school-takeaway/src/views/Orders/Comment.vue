@@ -68,7 +68,7 @@ export default {
   methods: {
     handleClick() {
       this.$axios
-        .post("https://takeawayapi.pykky.com/?s=Comment.CommentByUser", {
+        .post("http://123.207.230.132:1203/?s=Comment.CommentByUser", {
           userID: this.userID,
           text: this.message,
           restID: this.restID,

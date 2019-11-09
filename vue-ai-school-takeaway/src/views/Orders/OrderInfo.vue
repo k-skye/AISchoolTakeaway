@@ -221,7 +221,7 @@ export default {
   methods: {
     onSendButtonClick(){
       this.$axios.post(
-        "https://takeawayapi.pykky.com/?s=Feedback.addOneComplaintByUser",
+        "http://123.207.230.132:1203/?s=Feedback.addOneComplaintByUser",
         {
             userID: this.userInfo.id,
             content: this.message,
@@ -247,7 +247,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .post("https://takeawayapi.pykky.com/?s=Orders.CancelOrder", {
+            .post("http://123.207.230.132:1203/?s=Orders.CancelOrder", {
               id: this.orderDetail.id
             })
             .then(res => {

@@ -47,7 +47,7 @@ export default {
   methods:{
     onSendButtonClick(){
       this.$axios.post(
-        "https://takeawayapi.pykky.com/?s=Feedback.addOneFeedBackByUser",
+        "http://123.207.230.132:1203/?s=Feedback.addOneFeedBackByUser",
         {
             userID: this.userID,
             content: this.message

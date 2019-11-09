@@ -5,10 +5,15 @@
       class="header"
     >
       <div class="headerContain">
-        <!-- <div class="orderButton">暂时不用，未来可能用到
-          <van-switch :value="orderChecked" @input="onOrderInput" />
-          <div class="headerTitle">{{orderChecked ? '接单提醒:开' : '接单提醒:关'}}</div>
-        </div>-->
+        <div class="orderButton">
+          <van-switch
+            :value="orderChecked"
+            @input="onOrderInput"
+          />
+          <div class="headerTitle">
+            {{ orderChecked ? '接单提醒:开' : '接单提醒:关' }}
+          </div>
+        </div>
         <div class="headerEndButton">
           <van-icon
             :size="28"
@@ -265,6 +270,8 @@ export default {
       this.chooseRestNum = this.preUserInfo.chooseRest;
       this.chooseAddrNum = this.preUserInfo.chooseAddr;
       this.chooseNearNum = this.preUserInfo.chooseNear;
+      //开启提醒按钮
+      this.orderChecked = this.preUserInfo.sendMessage == "1" ? true : false;
       //筛选
       this.nearChecked = this.chooseNearNum == "1" ? true : false;
       switch (this.chooseRestNum) {
@@ -355,10 +362,30 @@ export default {
       Dialog.confirm({
         title: "是否开/关？",
         message:
-          "注：接单开启后就算您关闭本页面也会在微信继续收到筛选后的接单提醒噢～"
-      }).then(() => {
-        this.orderChecked = orderChecked;
-      });
+          "开启之后如关闭本页面也会在微信里继续收到筛选后的接单提醒噢～"
+      })
+        .then(() => {
+          this.orderChecked = orderChecked;
+          //开始请求
+          this.$axios(
+            "https://takeawayapi.pykky.com/?s=DeliverUsers.changeUserInfoOnSendMessage",
+            {
+              params: {
+                userID: this.userInfo.id,
+                sendMessage: this.orderChecked==true?'1':'0'
+              }
+            }
+          ).then(res => {
+            if (res.data.data == "ok") {
+              Toast.success("修改成功");
+            } else {
+              Toast.fail("失败！" + res.data.msg);
+            }
+          });
+        })
+        .catch(() => {
+          // on cancel
+        });
     },
     onLoad() {
       // 异步更新数据
@@ -533,7 +560,7 @@ export default {
       display: flex;
       align-items: center;
       justify-content: flex-end; //只有一个元素的时候用，让设置按钮居右显示
-      //justify-content: space-between;
+      justify-content: space-between;
       .orderButton {
         display: flex;
         align-items: center;
@@ -575,6 +602,9 @@ export default {
   .content {
     margin-top: 41px;
     height: calc(100% - 41px);
+    .van-list {
+      height: calc(100vh - 50px - 41px);
+    }
     .title {
       display: flex;
       align-items: center;

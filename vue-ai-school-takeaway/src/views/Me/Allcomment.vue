@@ -95,7 +95,7 @@ export default {
       this.offset = 1;
       this.finished = false;
       // 拉取商家信息
-      this.$axios("https://takeawayapi.pykky.com/?s=Comment.GetOnesComment", {
+      this.$axios("http://123.207.230.132:1203/?s=Comment.GetOnesComment", {
         params: {
           userID: this.userID,
           offset: this.offset,
@@ -120,7 +120,7 @@ export default {
           this.offset += (parseInt(this.commentlist[this.commentlist.length-1].id));
           // 拉取商家信息
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Comment.GetOnesComment",
+            "http://123.207.230.132:1203/?s=Comment.GetOnesComment",
             {
               params: {
                 userID: this.userID,

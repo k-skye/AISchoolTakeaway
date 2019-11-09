@@ -401,7 +401,7 @@ class orders {
         $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
         $url='http://takeawaydeliver.pykky.com/';
         $first='您有 '.$restNum.'饭 新订单可接';
-        $remark='若不想接收此消息可在配送端更改筛选规则（更新通知：明天5号将支持自己关闭接单提醒噢～）';
+        $remark='若不想接收此消息可在配送端关闭提醒或更改筛选规则';
         //测试用
         //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
         $modid='2ufY9x3kvO8gLJsTzc7IgSPPipBbu-MkBEfXIvjkFZ4';

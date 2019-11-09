@@ -42,6 +42,10 @@ class DeliverUsers extends Api {
                 'chooseRest'  => array('name' => 'chooseRest', 'require' => true, 'desc' => '选择饭堂'),
                 'chooseNear'  => array('name' => 'chooseNear', 'require' => true, 'desc' => '是否附近宿舍'),
             ),
+            'changeUserInfoOnSendMessage' => array(
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '配送员id'),
+                'sendMessage'  => array('name' => 'sendMessage', 'require' => true, 'desc' => '是否开启提醒'),
+            ),
         );
     }
 
@@ -72,6 +76,20 @@ class DeliverUsers extends Api {
             return 'ok';
         }else {
             throw new InternalServerErrorException("修改筛选错误", 20);
+        }
+    }
+
+    /**
+     * 开关微信提醒
+     * @desc 测试一下
+     */
+    public function changeUserInfoOnSendMessage() {
+        $domain = new DomainUsers();
+        $res = $domain->changeUserInfoOnSendMessage($this->userID,$this->sendMessage);
+        if ($res > 0) {
+            return 'ok';
+        }else {
+            throw new InternalServerErrorException("修改开关提醒错误", 32);
         }
     }
 

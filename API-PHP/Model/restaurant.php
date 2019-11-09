@@ -5,60 +5,54 @@ use PhalApi\Model\NotORMModel as NotORM;
 
 class restaurant extends NotORM {
 
-    public function getRestsInNormal($offset,$limit) {
+    public function getRestsInNormal($page) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
-            ->order('stars and salesNum DESC')
-            ->where('id >= ?', $offset)
-            ->limit($limit)
+            ->order('salesNum DESC,stars DESC')
+            ->page($page, 5)
             ->fetchAll();
     }
 
-    public function getRestsInNormalWtihRoomNum($offset,$limit,$roomNum) {
+    public function getRestsInNormalWtihRoomNum($page,$roomNum) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
             ->where('roomNum', $roomNum)
-            ->order('stars and salesNum DESC')
-            ->where('id >= ?', $offset)
-            ->limit($limit)
+            ->order('salesNum DESC,stars DESC')
+            ->page($page, 5)
             ->fetchAll();
     }
 
-    public function getRestsInSale($offset,$limit) {
+    public function getRestsInSale($page) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
             ->order('salesNum DESC')
-            ->where('id >= ?', $offset)
-            ->limit($limit)
+            ->page($page, 5)
             ->fetchAll();
     }
 
-    public function getRestsInSaleWithRoomNum($offset,$limit,$roomNum) {
+    public function getRestsInSaleWithRoomNum($page,$roomNum) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
             ->where('roomNum', $roomNum)
             ->order('salesNum DESC')
-            ->where('id >= ?', $offset)
-            ->limit($limit)
+            ->page($page, 5)
             ->fetchAll();
     }
 
-    public function getRestsInStars($offset,$limit) {
+    public function getRestsInStars($page) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
             ->order('stars DESC')
-            ->where('id >= ?', $offset)
-            ->limit($limit)
+            ->page($page, 5)
             ->fetchAll();
     }
 
-    public function getRestsInStarsWithRoomNum($offset,$limit,$roomNum) {
+    public function getRestsInStarsWithRoomNum($page,$roomNum) {
         return $this->getORM()
             //默认排序筛选条件-评价和销量一起排序
             ->where('roomNum', $roomNum)
             ->order('stars DESC')
-            ->where('id >= ?', $offset)
-            ->limit($limit)
+            ->page($page, 5)
             ->fetchAll();
     }
     

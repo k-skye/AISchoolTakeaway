@@ -145,7 +145,7 @@ export default {
       this.showList = true;
       //拿红包数据
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=Discount.GetOnesAllcounts",
+        "http://123.207.230.132:1203/?s=Discount.GetOnesAllcounts",
         {
           params: {
             userID: this.userInfo.id
@@ -166,7 +166,7 @@ export default {
     handleRes() {
       const appid = "wx3df92dead7bcd174";
       const redirectUrl = encodeURI(
-        "https://takeawayapi.pykky.com/?s=Users.getInfoInWechat"
+        "http://123.207.230.132:1203/?s=Users.getInfoInWechat"
       );
       const wechatUrl =
         "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +

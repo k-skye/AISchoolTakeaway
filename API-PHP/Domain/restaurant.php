@@ -5,11 +5,11 @@ use App\Model\restaurant as ModelRestaurant;
 
 class restaurant {
 
-    public function getRestsByRule($offset,$limit,$condition) {
+    public function getRestsByRule($page,$condition) {
         $model = new ModelRestaurant();
         switch ($condition) {
             case 'normal':
-                $arr = $model->getRestsInNormal($offset,$limit);
+                $arr = $model->getRestsInNormal($page);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -19,7 +19,7 @@ class restaurant {
                 return $arr;
                 break;
             case 'sale':
-                $arr = $model->getRestsInSale($offset,$limit);
+                $arr = $model->getRestsInSale($page);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -29,7 +29,7 @@ class restaurant {
                 return $arr;
                 break;
             case 'stars':
-                $arr = $model->getRestsInStars($offset,$limit);
+                $arr = $model->getRestsInStars($page);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -39,7 +39,7 @@ class restaurant {
                 return $arr;
                 break;
             default:
-                $arr = $model->getRestsInNormal($offset,$limit);
+                $arr = $model->getRestsInNormal($page);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -59,11 +59,11 @@ class restaurant {
         return $res;
     }
 
-    public function getRestsByRuleWithRoomNum($offset,$limit,$condition,$roomNum) {
+    public function getRestsByRuleWithRoomNum($page,$condition,$roomNum) {
         $model = new ModelRestaurant();
         switch ($condition) {
             case 'normal':
-                $arr = $model->getRestsInNormalWtihRoomNum($offset,$limit,$roomNum);
+                $arr = $model->getRestsInNormalWtihRoomNum($page,$roomNum);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -73,7 +73,7 @@ class restaurant {
                 return $arr;
                 break;
             case 'sale':
-                $arr = $model->getRestsInSaleWithRoomNum($offset,$limit,$roomNum);
+                $arr = $model->getRestsInSaleWithRoomNum($page,$roomNum);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -83,7 +83,7 @@ class restaurant {
                 return $arr;
                 break;
             case 'stars':
-                $arr = $model->getRestsInStarsWithRoomNum($offset,$limit,$roomNum);
+                $arr = $model->getRestsInStarsWithRoomNum($page,$roomNum);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回
@@ -93,7 +93,7 @@ class restaurant {
                 return $arr;
                 break;
             default:
-                $arr = $model->getRestsInNormalWtihRoomNum($offset,$limit,$roomNum);
+                $arr = $model->getRestsInNormalWtihRoomNum($page,$roomNum);
                 $i = 0;
                 foreach ($arr as $value){
                     //添加配送费一起返回

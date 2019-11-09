@@ -14,8 +14,7 @@ class Restaurant extends Api {
     public function getRules() {
         return array(
             'getRestsByRule' => array(
-                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
-                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+                'page'  => array('name' => 'page', 'require' => true, 'desc' => '第几页'),
                 'condition'  => array('name' => 'condition', 'require' => false, 'desc' => '筛选规则')
             ),
             'getOneRest' => array(
@@ -36,8 +35,7 @@ class Restaurant extends Api {
                 'logo'  => array('name' => 'logo', 'require' => true, 'desc' => '图片地址')
             ),
             'getRestsByRuleWithRoomNum' => array(
-                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
-                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+                'page'  => array('name' => 'page', 'require' => true, 'desc' => '第几页'),
                 'condition'  => array('name' => 'condition', 'require' => false, 'desc' => '筛选规则'),
                 'roomNum'  => array('name' => 'roomNum', 'require' => true, 'desc' => '餐厅编号'),
             ),
@@ -49,7 +47,7 @@ class Restaurant extends Api {
      */
     public function getRestsByRule() {
         $domain = new DomainRestaurant();
-        return $domain->getRestsByRule($this->offset,$this->limit,$this->condition);
+        return $domain->getRestsByRule($this->page,$this->condition);
     }
     /**
      * 拿某个店铺信息
@@ -95,6 +93,6 @@ class Restaurant extends Api {
      */
     public function getRestsByRuleWithRoomNum() {
         $domain = new DomainRestaurant();
-        return $domain->getRestsByRuleWithRoomNum($this->offset,$this->limit,$this->condition,$this->roomNum);
+        return $domain->getRestsByRuleWithRoomNum($this->page,$this->condition,$this->roomNum);
     }
 } 

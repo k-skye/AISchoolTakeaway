@@ -32,6 +32,13 @@ class deliverusers extends NotORM {
         ->update($data);
     }
 
+    public function changeUserInfoOnSendMessage($userID,$sendMessage) {
+        $data = array('sendMessage' => $sendMessage);
+        return $this->getORM()
+        ->where('id', $userID)
+        ->update($data);
+    }
+
     public function getOneUserByPhone($phoneNo) {
         return $this->getORM()
         ->where('phoneNo', $phoneNo)

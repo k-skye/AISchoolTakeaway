@@ -169,4 +169,9 @@ class deliverusers {
         $model = new ModelDeliverUser();
         return $model->changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear);
     }
+
+    public function changeUserInfoOnSendMessage($userID,$sendMessage) {
+        $model = new ModelDeliverUser();
+        return $model->changeUserInfoOnSendMessage($userID,$sendMessage);
+    }
 }

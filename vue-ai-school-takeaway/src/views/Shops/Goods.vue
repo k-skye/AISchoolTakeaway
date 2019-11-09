@@ -135,7 +135,7 @@ export default {
   methods: {
     getData() {
       this.restID = this.restInfo.id;
-      this.$axios("https://takeawayapi.pykky.com/?s=Food.GetFoods", {
+      this.$axios("http://123.207.230.132:1203/?s=Food.GetFoods", {
         params: {
           restID: this.restID
         }

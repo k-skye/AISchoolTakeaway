@@ -95,7 +95,7 @@ export default {
       });
     },
     getData() {
-      this.$axios("https://takeawayapi.pykky.com/?s=Address.GetUserAddrs", {
+      this.$axios("http://123.207.230.132:1203/?s=Address.GetUserAddrs", {
         params: {
           userID: this.userInfo.id
         }
@@ -114,7 +114,7 @@ export default {
     },
     handleDelete(address, index) {
       this.$axios
-        .post("https://takeawayapi.pykky.com/?s=Address.RemoveAddr", {
+        .post("http://123.207.230.132:1203/?s=Address.RemoveAddr", {
           id: address.id
         })
         .then(() => {

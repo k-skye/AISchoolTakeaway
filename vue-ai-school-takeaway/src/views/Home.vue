@@ -16,10 +16,7 @@
           @blur="onBlur"
           @focus="onFocus"
         />
-        <div
-          v-show="showResult"
-          class="serachlist"
-        >
+        <div v-show="showResult" class="serachlist">
           <div class="searchcells">
             <van-cell
               v-for="(result,index) in serachResult"
@@ -35,20 +32,9 @@
     <div class="container">
       <!-- 轮播 -->
       <div class="swipe">
-        <van-swipe
-          :autoplay="3000"
-          indicator-color="white"
-          @change="swipeOnChange"
-        >
-          <van-swipe-item
-            v-for="(img,index) in swipeImgs"
-            :key="index"
-            @click="swipeClick"
-          >
-            <img
-              :src="img"
-              alt
-            >
+        <van-swipe :autoplay="3000" indicator-color="white" @change="swipeOnChange">
+          <van-swipe-item v-for="(img,index) in swipeImgs" :key="index" @click="swipeClick">
+            <img :src="img" alt />
           </van-swipe-item>
         </van-swipe>
       </div>
@@ -61,10 +47,7 @@
           @click="entriesClick(item.roomNum)"
         >
           <div class="img_wrap">
-            <img
-              :src="item.image"
-              alt
-            >
+            <img :src="item.image" alt />
           </div>
           <span>{{ item.name }}</span>
         </div>
@@ -74,24 +57,12 @@
     <div class="chooseRest">
       <van-sticky>
         <!-- 导航 -->
-        <FilterView
-          :filter-data="filterData"
-          @update="update"
-        />
+        <FilterView :filter-data="filterData" @update="update" />
       </van-sticky>
       <!-- 商家信息 -->
-      <van-list
-        v-model="loading"
-        :finished="allLoaded"
-        finished-text="没有更多了"
-        @load="loadMore"
-      >
+      <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
         <div class="shoplist">
-          <IndexShop
-            v-for="(item,index) in restaurants"
-            :key="index"
-            :restaurant="item"
-          />
+          <IndexShop v-for="(item,index) in restaurants" :key="index" :restaurant="item" />
         </div>
       </van-list>
     </div>
@@ -120,27 +91,27 @@ export default {
       menu: [
         {
           name: "一饭",
-          image: "https://takeawayapi.pykky.com/homeImg/icons8-1-50.png",
+          image: "http://123.207.230.132:1203/homeImg/icons8-1-50.png",
           roomNum: 1
         },
         {
           name: "二饭",
-          image: "https://takeawayapi.pykky.com/homeImg/icons8-2-50.png",
+          image: "http://123.207.230.132:1203/homeImg/icons8-2-50.png",
           roomNum: 2
         },
         {
           name: "门口/其他",
-          image: "https://takeawayapi.pykky.com/homeImg/icons8-8-50.png",
+          image: "http://123.207.230.132:1203/homeImg/icons8-8-50.png",
           roomNum: 5
         },
         {
           name: "三饭",
-          image: "https://takeawayapi.pykky.com/homeImg/icons8-3-50.png",
+          image: "http://123.207.230.132:1203/homeImg/icons8-3-50.png",
           roomNum: 3
         },
         {
           name: "四饭",
-          image: "https://takeawayapi.pykky.com/homeImg/icons8-4-50.png",
+          image: "http://123.207.230.132:1203/homeImg/icons8-4-50.png",
           roomNum: 4
         }
       ],
@@ -166,10 +137,10 @@ export default {
     this.getData();
   },
   methods: {
-    swipeClick(){
+    swipeClick() {
       window.location.href = this.homeData.ImgUrl[this.currentSwipe];
     },
-    swipeOnChange(index){
+    swipeOnChange(index) {
       this.currentSwipe = index;
     },
     onFocus() {
@@ -184,7 +155,7 @@ export default {
       this.showResult = false;
     },
     onInput() {
-      this.$axios("https://takeawayapi.pykky.com/?s=HomeData.GetSearchByRule", {
+      this.$axios("http://123.207.230.132:1203/?s=HomeData.GetSearchByRule", {
         params: {
           text: this.value
         }
@@ -198,7 +169,10 @@ export default {
       }
     },
     onSearch() {
-      this.$router.push({name: 'search',params: {restaurants: this.serachResult,title: this.value}});
+      this.$router.push({
+        name: "search",
+        params: { restaurants: this.serachResult, title: this.value }
+      });
     },
     entriesClick(roomNum) {
       if (roomNum == 5) {
@@ -211,12 +185,12 @@ export default {
       }
     },
     getData() {
-      this.$axios(
-        "https://takeawayapi.pykky.com/?s=HomeData.GetHeadAdImg"
-      ).then(res => {
-        this.swipeImgs = JSON.parse(res.data.data).headAdImg;
-        this.homeData = JSON.parse(res.data.data);
-      }); //加载广告
+      this.$axios("http://123.207.230.132:1203/?s=HomeData.GetHeadAdImg").then(
+        res => {
+          this.swipeImgs = JSON.parse(res.data.data).headAdImg;
+          this.homeData = JSON.parse(res.data.data);
+        }
+      ); //加载广告
       this.$axios("http://wthrcdn.etouch.cn/weather_mini?city=花都").then(
         res => {
           const today = res.data.data.forecast[0];
@@ -227,19 +201,15 @@ export default {
       this.firstLoadData(); //加载商家
     },
     firstLoadData() {
-      this.offset = 7;
+      this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
-      this.$axios(
-        "https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule",
-        {
-          params: {
-            offset: this.offset,
-            limit: this.size,
-            condition: this.condition
-          }
+      this.$axios("http://123.207.230.132:1203/?s=Restaurant.GetRestsByRule", {
+        params: {
+          page: this.offset,
+          condition: this.condition
         }
-      ).then(res => {
+      }).then(res => {
         this.restaurants = res.data.data;
       });
     },
@@ -247,19 +217,13 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.allLoaded) {
-          if (this.offset == 27) {
-            //处理数据库id中间有一个id按顺序时候漏了，修复后这里可以去掉
-            this.offset += 6;
-          } else {
-            this.offset += 5;
-          }
+          this.offset++;
           // 拉取商家信息
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule",
+            "http://123.207.230.132:1203/?s=Restaurant.GetRestsByRule",
             {
               params: {
-                offset: this.offset,
-                limit: this.size,
+                page: this.offset,
                 condition: this.condition
               }
             }
