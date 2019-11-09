@@ -565,6 +565,8 @@ export default {
           upstairs: this.isUpstairs
         })
         .then(res => {
+          //重要接口加错误处理！！！
+          if (JSON.stringify(res.data.msg) == "") {
           //微信支付
           const data = JSON.parse(res.data.data);
           // eslint-disable-next-line no-undef
@@ -584,6 +586,14 @@ export default {
               });
             }
           });
+          }
+          else{
+            Dialog({
+                message:
+                  "创建订单失败：" +
+                  res.data.msg
+              });
+          }
         });
     }
   },

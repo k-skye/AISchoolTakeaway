@@ -178,7 +178,7 @@ export default {
       if (roomNum == 5) {
         Dialog({
           message:
-            "这里可以代买校门口和其他任何店里你想买的东西，还在内测噢～预计两天后上线！尽情期待～"
+            "这里可以代买校门口和其他任何店里你想买的东西，还在内测噢～预计两周后上线！尽情期待～"
         });
       } else {
         this.$router.push({ name: "filter", params: { roomNum: roomNum } });
