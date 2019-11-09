@@ -49,10 +49,16 @@
                 {{ item.content }}
               </div>
               <div
+                v-show="item.deliverReply!='未回复'"
+                class="comment-reply"
+              >
+                {{ '伙伴回复：'+item.deliverReply }}
+              </div>
+              <div
                 v-show="item.reply!='未回复'"
                 class="comment-reply"
               >
-                {{ '伙伴回复：'+item.reply }}
+                {{ '老康回复：'+item.reply }}
               </div>
               <ul class="comment-imgs">
                 <li

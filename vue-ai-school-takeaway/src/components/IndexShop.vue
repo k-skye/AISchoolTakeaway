@@ -2,7 +2,7 @@
   <section class="index-container">
     <div
       class="index-shopInfo"
-      @click="$router.push({name: 'shop',params: {restID: restaurant.id}})"
+      @click="clickToRest(restaurant)"
     >
       <!-- 左侧图片 -->
       <div class="logo_container">
@@ -32,7 +32,8 @@
           <div>
             <!--             <span>¥10起送</span>
             |-->
-            <span>配送费¥{{ restaurant.deliveryFee }}起</span>
+            <span v-if="restaurant.status=='1'">配送费¥{{ restaurant.deliveryFee }}起</span>
+            <span v-else>此店铺已打烊</span>
           </div>
           <div class="index-distanceWrap">
             <span class="spans">
@@ -50,6 +51,7 @@
 
 <script>
 import Rating from "./Rating";
+import { Toast } from 'vant';
 export default {
   name: "IndeShop",
   components: {
@@ -59,6 +61,16 @@ export default {
     restaurant: {
       type: Object,
       default: () => {}
+    }
+  },
+  methods:{
+    clickToRest(restaurant){
+      if (restaurant.status=='1') {
+        this.$router.push({name: 'shop',params: {restID: restaurant.id}});
+      }else{
+        Toast.fail('抱歉，此店铺已经打烊了哦');
+      }
+      
     }
   }
 };
