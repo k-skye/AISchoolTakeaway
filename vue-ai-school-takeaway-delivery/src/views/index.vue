@@ -44,7 +44,7 @@ export default {
           if (firstloginReq == 0) {
             //用openid去get全部用户信息回来
             this.$axios(
-              "https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo",
+              "http://tatestapi.pykky.com/?s=DeliverUsers.GetUserInfo",
               {
                 params: {
                   openid: openidReq
@@ -64,7 +64,7 @@ export default {
           //缓存中没有fistlogin
           const appid = "wx3df92dead7bcd174";
           const redirectUrl = encodeURI(
-            "https://takeawayapi.pykky.com/?s=DeliverUsers.GetOpenid"
+            "http://tatestapi.pykky.com/?s=DeliverUsers.GetOpenid"
           );
           const wechatUrl =
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
@@ -78,7 +78,7 @@ export default {
         //用openid去get全部用户信息回来
         const openid = localStorage.openid;
         this.$axios(
-          "https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo",
+          "http://tatestapi.pykky.com/?s=DeliverUsers.GetUserInfo",
           {
             params: {
               openid: openid

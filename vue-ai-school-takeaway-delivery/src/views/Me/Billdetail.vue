@@ -74,7 +74,7 @@ export default {
       this.finished = false;
       // 拉取商家信息
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
+        "http://tatestapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
         {
           params: {
             deliverID: this.userInfo.id,
@@ -98,7 +98,7 @@ export default {
           this.offset += (parseInt(this.trads[0].id));
           // 拉取商家信息
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
+            "http://tatestapi.pykky.com/?s=Tradinglog.GetOnesAllTradLog",
             {
               params: {
                 deliverID: this.userInfo.id,

@@ -251,7 +251,7 @@ export default {
       this.finished = false;
       // 拉取商家信息
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrder",
+        "http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrder",
         {
           params: {
             deliverID: this.userInfo.id,
@@ -296,7 +296,7 @@ export default {
           this.offset += parseInt(this.orders[this.orders.length - 1].id);
           // 拉取商家信息
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrder",
+            "http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrder",
             {
               params: {
                 deliverID: this.userInfo.id,
@@ -338,7 +338,7 @@ export default {
       })
         .then(() => {
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Deliverorders.ChangToGetFood",
+            "http://tatestapi.pykky.com/?s=Deliverorders.ChangToGetFood",
             {
               params: {
                 orderID: orderID,
@@ -364,7 +364,7 @@ export default {
       })
         .then(() => {
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Deliverorders.ChangToFinishDelive",
+            "http://tatestapi.pykky.com/?s=Deliverorders.ChangToFinishDelive",
             {
               params: {
                 orderID: orderID,

@@ -121,6 +121,7 @@
           maxlength="3"
           label="悬赏红包"
           placeholder="红包金额(越大接单几率增大)"
+          :error-message="giftError"
           @input="customGiftInput"
         >
           <div
@@ -184,6 +185,30 @@
           />
         </van-popup>
         <van-field
+          v-show="showCustomFee"
+          v-model="customFee"
+          center
+          clearable
+          label="伙伴费"
+          type="number"
+          maxlength="3"
+          placeholder="请输入伙伴费(10元起)"
+          :error-message="customFeeError"
+          @input="customFeeInput"
+        >
+          <div
+            slot="button"
+            style="display:flex;align-items: center;"
+            @click="showCustomQuestion"
+          >
+            元
+            <van-icon
+              style="padding-left:5px;"
+              name="question-o"
+            />
+          </div>
+        </van-field>
+        <van-field
           readonly
           clickable
           label="类型"
@@ -205,29 +230,6 @@
             @confirm="ongoodTypeConfirm"
           />
         </van-popup>
-        <van-field
-          v-show="showCustomFee"
-          v-model="customFee"
-          center
-          clearable
-          label="伙伴费"
-          type="number"
-          maxlength="3"
-          placeholder="请输入伙伴费(10元起)"
-          @input="customFeeInput"
-        >
-          <div
-            slot="button"
-            style="display:flex;align-items: center;"
-            @click="showCustomQuestion"
-          >
-            元
-            <van-icon
-              style="padding-left:5px;"
-              name="question-o"
-            />
-          </div>
-        </van-field>
         <van-field
           v-model="remark"
           rows="2"
@@ -309,7 +311,18 @@ export default {
       goodTypevalue: "",
       goodTypeError: "",
       showgoodTypePicker: false,
-      goodTypecolumns: ["衣物", "饮品", "食物", "书籍", "个人护理", "数码电器" ,"其他"]
+      goodTypecolumns: [
+        "衣物",
+        "饮品",
+        "食物",
+        "书籍",
+        "个人护理",
+        "数码电器",
+        "其他"
+      ],
+      giftError: "",
+      weightNum: 0,
+      customFeeError: ""
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -323,11 +336,11 @@ export default {
     }
   },
   methods: {
-    onTimeConfirm(okTime){
+    onTimeConfirm(okTime) {
       this.okTime = okTime;
       this.showTimePicker = false;
     },
-    goodTypeQuestion(){
+    goodTypeQuestion() {
       this.showgoodTypePicker = false;
       Dialog({
         message:
@@ -399,6 +412,7 @@ export default {
           this.showCustomFee = false;
           break;
       }
+      this.weightNum = index;
       this.showWeightPicker = false;
     },
     shouldShowPicker() {
@@ -434,38 +448,59 @@ export default {
       return options;
     },
     handlePay() {
-      /* if (!this.addrInfo) {
-        Toast("请先选择收货地址");
-        return;
-      }
+      //先判断所有需要填的空是否已填写
+      this.addrError = "";
+      this.codeError = "";
+      this.weightError = "";
+      this.goodTypeError = "";
+      this.timeError = "";
+      this.giftError = "";
+      this.customFeeError = "";
       if (!this.addrInfo) {
         Toast("请先选择收货地址");
         return;
       }
-      //开始创建订单
-      var foodArrID = []; //食物的id数组
-      this.orderInfo.selectFoods.forEach(element => {
-        //让2份以上的商品也添加上，不然无论你点了多少分都只记录一份
-        if (element.count > 1) {
-          for (let i = 0; i < element.count; i++) {
-            foodArrID.push(Number(element.id));
-          }
-        } else {
-          //只有一份
-          foodArrID.push(Number(element.id));
+      if (!this.addrvalue) {
+        this.addrError = "请选择取件地址";
+        return;
+      }
+      if (!this.code) {
+        this.codeError = "取件码不能为空";
+        return;
+      }
+      if (!this.weightvalue) {
+        this.weightError = "请选择重量";
+        return;
+      }
+      if (!this.goodTypevalue) {
+        this.goodTypeError = "快递类型不能为空";
+        return;
+      }
+      if (!this.remark) {
+        this.remark = "无";
+        return;
+      }
+      if (parseInt(this.radio) == 2) {
+        if (!this.currentTime) {
+          this.timeError = "请选择指定时间";
+          return;
         }
-      });
-      foodArrID = JSON.stringify(foodArrID).toString();
-      var remarks = this.remarkInfo.tableware + "," + this.remarkInfo.remark;
-      if (remarks == ",") {
-        remarks = "无";
+        if (!this.customGift) {
+          this.giftError = "红包金额不能为空";
+          return;
+        }
+        this.okTime = this.currentTime;
+      }else{
+        this.customGift = "0";
       }
-      var discID = -1;
-      if (!this.orderInfo.discount.id) {
-        discID = -1;
-      } else {
-        discID = this.orderInfo.discount.id;
+      if (this.weightNum == 4) {
+        //特殊其他件
+        if (!this.customFee) {
+          this.customFeeError = "伙伴配送费不能为空";
+          return;
+        }
       }
+      //开始创建订单
       //正则取时间
       const finalTime = this.okTime
         .match(/\d+:\d+/g)
@@ -478,20 +513,23 @@ export default {
       }
       const finalFormatTime =
         this.dateFormat("YYYY-mm-dd ", nowDate) + finalTime;
+      let isNeedFastNum = parseInt(this.radio) - 1;
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Orders.CreateOneOrder", {
+        .post("http://tatestapi.pykky.com/?s=Orders.CreateOneExpressOrder", {
           userID: this.userInfo.id,
-          foodArrID: foodArrID,
-          remark: remarks,
-          restID: this.restInfo.id,
-          totalPrice: this.totalPrice,
-          payPrice: this.realPrice,
+          remark: this.remark,
+          expressAddr: this.addrvalue,
+          totalPrice: this.okFee,
+          payPrice: this.okFee,
           addrID: this.addrInfo.id,
-          discountID: discID,
           openID: this.userInfo.openid,
           shouldDeliveTime: finalFormatTime,
           deliveFee: this.okFee,
-          upstairs: this.isUpstairs
+          expressCode: this.code,
+          weight: this.weightNum,
+          goodType: this.goodTypevalue,
+          isNeedFast: isNeedFastNum,
+          fastMoney: this.customGift
         })
         .then(res => {
           //重要接口加错误处理！！！
@@ -520,7 +558,7 @@ export default {
               message: "创建订单失败：" + res.data.msg
             });
           }
-        }); */
+        });
     },
     radioChange() {
       let nowtime = new Date();

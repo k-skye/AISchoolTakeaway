@@ -144,7 +144,7 @@ export default {
     handleRes(){
       const appid = "wx3df92dead7bcd174";
       const redirectUrl = encodeURI(
-        "https://takeawayapi.pykky.com/?s=DeliverUsers.getInfoInWechat"
+        "http://tatestapi.pykky.com/?s=DeliverUsers.getInfoInWechat"
       );
       const wechatUrl =
         "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
@@ -157,7 +157,7 @@ export default {
     getuserInfo() {
       const openid = localStorage.openid;
       //用openid去get全部用户信息回来
-      this.$axios("https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
+      this.$axios("http://tatestapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
         params: {
           openid: openid
         }

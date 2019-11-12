@@ -28,13 +28,27 @@
       v-model="showRule"
       closeable
       position="bottom"
-      :style="{ height: '38%' }"
+      :style="{ height: '50%' }"
     >
       <div class="settings">
         <div class="head">
           筛选
         </div>
         <div class="chooses">
+          <Choose
+            label="类型"
+            :value="chooseTypeValue"
+            placeholder="选择接单类型"
+            :data="types"
+            @getValue="getTypeValue"
+          />
+          <Choose
+            label="快递点"
+            :value="chooseExpressValue"
+            placeholder="选择快递点"
+            :data="expresss"
+            @getValue="getExpressValue"
+          />
           <Choose
             label="饭堂"
             :value="chooseRestValue"
@@ -247,7 +261,11 @@ export default {
       chooseRestNum: 0,
       chooseAddrNum: 0,
       chooseNearNum: 1,
-      preUserInfo: null
+      preUserInfo: null,
+      chooseTypeValue: "",
+      types: ["全部","美食跑题","快递代拿"],
+      chooseExpressValue: "",
+      expresss: ["C3","C4","商业街京东派"],
     };
   },
   computed: {
@@ -262,6 +280,12 @@ export default {
     });
   },
   methods: {
+    getExpressValue(){
+
+    },
+    getTypeValue(){
+
+    },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
       if (this.preUserInfo == null) {

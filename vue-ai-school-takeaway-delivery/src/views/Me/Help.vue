@@ -40,7 +40,7 @@ export default {
   methods: {
     getData() {
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=Help.GetDeliverAllHelp"
+        "http://tatestapi.pykky.com/?s=Help.GetDeliverAllHelp"
       ).then(res => {
         /* if (JSON.stringify(res.data.data) == "{}") {
           return;

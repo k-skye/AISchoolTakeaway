@@ -42,6 +42,15 @@ class orders extends NotORM {
         // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
         return $orm->insert_id();
     }
+    
+    public function insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$createTime,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney) {
+        $data = array('userID' => $userID,'expressAddr' => $expressAddr,'remark' => $remark,'expressCode' => $expressCode,'totalPrice' => $totalPrice,'payPrice' => $payPrice,'addressID' => $addrID,'createTime' => $createTime, 'status' => 0, 'type' => 1, 'shouldDeliveTime' => $shouldDeliveTime, 'deliveFee' => $deliveFee, 'weight' => $weight, 'goodType' => $goodType, 'isNeedFast' => $isNeedFast, 'fastMoney' => $fastMoney);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    }
 
     public function updateOrderNo($id,$orderNo) {
         $data = array('orderNo' => $orderNo);

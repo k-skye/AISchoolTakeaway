@@ -58,9 +58,13 @@ class Orders extends Api {
                 'deliveFee'  => array('name' => 'deliveFee', 'require' => true, 'desc' => '配送费'),
                 'weight'  => array('name' => 'weight', 'require' => true, 'desc' => '重量'),
                 'goodType'  => array('name' => 'goodType', 'require' => true, 'desc' => '快递类型'),
-                'isTooWeight'  => array('name' => 'isTooWeight', 'require' => true, 'desc' => '是否特殊件'),
                 'isNeedFast'  => array('name' => 'isNeedFast', 'require' => true, 'desc' => '需要加急'),
                 'fastMoney'  => array('name' => 'fastMoney', 'require' => true, 'desc' => '加急红包金额'),
+            ),
+            'handleExpressPay' => array(
+                'payPrice'  => array('name' => 'payPrice', 'require' => true, 'desc' => '实际支付金额'),
+                'orderNo'  => array('name' => 'orderNo', 'require' => true, 'desc' => '微信商户订单号'),
+                'payTime'  => array('name' => 'payTime', 'require' => true, 'desc' => '支付时间')
             ),
         );
     }
@@ -116,7 +120,7 @@ class Orders extends Api {
      */
     public function createOneExpressOrder() {
         $domain = new DomainOders();
-        $res = $domain->insertOneExpressOrder($this->userID,$this->expressAddr,$this->remark,$this->expressCode,$this->totalPrice,$this->payPrice,$this->addrID,$this->shouldDeliveTime,$this->deliveFee,$this->weight,$this->goodType,$this->isTooWeight,$this->isNeedFast,$this->fastMoney);
+        $res = $domain->insertOneExpressOrder($this->userID,$this->expressAddr,$this->remark,$this->expressCode,$this->totalPrice,$this->payPrice,$this->addrID,$this->shouldDeliveTime,$this->deliveFee,$this->weight,$this->goodType,$this->isNeedFast,$this->fastMoney);
         switch ($res) {
             case '-1':
                 throw new InternalServerErrorException("新增订单失败", 33);
@@ -155,7 +159,7 @@ class Orders extends Api {
         }
     }
     /**
-     * 代拿订单支付回调处理
+     * 快递代拿支付回调处理
      * @desc 测试一下
      */
     public function handleExpressPay() {
