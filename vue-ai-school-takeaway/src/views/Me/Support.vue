@@ -15,6 +15,7 @@
         placeholder="请输入留言"
         rows="2"
         autosize
+        clearable
       >
         <van-button
           slot="button"
@@ -47,7 +48,7 @@ export default {
   methods:{
     onSendButtonClick(){
       this.$axios.post(
-        "http://123.207.230.132:1203/?s=Feedback.addOneFeedBackByUser",
+        "http://tatestapi.pykky.com/?s=Feedback.addOneFeedBackByUser",
         {
             userID: this.userID,
             content: this.message

@@ -15,9 +15,10 @@ export default {
   data() {
     return {
       tabbarData: [
-        { title: "首页", icon: "wap-home-o", path: "/home" },
-        { title: "订单", icon: "orders-o", path: "/order" },
-        { title: "我的", icon: "user-o", path: "/me" }
+        { title: "美食", icon: "shop", path: "/home" },
+        { title: "快递", icon: "send-gift", path: "/express" },
+        { title: "订单", icon: "balance-list", path: "/order" },
+        { title: "我的", icon: "manager", path: "/me" }
       ]
     };
   },
@@ -36,7 +37,7 @@ export default {
           havefirstlogin = true;
           if (firstloginReq == 0) {
             //用openid去get全部用户信息回来
-            this.$axios("http://123.207.230.132:1203/?s=Users.GetUserInfo", {
+            this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
               params: {
                 openid: openidReq
               }
@@ -48,7 +49,7 @@ export default {
         if (!havefirstlogin) {//缓存中没有fistlogin
           const appid = "wx3df92dead7bcd174";
           const redirectUrl = encodeURI(
-            "http://123.207.230.132:1203/?s=Users.GetOpenid"
+            "http://tatestapi.pykky.com/?s=Users.GetOpenid"
           );
           const wechatUrl =
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
@@ -61,7 +62,7 @@ export default {
       } else {
         //用openid去get全部用户信息回来
         const openid = localStorage.openid;
-        this.$axios("http://123.207.230.132:1203/?s=Users.GetUserInfo", {
+        this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
           params: {
             openid: openid
           }

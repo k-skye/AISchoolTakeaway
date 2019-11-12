@@ -95,7 +95,7 @@ export default {
       this.errors = {};
       // 发送请求
       this.$axios
-        .post("http://123.207.230.132:1203/?s=Users.UserReg", {
+        .post("http://tatestapi.pykky.com/?s=Users.UserReg", {
           phoneNo: this.phone,
           loginCode: this.verifyCode,
           codeID: this.codeID,
@@ -122,7 +122,7 @@ export default {
         this.validateBtn();
         // 发送网络请求
         this.$axios
-          .post("http://123.207.230.132:1203/?s=Users.SendMessage", {
+          .post("http://tatestapi.pykky.com/?s=Users.SendMessage", {
             phoneNo: this.phone
           })
           .then(res => {

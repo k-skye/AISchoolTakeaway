@@ -363,6 +363,268 @@ class orders {
             return -1;
         }
     }
+
+    public function insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isTooWeight,$isNeedFast,$fastMoney) {
+        $model = new ModelOders();
+        $t = time();
+        $createTime = date('Y-m-d H:i:s',$t);
+        $res = $model->insertOneOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$createTime,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isTooWeight,$isNeedFast,$fastMoney);
+        if ($res) {
+            return $res;
+        }else {
+            return -1;
+        }
+    }
+
+    public function updateExpressOrderPay($orderNo,$payPrice,$payTime) {
+        $model = new ModelOders();
+        $res = $model->updateOrderPay($orderNo,$payPrice,$payTime);
+        if ($res) {
+            //开始推送微信消息给所有配送员
+        $orderInfo = $model->getOnesOneOrderByWechatNo($orderNo);
+        $upstairs = $orderInfo['upstairs'];
+        $addrID = $orderInfo['addressID'];
+        $restID = $orderInfo['restID'];
+        $deliveTime = $orderInfo['shouldDeliveTime'];
+        $deliverFee = $orderInfo['deliveFee'];
+        $foodArr = $orderInfo['foods'];
+        //找地址
+        $modelAddr = new ModelAddress();
+        $addrRes = $modelAddr->getOneByAddrById($addrID);
+        $dormitory = $addrRes['dormitory'];
+        $needSex = (int)$addrRes['gender'];
+        //找店铺
+        $modelRest = new ModelRestaurant();
+        $restRes = $modelRest->getOneRest($restID);
+        $restNum = (int)$restRes['roomNum'];
+        $needUpstair = '送楼下';
+        if (((int)$upstairs) == 1){
+            $needUpstair = '送上门(1-3楼)';
+        }else if (((int)$upstairs) == 2) {
+            $needUpstair = '送上门(4-6楼)';
+        }
+        $addr = $restNum.'饭 - '.$dormitory;
+        
+        $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+        $url='http://takeawaydeliver.pykky.com/';
+        $first='您有 '.$restNum.'饭 新订单可接';
+        $remark='若不想接收此消息可在配送端关闭提醒或更改筛选规则';
+        //测试用
+        //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+        $modid='2ufY9x3kvO8gLJsTzc7IgSPPipBbu-MkBEfXIvjkFZ4';
+        $data = array(
+            'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+            'tradeDateTime'=>array('value'=>urlencode($deliveTime.'（预计送达）'),'color'=>'#743A3A'),
+            'orderType'=>array('value'=>urlencode($needUpstair),'color'=>"#0000FF"),
+            'customerInfo'=>array('value'=>urlencode($addr),'color'=>"#0000FF"),
+            'orderItemName'=>array('value'=>urlencode('可得配送费'),'color'=>"#000000"),
+            'orderItemData'=>array('value'=>urlencode($deliverFee.' 元'),'color'=>"#0000FF"),
+            'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+        );
+        //所有配送员
+        $modelAllUser = new ModelDeliverUser();
+        $allDeliverArr = $modelAllUser->getAllUsers();
+        
+        $iisex = 0;
+        $iiRest = 0;
+        $iimessage = 0;
+        foreach ($allDeliverArr as $value){
+
+            //去掉性别不一致的
+            $sex = (int)$value['sex'];
+            //当要送上楼的时候
+            if (((int)$upstairs) != 0) {
+                //把性别不相等的去掉
+                if ($sex != $needSex) {
+                    unset($allDeliverArr[$iisex]);
+                }
+            }
+            $iisex++;
+
+            $sendMessage = (int)$value['sendMessage'];
+            if ($sendMessage == 0) {
+                //设置了不想接消息
+                unset($allDeliverArr[$iimessage]);
+            }
+            $iimessage++;
+            
+            //筛选
+            $chooseAddr = (int)$value['chooseAddr'];
+            $chooseRest = (int)$value['chooseRest'];
+            $chooseNear = (int)$value['chooseNear'];
+
+            if ($chooseAddr == 0 && $chooseRest ==0) {//默认
+                //
+            }else{
+                if ($chooseAddr > 0){
+                    $needNum = $chooseAddr;
+                    if ($chooseNear == 1) {//包括附近宿舍
+                    if ($needNum <= 6) {
+                        
+                        $dormitoryNum = 0;
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于6的都去掉
+                             if ($dormitoryNum > 6) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                            
+                         
+                         
+                    }else if ($needNum <= 10){
+                        
+                        $dormitoryNum = 0;
+                        
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于10和小于7的都去掉
+                             if ($dormitoryNum > 10 || $dormitoryNum < 7) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                             
+                         
+                    }else if ($needNum <= 15){
+                        
+                        $dormitoryNum = 0;
+                        
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于15和小于11的都去掉
+                             if ($dormitoryNum > 15 || $dormitoryNum < 11) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                            
+                         
+                    }else if ($needNum <= 17){
+                        
+                        $dormitoryNum = 0;
+                        
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于17和小于16的都去掉
+                             if ($dormitoryNum > 17 || $dormitoryNum < 16) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                             
+                         
+                    }else if ($needNum <= 20){
+                        
+                        $dormitoryNum = 0;
+                        
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于20和小于18的都去掉
+                             if ($dormitoryNum > 20 || $dormitoryNum < 18) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                             
+                         
+                    }else if ($needNum <= 22){
+                        
+                        $dormitoryNum = 0;
+                        
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把大于22和小于20的都去掉
+                             if ($dormitoryNum > 22 || $dormitoryNum < 20) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                             
+                         
+                    }
+                    }else if ($chooseNear == 0) {
+                        
+                        $dormitoryNum = 0;
+                        
+                        if(preg_match('/\d+/',$dormitory,$arrMath)){
+                            $dormitoryNum = $arrMath[0];
+                         }//这次循环拿宿舍楼的数字
+                             //把不等于的去掉
+                             if ($dormitoryNum != $needNum) {
+                                unset($allDeliverArr[$iiRest]);
+                             }
+                            
+                         
+                    }
+                }
+                if ($chooseRest > 0) {
+                    $needNum = $chooseRest;//配送员需要的饭堂  restNum下单的饭堂
+                    if ($needNum != $restNum) {
+                        unset($allDeliverArr[$iiRest]);
+                    }
+                }
+            }
+            $iiRest++;
+         }
+        
+        $allDeliverArr = array_values($allDeliverArr);//重建索引
+        //发送
+        foreach ($allDeliverArr as $value) {
+                if ((!empty($value['cardImg'])) && $value['openid'] != 'oAMY6uDvgBa5GmRVLsRSeMavgDu8'){
+
+                    //测试用
+                    //if ($value['openid'] == 'oAMY6uLSkezkVmGf2M27o07Xfthg') {
+                        $openid = $value['openid'];
+                        $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+                    //}
+    
+                }
+        }
+
+
+        //开始给用户发已支付/待接单消息
+        $t = time();
+        $createTime = date('Y-m-d H:i:s',$t);
+
+        $url='';
+        $first='订单已发布，等待有空的小伙伴接单';
+        $remark='因为是跑腿任务，不能保证您的订单一定会有小伙伴接单噢～若30分钟后仍未被接单会自动退款(并且返2元无门槛红包)';
+        //测试用
+        //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+        $modid='0YWKECWoWvrVijLuDm45mX1yxIzXkLigaZbdtCCa7Ts';
+        $data = array(
+            'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+            'keyword1'=>array('value'=>urlencode('美食跑腿'),'color'=>'#0000FF'),
+            'keyword2'=>array('value'=>urlencode((((float)$payPrice)/100).' 元'),'color'=>"#0000FF"),
+            'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
+            'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+        );
+        //发送
+        $userid = $orderInfo['userID'];
+        $modelTureUser = new ModelUsers();
+        $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+        $openid = $trueUserInfo['openid'];
+        $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
+        //店铺数和商品数销量增加
+        $foodArr = json_decode($foodArr);
+        $modelFood = new ModelFood();
+        $foodres = null;
+        foreach ($foodArr as $value) {
+            //对每一个商品
+            //在food数据库里找当前数，再update++
+            $foodInfo = $modelFood->getOneFoodByID($value);
+            $salesNum = (int)$foodInfo['salesNum'];
+            $salesNum++;
+            $foodres = $modelFood->updateSalesNum($value,$salesNum);
+        }
+        //对店铺
+        $salesNumRest = (int)$restRes['salesNum'];
+        $salesNumRest++;
+        $restres = $modelRest->updateSalesNum($restID,$salesNumRest);
+
+
+        return $res;
+        }else{
+            return -1;
+        }
+    }
     
     public function updateOrderNo($id,$orderNo) {
         $model = new ModelOders();

@@ -45,6 +45,23 @@ class Orders extends Api {
             'cancelOrder' => array(
                 'id'  => array('name' => 'id', 'require' => true, 'desc' => '订单id'),
             ),
+            'createOneExpressOrder' => array(
+                'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
+                'expressAddr'  => array('name' => 'expressAddr', 'require' => true, 'desc' => '取件地址'),
+                'remark'  => array('name' => 'remark', 'require' => true, 'desc' => '订单备注'),
+                'expressCode'  => array('name' => 'expressCode', 'require' => true, 'desc' => '取件码'),
+                'totalPrice'  => array('name' => 'totalPrice', 'require' => true, 'desc' => '原价'),
+                'payPrice'  => array('name' => 'payPrice', 'require' => true, 'desc' => '支付价格'),
+                'addrID'  => array('name' => 'addrID', 'require' => true, 'desc' => '地址id'),
+                'openID'  => array('name' => 'openID', 'require' => true, 'desc' => 'openid'),
+                'shouldDeliveTime'  => array('name' => 'shouldDeliveTime', 'require' => true, 'desc' => '配送时间'),
+                'deliveFee'  => array('name' => 'deliveFee', 'require' => true, 'desc' => '配送费'),
+                'weight'  => array('name' => 'weight', 'require' => true, 'desc' => '重量'),
+                'goodType'  => array('name' => 'goodType', 'require' => true, 'desc' => '快递类型'),
+                'isTooWeight'  => array('name' => 'isTooWeight', 'require' => true, 'desc' => '是否特殊件'),
+                'isNeedFast'  => array('name' => 'isNeedFast', 'require' => true, 'desc' => '需要加急'),
+                'fastMoney'  => array('name' => 'fastMoney', 'require' => true, 'desc' => '加急红包金额'),
+            ),
         );
     }
     /**
@@ -93,9 +110,36 @@ class Orders extends Api {
                 break;
         }
     }
+    /**
+     * 创建快递订单
+     * @desc 测试一下
+     */
+    public function createOneExpressOrder() {
+        $domain = new DomainOders();
+        $res = $domain->insertOneExpressOrder($this->userID,$this->expressAddr,$this->remark,$this->expressCode,$this->totalPrice,$this->payPrice,$this->addrID,$this->shouldDeliveTime,$this->deliveFee,$this->weight,$this->goodType,$this->isTooWeight,$this->isNeedFast,$this->fastMoney);
+        switch ($res) {
+            case '-1':
+                throw new InternalServerErrorException("新增订单失败", 33);
+                break;
+            default:
+                $curl = new \PhalApi\CUrl(3);//失败重试3次
+                $t = time();
+                $createTime = date('YmdHis'.$res,$t);
+                $orderNo = $createTime.$res;
+                $rres = $domain->updateOrderNo($res,$orderNo);
+                if ($rres) {
+                    $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广快递代拿&notifyUrl=https://takeawayapi.pykky.com/pay/notifyExpressOrder.php&openID=".$this->openID;
+                    $rs = $curl->get($url, 5000);
+                    return $rs;
+                }else{
+                    throw new InternalServerErrorException("快递代拿添加商户订单号失败", 34);
+                }
+                break;
+        }
+    }
 
     /**
-     * 支付回调处理
+     * 美食跑腿支付回调处理
      * @desc 测试一下
      */
     public function handlePay() {
@@ -104,6 +148,22 @@ class Orders extends Api {
         $time = strtotime($t);
         $okTime = date('Y-m-d H:i:s',$time);
         $res = $domain->updateOrderPay($this->orderNo,$this->payPrice,$okTime);
+        if ($res) {
+            return 0;
+        }else{
+            return -1;
+        }
+    }
+    /**
+     * 代拿订单支付回调处理
+     * @desc 测试一下
+     */
+    public function handleExpressPay() {
+        $domain = new DomainOders();
+        $t = $this->payTime;
+        $time = strtotime($t);
+        $okTime = date('Y-m-d H:i:s',$time);
+        $res = $domain->updateExpressOrderPay($this->orderNo,$this->payPrice,$okTime);
         if ($res) {
             return 0;
         }else{

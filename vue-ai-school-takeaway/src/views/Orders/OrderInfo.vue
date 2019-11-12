@@ -18,6 +18,7 @@
           placeholder="请输入投诉"
           rows="1"
           autosize
+          clearable
         >
           <van-button
             slot="button"
@@ -221,7 +222,7 @@ export default {
   methods: {
     onSendButtonClick(){
       this.$axios.post(
-        "http://123.207.230.132:1203/?s=Feedback.addOneComplaintByUser",
+        "http://tatestapi.pykky.com/?s=Feedback.addOneComplaintByUser",
         {
             userID: this.userInfo.id,
             content: this.message,
@@ -247,7 +248,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .post("http://123.207.230.132:1203/?s=Orders.CancelOrder", {
+            .post("http://tatestapi.pykky.com/?s=Orders.CancelOrder", {
               id: this.orderDetail.id
             })
             .then(res => {

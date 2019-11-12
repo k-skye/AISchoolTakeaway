@@ -16,7 +16,10 @@
           @blur="onBlur"
           @focus="onFocus"
         />
-        <div v-show="showResult" class="serachlist">
+        <div
+          v-show="showResult"
+          class="serachlist"
+        >
           <div class="searchcells">
             <van-cell
               v-for="(result,index) in serachResult"
@@ -32,9 +35,20 @@
     <div class="container">
       <!-- 轮播 -->
       <div class="swipe">
-        <van-swipe :autoplay="3000" indicator-color="white" @change="swipeOnChange">
-          <van-swipe-item v-for="(img,index) in swipeImgs" :key="index" @click="swipeClick">
-            <img :src="img" alt />
+        <van-swipe
+          :autoplay="3000"
+          indicator-color="white"
+          @change="swipeOnChange"
+        >
+          <van-swipe-item
+            v-for="(img,index) in swipeImgs"
+            :key="index"
+            @click="swipeClick"
+          >
+            <img
+              :src="img"
+              alt
+            >
           </van-swipe-item>
         </van-swipe>
       </div>
@@ -47,7 +61,10 @@
           @click="entriesClick(item.roomNum)"
         >
           <div class="img_wrap">
-            <img :src="item.image" alt />
+            <img
+              :src="item.image"
+              alt
+            >
           </div>
           <span>{{ item.name }}</span>
         </div>
@@ -57,12 +74,24 @@
     <div class="chooseRest">
       <van-sticky>
         <!-- 导航 -->
-        <FilterView :filter-data="filterData" @update="update" />
+        <FilterView
+          :filter-data="filterData"
+          @update="update"
+        />
       </van-sticky>
       <!-- 商家信息 -->
-      <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
+      <van-list
+        v-model="loading"
+        :finished="allLoaded"
+        finished-text="没有更多了"
+        @load="loadMore"
+      >
         <div class="shoplist">
-          <IndexShop v-for="(item,index) in restaurants" :key="index" :restaurant="item" />
+          <IndexShop
+            v-for="(item,index) in restaurants"
+            :key="index"
+            :restaurant="item"
+          />
         </div>
       </van-list>
     </div>
@@ -91,27 +120,27 @@ export default {
       menu: [
         {
           name: "一饭",
-          image: "http://123.207.230.132:1203/homeImg/icons8-1-50.png",
+          image: "http://tatestapi.pykky.com/homeImg/icons8-1-50.png",
           roomNum: 1
         },
         {
           name: "二饭",
-          image: "http://123.207.230.132:1203/homeImg/icons8-2-50.png",
+          image: "http://tatestapi.pykky.com/homeImg/icons8-2-50.png",
           roomNum: 2
         },
         {
           name: "门口/其他",
-          image: "http://123.207.230.132:1203/homeImg/icons8-8-50.png",
+          image: "http://tatestapi.pykky.com/homeImg/icons8-8-50.png",
           roomNum: 5
         },
         {
           name: "三饭",
-          image: "http://123.207.230.132:1203/homeImg/icons8-3-50.png",
+          image: "http://tatestapi.pykky.com/homeImg/icons8-3-50.png",
           roomNum: 3
         },
         {
           name: "四饭",
-          image: "http://123.207.230.132:1203/homeImg/icons8-4-50.png",
+          image: "http://tatestapi.pykky.com/homeImg/icons8-4-50.png",
           roomNum: 4
         }
       ],
@@ -155,7 +184,7 @@ export default {
       this.showResult = false;
     },
     onInput() {
-      this.$axios("http://123.207.230.132:1203/?s=HomeData.GetSearchByRule", {
+      this.$axios("http://tatestapi.pykky.com/?s=HomeData.GetSearchByRule", {
         params: {
           text: this.value
         }
@@ -185,26 +214,26 @@ export default {
       }
     },
     getData() {
-      this.$axios("http://123.207.230.132:1203/?s=HomeData.GetHeadAdImg").then(
+      this.$axios("http://tatestapi.pykky.com/?s=HomeData.GetHeadAdImg").then(
         res => {
           this.swipeImgs = JSON.parse(res.data.data).headAdImg;
           this.homeData = JSON.parse(res.data.data);
         }
       ); //加载广告
-      this.$axios("http://wthrcdn.etouch.cn/weather_mini?city=花都").then(
+      /* this.$axios("http://wthrcdn.etouch.cn/weather_mini?city=花都").then(
         res => {
           const today = res.data.data.forecast[0];
           const okStr = "今天" + today.type + "天，吃点什么呢？";
           this.wetherMessage = okStr;
         }
-      ); //加载天气
+      ); //加载天气 */
       this.firstLoadData(); //加载商家
     },
     firstLoadData() {
       this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
-      this.$axios("http://123.207.230.132:1203/?s=Restaurant.GetRestsByRule", {
+      this.$axios("http://tatestapi.pykky.com/?s=Restaurant.GetRestsByRule", {
         params: {
           page: this.offset,
           condition: this.condition
@@ -220,7 +249,7 @@ export default {
           this.offset++;
           // 拉取商家信息
           this.$axios(
-            "http://123.207.230.132:1203/?s=Restaurant.GetRestsByRule",
+            "http://tatestapi.pykky.com/?s=Restaurant.GetRestsByRule",
             {
               params: {
                 page: this.offset,

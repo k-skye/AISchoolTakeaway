@@ -1,13 +1,29 @@
 <template>
   <div class="order">
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-      <van-list v-model="loading" :finished="allLoaded" finished-text="没有更多了" @load="loadMore">
-        <div v-for="(order,index) in orders" :key="index" class="order-card-body">
-          <div v-if="order" class="order-card-wrap" @click="toOrderInfo(order)">
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+    >
+      <van-list
+        v-model="loading"
+        :finished="allLoaded"
+        finished-text="没有更多了"
+        @load="loadMore"
+      >
+        <div
+          v-for="(order,index) in orders"
+          :key="index"
+          class="order-card-body"
+        >
+          <div
+            v-if="order"
+            class="order-card-wrap"
+            @click="toOrderInfo(order)"
+          >
             <img
               :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+order.restLogo"
               alt
-            />
+            >
             <div class="order-card-content">
               <div class="order-card-head">
                 <div class="title">
@@ -16,27 +32,44 @@
                   </a>
                   <p>{{ order.statusText }}</p>
                 </div>
-                <p class="date-time">{{ order.createTime }}</p>
+                <p class="date-time">
+                  {{ order.createTime }}
+                </p>
               </div>
               <div class="order-card-detail">
-                <p class="detail">{{ order.showfood }}</p>
-                <p class="price">¥{{ (parseFloat(order.payPrice)/100).toFixed(2) }}</p>
+                <p class="detail">
+                  {{ order.showfood }}
+                </p>
+                <p class="price">
+                  ¥{{ (parseFloat(order.payPrice)/100).toFixed(2) }}
+                </p>
               </div>
             </div>
           </div>
-          <div v-show="order.status>=4 || order.status==0" class="order-card-bottom">
+          <div
+            v-show="order.status>=4 || order.status==0"
+            class="order-card-bottom"
+          >
             <button
               class="cardbutton"
               @click="$router.push({name: 'shop',params: {restID: order.restID}})"
-            >再来一单</button>
+            >
+              再来一单
+            </button>
           </div>
         </div>
       </van-list>
     </van-pull-refresh>
-    <div v-if="firstlogin" class="nologin">
+    <div
+      v-if="firstlogin"
+      class="nologin"
+    >
       <NoLoginInfo />
     </div>
-    <div v-if="nodata" class="nologin">
+    <div
+      v-if="nodata"
+      class="nologin"
+    >
       <NoDeliveOrderInfo />
     </div>
   </div>
@@ -100,7 +133,7 @@ export default {
       this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
-      this.$axios("http://123.207.230.132:1203/?s=Orders.GetOnesAllOrders", {
+      this.$axios("http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders", {
         params: {
           userID: this.userInfo.id,
           offset: this.offset,
@@ -126,7 +159,7 @@ export default {
           this.offset += parseInt(this.orders[0].id);
           // 拉取商家信息
           this.$axios(
-            "http://123.207.230.132:1203/?s=Orders.GetOnesAllOrders",
+            "http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders",
             {
               params: {
                 userID: this.userInfo.id,
@@ -228,7 +261,7 @@ export default {
       toData.value = null;
       toData.addrInfo = null;
       /* //店铺配送费信息
-      this.$axios("http://123.207.230.132:1203/?s=Restaurant.GetOneRest", {
+      this.$axios("http://tatestapi.pykky.com/?s=Restaurant.GetOneRest", {
         params: {
           id: order.restID
         }
@@ -236,7 +269,7 @@ export default {
         toData.deliveryFee = res.data.data.deliveryFee;
       }); */
       //收货地址信息
-      this.$axios("http://123.207.230.132:1203/?s=Address.GetOneAddr", {
+      this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
         params: {
           id: order.addressID
         }
@@ -246,7 +279,7 @@ export default {
       //红包信息
       if (order.discountID != -1) {
         this.$axios(
-          "http://123.207.230.132:1203/?s=Discount.GetOnesDiscounts",
+          "http://tatestapi.pykky.com/?s=Discount.GetOnesDiscounts",
           {
             params: {
               id: order.discountID

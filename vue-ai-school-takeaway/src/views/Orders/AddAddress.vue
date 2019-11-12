@@ -156,7 +156,7 @@ export default {
       this.addressInfo.userID = this.userInfo.id;
       this.$axios
         .post(
-          "http://123.207.230.132:1203/?s=Address.AddAddr",
+          "http://tatestapi.pykky.com/?s=Address.AddAddr",
           this.addressInfo
         )
         .then(res => {
@@ -164,7 +164,7 @@ export default {
           if (this.userInfo.mainAddressID == 0) {
             this.userInfo.mainAddressID == res.data.data;
             const openid = localStorage.openid;
-            this.$axios("http://123.207.230.132:1203/?s=Users.GetUserInfo", {
+            this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
               params: {
                 openid: openid
               }
@@ -184,7 +184,7 @@ export default {
     editAddress() {
       this.$axios
         .post(
-          "http://123.207.230.132:1203/?s=Address.ChangeAddr",
+          "http://tatestapi.pykky.com/?s=Address.ChangeAddr",
           this.addressInfo
         )
         .then(() => {

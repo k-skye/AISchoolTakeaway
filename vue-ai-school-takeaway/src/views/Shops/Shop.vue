@@ -81,7 +81,7 @@ export default {
   },
   methods: {
     getData() {
-      this.$axios("http://123.207.230.132:1203/?s=Restaurant.GetOneRest", {
+      this.$axios("http://tatestapi.pykky.com/?s=Restaurant.GetOneRest", {
         params: {
           id: this.restID
         }

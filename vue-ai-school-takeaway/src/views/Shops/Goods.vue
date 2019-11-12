@@ -135,7 +135,7 @@ export default {
   methods: {
     getData() {
       this.restID = this.restInfo.id;
-      this.$axios("http://123.207.230.132:1203/?s=Food.GetFoods", {
+      this.$axios("http://tatestapi.pykky.com/?s=Food.GetFoods", {
         params: {
           restID: this.restID
         }

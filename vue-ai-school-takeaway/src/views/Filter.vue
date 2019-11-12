@@ -93,7 +93,7 @@ export default {
       this.allLoaded = false;
       // 拉取商家信息
       this.$axios(
-        "http://123.207.230.132:1203/?s=Restaurant.GetRestsByRuleWithRoomNum",
+        "http://tatestapi.pykky.com/?s=Restaurant.GetRestsByRuleWithRoomNum",
         {
           params: {
             page: this.offset,
@@ -112,7 +112,7 @@ export default {
           this.offset++;
           // 拉取商家信息
           this.$axios(
-            "http://123.207.230.132:1203/?s=Restaurant.GetRestsByRuleWithRoomNum",
+            "http://tatestapi.pykky.com/?s=Restaurant.GetRestsByRuleWithRoomNum",
             {
               params: {
                 page: this.offset,

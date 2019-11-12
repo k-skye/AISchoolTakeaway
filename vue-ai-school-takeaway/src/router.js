@@ -28,6 +28,11 @@ export default new Router({
           path: '/me',
           name: 'me',
           component: () => import('./views/Me.vue')
+        },
+        {
+          path: '/express',
+          name: 'express',
+          component: () => import('./views/Express.vue')
         }
       ]
     },

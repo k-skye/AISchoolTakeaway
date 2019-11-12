@@ -196,7 +196,12 @@
     <footer class="action-bar">
       <span>¥ {{ realPrice.toFixed(2) }}</span>
       <button @click="handlePay">
-        微信支付
+        <p>
+          <van-icon
+            name="wechat"
+            size="1.5rem"
+          />微信支付
+        </p>
       </button>
     </footer>
   </div>
@@ -473,7 +478,7 @@ export default {
       if (this.userInfo.mainAddressID != 0) {
         this.haveAddress = true;
         if (!this.addrInfo) {
-          this.$axios("http://123.207.230.132:1203/?s=Address.GetOneAddr", {
+          this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
             params: {
               id: this.userInfo.mainAddressID
             }
@@ -490,7 +495,7 @@ export default {
       }
       //拿用户红包
       this.$axios(
-        "http://123.207.230.132:1203/?s=Discount.GetOnesAllcounts",
+        "http://tatestapi.pykky.com/?s=Discount.GetOnesAllcounts",
         {
           params: {
             userID: this.userInfo.id
@@ -550,7 +555,7 @@ export default {
       const finalFormatTime =
         this.dateFormat("YYYY-mm-dd ", nowDate) + finalTime;
       this.$axios
-        .post("http://123.207.230.132:1203/?s=Orders.CreateOneOrder", {
+        .post("http://tatestapi.pykky.com/?s=Orders.CreateOneOrder", {
           userID: this.userInfo.id,
           foodArrID: foodArrID,
           remark: remarks,
@@ -566,33 +571,30 @@ export default {
         })
         .then(res => {
           //重要接口加错误处理！！！
-          if (JSON.stringify(res.data.msg) == "") {
-          //微信支付
-          const data = JSON.parse(res.data.data);
-          // eslint-disable-next-line no-undef
-          WeixinJSBridge.invoke("getBrandWCPayRequest", data, res => {
-            if (res.err_msg == "get_brand_wcpay_request:ok") {
-              // 使用以上方式判断前端返回,微信团队郑重提示：
-              //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
-              Toast.success('支付成功');
-              this.$router.push("/order");
-            } else {
-              Dialog({
-                message:
-                  "支付失败：" +
-                  res.data.data.err_code +
-                  res.data.data.err_desc +
-                  res.data.data.err_msg
-              });
-            }
-          });
-          }
-          else{
+          if (res.data.msg == "") {
+            //微信支付
+            const data = JSON.parse(res.data.data);
+            // eslint-disable-next-line no-undef
+            WeixinJSBridge.invoke("getBrandWCPayRequest", data, res => {
+              if (res.err_msg == "get_brand_wcpay_request:ok") {
+                // 使用以上方式判断前端返回,微信团队郑重提示：
+                //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                Toast.success("支付成功");
+                this.$router.push("/order");
+              } else {
+                Dialog({
+                  message:
+                    "支付失败：" +
+                    res.data.data.err_code +
+                    res.data.data.err_desc +
+                    res.data.data.err_msg
+                });
+              }
+            });
+          } else {
             Dialog({
-                message:
-                  "创建订单失败：" +
-                  res.data.msg
-              });
+              message: "创建订单失败：" + res.data.msg
+            });
           }
         });
     }
@@ -661,18 +663,6 @@ export default {
           margin-left: 2.133333vw;
         }
       }
-    }
-    .checkout-section {
-      margin-bottom: 2.133333vw;
-      padding: 0 5.333333vw;
-      background: #fff;
-      box-shadow: 0 0.133333vw 0.266667vw 0 rgba(0, 0, 0, 0.05);
-    }
-    .checkout-section {
-      margin-bottom: 2.133333vw;
-      padding: 0 5.333333vw;
-      background: #fff;
-      box-shadow: 0 0.133333vw 0.266667vw 0 rgba(0, 0, 0, 0.05);
     }
     .cart-group > h3 {
       padding: 4.266667vw 0;
@@ -762,17 +752,23 @@ export default {
     }
     button {
       position: absolute;
+      display: flex;
+      justify-content: center;
       top: 0;
       right: 0;
       bottom: 0;
       background: #00e067;
-      min-width: 35vw;
+      min-width: 38vw;
       border: none;
       outline: none;
       color: #fff;
       font-size: 1.1rem;
-      font-weight: 500;
+      font-weight: 450;
       height: 100%;
+      p{
+        display: flex;
+        align-items: center;
+      }
     }
   }
   .cart-item {

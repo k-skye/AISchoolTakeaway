@@ -12,6 +12,7 @@
         v-model="message"
         rows="2"
         autosize
+        clearable
         type="textarea"
         maxlength="50"
         placeholder="请输入评价"
@@ -68,7 +69,7 @@ export default {
   methods: {
     handleClick() {
       this.$axios
-        .post("http://123.207.230.132:1203/?s=Comment.CommentByUser", {
+        .post("http://tatestapi.pykky.com/?s=Comment.CommentByUser", {
           userID: this.userID,
           text: this.message,
           restID: this.restID,
