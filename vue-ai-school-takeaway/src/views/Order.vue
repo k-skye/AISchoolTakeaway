@@ -21,14 +21,14 @@
             @click="toOrderInfo(order)"
           >
             <img
-              :src="'https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+order.restLogo"
+              :src="(order.restLogo)?('https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/restImgs/'+order.restLogo):('https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/icontyexpress.png')"
               alt
             >
             <div class="order-card-content">
               <div class="order-card-head">
                 <div class="title">
                   <a>
-                    <span>{{ order.restName }}</span>
+                    <span>{{ (order.restName)?(order.restName):('快递代拿') }}</span>
                   </a>
                   <p>{{ order.statusText }}</p>
                 </div>
@@ -38,7 +38,7 @@
               </div>
               <div class="order-card-detail">
                 <p class="detail">
-                  {{ order.showfood }}
+                  {{ (order.showfood)?(order.showfood):(order.expressAddr+'快递点  '+order.goodType+'类') }}
                 </p>
                 <p class="price">
                   ¥{{ (parseFloat(order.payPrice)/100).toFixed(2) }}
@@ -47,7 +47,7 @@
             </div>
           </div>
           <div
-            v-show="order.status>=4 || order.status==0"
+            v-show="(order.status>=4 || order.status==0) && order.type!=1"
             class="order-card-bottom"
           >
             <button
@@ -158,16 +158,13 @@ export default {
         if (!this.allLoaded) {
           this.offset += parseInt(this.orders[0].id);
           // 拉取商家信息
-          this.$axios(
-            "http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders",
-            {
-              params: {
-                userID: this.userInfo.id,
-                offset: this.offset,
-                limit: this.size
-              }
+          this.$axios("http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders", {
+            params: {
+              userID: this.userInfo.id,
+              offset: this.offset,
+              limit: this.size
             }
-          ).then(res => {
+          }).then(res => {
             if (JSON.stringify(res.data.data) != "{}") {
               this.orderlist = res.data.data;
               this.handleData();
@@ -189,28 +186,32 @@ export default {
       //对商品数据处理
       var i = 0;
       this.orderlist.forEach(order => {
-        var showfood = "";
-        var OrderFoods = JSON.parse(order.foods);
-        var foodsArr = new Array();
-        OrderFoods.forEach(id => {
-          order.food.forEach(food => {
-            if (food.id == id) {
-              foodsArr.push(food); //把每行food的全部数据对象都放入数组
-            }
+        if (order.type == 0) {
+          //仅处理美食跑腿
+          var showfood = "";
+          var OrderFoods = JSON.parse(order.foods);
+          var foodsArr = new Array();
+          OrderFoods.forEach(id => {
+            order.food.forEach(food => {
+              if (food.id == id) {
+                foodsArr.push(food); //把每行food的全部数据对象都放入数组
+              }
+            });
           });
-        });
-        this.orders[i].foodsArr = foodsArr;
-        var o = 0;
-        foodsArr.forEach(food => {
-          if (o < 2) {
-            showfood += " " + food.name;
+          this.orders[i].foodsArr = foodsArr;
+          var o = 0;
+          foodsArr.forEach(food => {
+            if (o < 2) {
+              showfood += " " + food.name;
+            }
+            o++;
+          });
+          if (o > 2) {
+            showfood += " 等";
           }
-          o++;
-        });
-        if (o > 2) {
-          showfood += " 等";
+          this.orders[i].showfood = showfood;
         }
-        this.orders[i].showfood = showfood;
+
         //状态提示文字
         this.orders[i].statusText = null;
         const status = parseInt(order.status);
@@ -278,14 +279,11 @@ export default {
       });
       //红包信息
       if (order.discountID != -1) {
-        this.$axios(
-          "http://tatestapi.pykky.com/?s=Discount.GetOnesDiscounts",
-          {
-            params: {
-              id: order.discountID
-            }
+        this.$axios("http://tatestapi.pykky.com/?s=Discount.GetOnesDiscounts", {
+          params: {
+            id: order.discountID
           }
-        ).then(res => {
+        }).then(res => {
           toData.value = res.data.data.value;
         });
       } else {
