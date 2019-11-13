@@ -322,7 +322,8 @@ export default {
       ],
       giftError: "",
       weightNum: 0,
-      customFeeError: ""
+      customFeeError: "",
+      preuserInfo: null
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -490,7 +491,7 @@ export default {
           return;
         }
         this.okTime = this.currentTime;
-      }else{
+      } else {
         this.customGift = "0";
       }
       if (this.weightNum == 4) {
@@ -614,7 +615,9 @@ export default {
       //动态计算预估时间和配送费
       const roomNum = 1;
       let dormitory = this.addrInfo.dormitory;
-      dormitory = dormitory.replace(/[^0-9]/gi, "");
+      if (dormitory) {
+        dormitory = dormitory.replace(/[^0-9]/gi, "");
+      }
       //两个之间差值来算，把宿舍分成2个区域
       const dormNum = dormitory >= 1 && dormitory <= 6 ? 1 : 2;
       //默认起始配送费和时间为
@@ -682,24 +685,33 @@ export default {
     getData() {
       //拿收货地址
       this.addrInfo = this.$store.getters.addrInfo;
-      if (this.userInfo.mainAddressID != 0) {
-        this.haveAddress = true;
-        if (!this.addrInfo) {
-          this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
-            params: {
-              id: this.userInfo.mainAddressID
-            }
-          }).then(res => {
-            this.addrInfo = res.data.data;
-            this.$store.dispatch("setAddrInfo", this.addrInfo);
-            this.calcData();
-          });
-        } else {
-          this.calcData();
+      //用openid去get全部用户信息回来
+      const openid = localStorage.openid;
+      this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
+        params: {
+          openid: openid
         }
-      } else {
-        this.haveAddress = false;
-      }
+      }).then(res => {
+        this.preuserInfo = res.data.data;
+        if (this.preuserInfo.mainAddressID != 0) {
+          this.haveAddress = true;
+          if (!this.addrInfo) {
+            this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
+              params: {
+                id: this.preuserInfo.mainAddressID
+              }
+            }).then(res => {
+              this.addrInfo = res.data.data;
+              this.$store.dispatch("setAddrInfo", this.addrInfo);
+              this.calcData();
+            });
+          } else {
+            this.calcData();
+          }
+        } else {
+          this.haveAddress = false;
+        }
+      });
     },
     addAddress() {
       this.$router.push({

@@ -385,7 +385,9 @@ export default {
       //动态计算预估时间和配送费
       const roomNum = parseInt(this.restInfo.roomNum);
       let dormitory = this.addrInfo.dormitory;
-      dormitory = dormitory.replace(/[^0-9]/gi, "");
+      if (dormitory) {
+        dormitory = dormitory.replace(/[^0-9]/gi, "");
+      }
       //两个之间差值来算，把宿舍分成2个区域
       const dormNum = dormitory >= 1 && dormitory <= 6 ? 1 : 2;
       //默认起始配送费和时间为
