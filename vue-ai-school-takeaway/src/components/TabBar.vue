@@ -3,6 +3,7 @@
     <van-tabbar
       route
       safe-area-inset-bottom
+      style="z-index:999"
     >
       <van-tabbar-item
         v-for="(item,index) in data"

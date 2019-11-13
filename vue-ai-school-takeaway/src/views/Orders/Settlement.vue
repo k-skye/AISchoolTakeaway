@@ -193,17 +193,14 @@
     </div>
 
     <!-- 底部 -->
-    <footer class="action-bar">
-      <span>¥ {{ realPrice.toFixed(2) }}</span>
-      <button @click="handlePay">
-        <p>
-          <van-icon
-            name="wechat"
-            size="1.5rem"
-          />微信支付
-        </p>
-      </button>
-    </footer>
+    <van-submit-bar
+      :price="realPrice*100"
+      button-text="微信支付"
+      button-type="primary"
+      safe-area-inset-bottom
+      :loading="isPayloading"
+      @submit="handlePay"
+    />
   </div>
 </template>
 
@@ -234,7 +231,8 @@ export default {
       deliveFee: 0.0,
       okFee: 0.0,
       packgeFee: 1,
-      deliverTime: 30
+      deliverTime: 30,
+      isPayloading:false
     };
   },
   computed: {
@@ -385,7 +383,9 @@ export default {
       //动态计算预估时间和配送费
       const roomNum = parseInt(this.restInfo.roomNum);
       let dormitory = this.addrInfo.dormitory;
-      dormitory = dormitory.replace(/[^0-9]/gi, "");
+      if (dormitory) {
+        dormitory = dormitory.replace(/[^0-9]/gi, "");
+      }
       //两个之间差值来算，把宿舍分成2个区域
       const dormNum = dormitory >= 1 && dormitory <= 6 ? 1 : 2;
       //默认起始配送费和时间为
@@ -519,6 +519,7 @@ export default {
         return;
       }
       //开始创建订单
+      this.isPayloading = true;
       var foodArrID = []; //食物的id数组
       this.orderInfo.selectFoods.forEach(element => {
         //让2份以上的商品也添加上，不然无论你点了多少分都只记录一份
@@ -590,6 +591,7 @@ export default {
                     res.data.data.err_msg
                 });
               }
+              this.isPayloading = false;
             });
           } else {
             Dialog({
@@ -732,42 +734,6 @@ export default {
       .price {
         font-size: 1.5rem;
         font-weight: 500;
-      }
-    }
-  } /* 底部支付样式 */
-  .action-bar {
-    height: 11.733333vw;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    background: #3c3c3c;
-    z-index: 2;
-    span {
-      color: #fff;
-      font-size: 1.4rem;
-      line-height: 11.733333vw;
-      padding-left: 2.666667vw;
-      vertical-align: middle;
-    }
-    button {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      background: #00e067;
-      min-width: 38vw;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 450;
-      height: 100%;
-      p{
-        display: flex;
-        align-items: center;
       }
     }
   }

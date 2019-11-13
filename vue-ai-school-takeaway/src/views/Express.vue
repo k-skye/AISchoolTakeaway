@@ -242,36 +242,51 @@
           :error-message="markError"
         />
       </van-cell-group>
+      <van-submit-bar
+        :price="okFee*100"
+        button-text="微信支付"
+        button-type="primary"
+        style="margin-bottom:50px"
+        safe-area-inset-bottom
+        :loading="isPayloading"
+        @submit="handlePay"
+      >
+        <div
+          class="info"
+          style="display:flex"
+          @click="payQuestion"
+        >
+          <van-icon
+            name="info-o"
+            color="gray"
+            style="margin-left:10px"
+          />注意事项
+        </div>
+      </van-submit-bar>
     </div>
 
-    <div class="bottomPay">
-      <span>¥ {{ okFee.toFixed(2) }}</span>
-      <van-icon
-        name="info-o"
-        color="#f2f3f5"
-        style="left:5px;"
-        @click="payQuestion"
-      />
-      <button @click="handlePay">
-        <p>
-          <van-icon
-            name="wechat"
-            size="1.5rem"
-          />微信支付
-        </p>
-      </button>
+    <div
+      v-if="firstlogin"
+      class="nologin"
+    >
+      <NoLoginInfo />
     </div>
   </div>
 </template>
 
 <script>
+import NoLoginInfo from "../components/NoLoginInfo";
 // eslint-disable-next-line no-unused-vars
 import { Toast } from "vant";
 import { Dialog } from "vant";
 export default {
   name: "Express",
+  components: {
+    NoLoginInfo
+  },
   data() {
     return {
+      firstlogin: false,
       haveAddress: false,
       addrInfo: null,
       okTime: "",
@@ -322,7 +337,9 @@ export default {
       ],
       giftError: "",
       weightNum: 0,
-      customFeeError: ""
+      customFeeError: "",
+      preuserInfo: null,
+      isPayloading:false
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -490,7 +507,7 @@ export default {
           return;
         }
         this.okTime = this.currentTime;
-      }else{
+      } else {
         this.customGift = "0";
       }
       if (this.weightNum == 4) {
@@ -501,6 +518,7 @@ export default {
         }
       }
       //开始创建订单
+      this.isPayloading = true;
       //正则取时间
       const finalTime = this.okTime
         .match(/\d+:\d+/g)
@@ -552,6 +570,7 @@ export default {
                     res.data.data.err_msg
                 });
               }
+              this.isPayloading = false;
             });
           } else {
             Dialog({
@@ -614,7 +633,9 @@ export default {
       //动态计算预估时间和配送费
       const roomNum = 1;
       let dormitory = this.addrInfo.dormitory;
-      dormitory = dormitory.replace(/[^0-9]/gi, "");
+      if (dormitory) {
+        dormitory = dormitory.replace(/[^0-9]/gi, "");
+      }
       //两个之间差值来算，把宿舍分成2个区域
       const dormNum = dormitory >= 1 && dormitory <= 6 ? 1 : 2;
       //默认起始配送费和时间为
@@ -680,26 +701,36 @@ export default {
       this.okFee = this.deliveFee;
     },
     getData() {
+      this.firstlogin = localStorage.firstlogin == 0 ? false : true;
       //拿收货地址
       this.addrInfo = this.$store.getters.addrInfo;
-      if (this.userInfo.mainAddressID != 0) {
-        this.haveAddress = true;
-        if (!this.addrInfo) {
-          this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
-            params: {
-              id: this.userInfo.mainAddressID
-            }
-          }).then(res => {
-            this.addrInfo = res.data.data;
-            this.$store.dispatch("setAddrInfo", this.addrInfo);
-            this.calcData();
-          });
-        } else {
-          this.calcData();
+      //用openid去get全部用户信息回来
+      const openid = localStorage.openid;
+      this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
+        params: {
+          openid: openid
         }
-      } else {
-        this.haveAddress = false;
-      }
+      }).then(res => {
+        this.preuserInfo = res.data.data;
+        if (this.preuserInfo.mainAddressID != 0) {
+          this.haveAddress = true;
+          if (!this.addrInfo) {
+            this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
+              params: {
+                id: this.preuserInfo.mainAddressID
+              }
+            }).then(res => {
+              this.addrInfo = res.data.data;
+              this.$store.dispatch("setAddrInfo", this.addrInfo);
+              this.calcData();
+            });
+          } else {
+            this.calcData();
+          }
+        } else {
+          this.haveAddress = false;
+        }
+      });
     },
     addAddress() {
       this.$router.push({
@@ -820,44 +851,6 @@ export default {
       margin-left: 0.666667vw;
       color: #888;
       font-size: 1.2rem;
-    }
-  }
-  .bottomPay {
-    height: 11.733333vw;
-    position: fixed;
-    left: 0;
-    bottom: 50px;
-    width: 100%;
-    background: #3c3c3c;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    span {
-      color: #fff;
-      font-size: 1.4rem;
-      line-height: 11.733333vw;
-      padding-left: 2.666667vw;
-      vertical-align: middle;
-    }
-    button {
-      position: absolute;
-      display: flex;
-      justify-content: center;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      background: #00e067;
-      min-width: 38vw;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: 450;
-      height: 100%;
-      p {
-        display: flex;
-        align-items: center;
-      }
     }
   }
 }
