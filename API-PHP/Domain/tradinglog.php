@@ -2,10 +2,12 @@
 namespace App\Domain;
 
 use App\Model\tradinglog as ModelTradinglog;
-use App\Model\deliverusers as ModelUsers;
+use App\Model\deliverusers as ModelDeliverUsers;
 use App\Model\deliverorders as ModelDeliverorders;
 use App\Model\orders as ModelOders;
 use App\Model\deliverusers as ModelDeliverUser;
+use App\Model\users as ModelUsers;
+
 class WeixinPush
 {
     protected $appid;
@@ -110,6 +112,80 @@ class tradinglog {
         return $model->getOnesAllTradLog($deliverID,$offset,$limit);
     }
 
+    public function createOneCompensate($orderID) {
+        $model = new ModelTradinglog();
+        //通过orderid查deliverorders
+        $modelDeliveOrder = new ModelDeliverorders();
+        $deliveOrderInfo = $modelDeliveOrder->getOneOrderByorderID($orderID);
+        $deliverID = $deliveOrderInfo['deliverID'];
+        return $model->addOneCompensate($orderID,$deliverID);
+    }
+
+    public function updateCompensate($id,$orderNo) {
+        $model = new ModelTradinglog();
+        return $model->updateCompensate($id,$orderNo);
+    }
+
+    public function updateCompensatePay($orderNo,$payPrice,$payTime) {
+        $model = new ModelTradinglog();
+        $res = $model->updateCompensatePay($orderNo,$payPrice,$payTime);
+        if ($res) {
+            //拿orderid
+            $logInfo = $model->getOneLogsCompensateByWechatID($orderNo);
+            $orderID = $logInfo['orderID'];
+            
+            //把钱加到订单的金额中
+            $modelOrder = new ModelOders();
+            $orderInfo = $modelOrder->getOnesOneOrder($orderID);
+            $totalPrice = (float)$orderInfo['totalPrice'];
+            $OldpayPrice = (float)$orderInfo['payPrice'];
+            $deliveFee = (float)$orderInfo['deliveFee'];
+            $okPayPrice = $OldpayPrice + $payPrice;
+            $okTotalPrice = $totalPrice + ($payPrice/100) ;
+            $okDeliveFee = $deliveFee + ($payPrice/100);
+            $rrres = $modelOrder->updateOrderCompensate($orderID,$okTotalPrice,$okPayPrice,$okDeliveFee);
+
+            //修改order的status为配送中
+            $rres = $modelOrder->updateStatus($orderID,3);
+
+            if ($rres && $rrres) {
+                //提醒用户
+                //开始给用户发已支付/待接单消息
+                $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+                $t = time();
+                $createTime = date('Y-m-d H:i:s',$t);
+
+                $url='';
+                $first='已支付尾款，伙伴将继续为您派送';
+                $remark='无';
+                //测试用
+                //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+                $modid='0YWKECWoWvrVijLuDm45mX1yxIzXkLigaZbdtCCa7Ts';
+                $data = array(
+                    'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                    'keyword1'=>array('value'=>urlencode('快递代拿尾款'),'color'=>'#0000FF'),
+                    'keyword2'=>array('value'=>urlencode((((float)$payPrice)/100).' 元'),'color'=>"#0000FF"),
+                    'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
+                    'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+                );
+                //发送
+                $userid = $orderInfo['userID'];
+                $modelTureUser = new ModelUsers();
+                $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+                $openid = $trueUserInfo['openid'];
+                $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+                
+
+                return $res;
+            }else {
+                return -2;
+            }
+        }else{
+            return -1;
+        }
+        
+    }
+
     public function autoDoneLog() {
         $model = new ModelTradinglog();
         $notDoneLogArr = $model->getAllLogsNotDone();
@@ -158,7 +234,7 @@ class tradinglog {
     }
 
     public function addCashTradLog($deliverID) {
-        $modelUser = new ModelUsers();
+        $modelUser = new ModelDeliverUsers();
         $userInfo = $modelUser->getOneUserByUserID($deliverID);
         $openID = $userInfo['openid'];
         $personName = $userInfo['realName'];

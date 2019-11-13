@@ -22,6 +22,15 @@ class TradingLog extends Api {
             'cashOneUser' => array(
                 'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
             ),
+            'createOneCompensate' => array(
+                'orderID'  => array('name' => 'orderID', 'require' => true, 'desc' => '订单id'),
+                'openID'  => array('name' => 'openID', 'require' => true, 'desc' => 'openid')
+            ),
+            'handleCompensatePay' => array(
+                'payPrice'  => array('name' => 'payPrice', 'require' => true, 'desc' => '实际支付金额'),
+                'orderNo'  => array('name' => 'orderNo', 'require' => true, 'desc' => '微信商户订单号'),
+                'payTime'  => array('name' => 'payTime', 'require' => true, 'desc' => '支付时间')
+            ),
         );
     }
     /**
@@ -31,6 +40,46 @@ class TradingLog extends Api {
     public function getOnesAllTradLog() {
         $domain = new DomainTradinglog();
         return $domain->getOnesAllTradLog($this->deliverID,$this->offset,$this->limit);
+    }
+    /**
+     * 跑腿支付回调处理
+     * @desc 测试一下
+     */
+    public function handleCompensatePay() {
+        $domain = new DomainTradinglog();
+        $t = $this->payTime;
+        $time = strtotime($t);
+        $okTime = date('Y-m-d H:i:s',$time);
+        $res = $domain->updateCompensatePay($this->orderNo,$this->payPrice,$okTime);
+        if ($res) {
+            return 0;
+        }else{
+            return -1;
+        }
+    }
+    /**
+     * 创建支付尾款记录和订单
+     * @desc 测试一下
+     */
+    public function createOneCompensate() {
+        $domain = new DomainTradinglog();
+        $res = $domain->createOneCompensate($this->orderID);
+        if ($res) {
+            $curl = new \PhalApi\CUrl(3);//失败重试3次
+                $t = time();
+                $createTime = date('YmdHis'.$res,$t);
+                $orderNo = $createTime.$res;
+                $rres = $domain->updateCompensate($res,$orderNo);
+                if ($rres) {
+                    $url = "http://tatestapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=3.0&ordername=华广快递代拿尾款&notifyUrl=http://tatestapi.pykky.com/pay/notifyCompensateOrder.php&openID=".$this->openID;
+                    $rs = $curl->get($url, 5000);
+                    return $rs;
+                }else{
+                    throw new InternalServerErrorException("快递代拿添加尾款订单号失败", 36);
+                }
+        }else {
+            throw new InternalServerErrorException("新增支付尾款记录失败", 35);
+        }
     }
     /**
      * 提现到微信零钱

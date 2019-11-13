@@ -30,15 +30,23 @@
                   <a>
                     <span>{{ (order.restName)?(order.restName):('快递代拿') }}</span>
                   </a>
-                  <p>{{ order.statusText }}</p>
+                  <p style="display:flex;">
+                    <van-icon
+                      v-show="order.statusText=='待支付尾款'"
+                      name="warning"
+                      style="padding-right:2px;"
+                    />{{ order.statusText }}
+                  </p>
                 </div>
                 <p class="date-time">
                   {{ order.createTime }}
                 </p>
               </div>
               <div class="order-card-detail">
-                <p class="detail">
-                  {{ (order.showfood)?(order.showfood):(order.expressAddr+'快递点  '+order.goodType+'类') }}
+                <p
+                  class="detail"
+                >
+                  {{ (order.showfood)?(order.showfood):(order.expressAddr+'快递点 '+order.goodType+'类') }}
                 </p>
                 <p class="price">
                   ¥{{ (parseFloat(order.payPrice)/100).toFixed(2) }}
@@ -223,7 +231,7 @@ export default {
             this.orders[i].statusText = "待接单";
             break;
           case 2:
-            this.orders[i].statusText = "待取餐";
+            this.orders[i].statusText = "待取货";
             break;
           case 3:
             this.orders[i].statusText = "配送中";
@@ -243,6 +251,9 @@ export default {
           case 8:
             this.orders[i].statusText = "已关闭";
             break;
+          case 9:
+            this.orders[i].statusText = "待支付尾款";
+            break;
           default:
             this.orders[i].statusText = "订单异常";
             break;
@@ -257,6 +268,32 @@ export default {
       toData.selectFoods = order.foodsArr;
       toData.payPrice = order.payPrice;
       toData.deliveryFee = order.deliveFee;
+      toData.expressAddr = order.expressAddr;
+      toData.expressCode = order.expressCode;
+      toData.goodType = order.goodType;
+      toData.isNeedFast = order.isNeedFast;
+      toData.fastMoney = order.fastMoney;
+      //处理重量
+      let weightNum = parseInt(order.weight);
+      switch (weightNum) {
+        case 0:
+          toData.weight = "小(<1.5kg 约3瓶中型怡宝)";
+          break;
+        case 1:
+          toData.weight = "中(>1.5-3kg 约1瓶大型怡宝)";
+          break;
+        case 2:
+          toData.weight = "大(>3kg-5kg 约1箱牛奶)";
+          break;
+        case 3:
+          toData.weight = "特大(>5kg-10kg 约2箱牛奶)";
+          break;
+        case 4:
+          toData.weight = "其他(>10kg/体积大)";
+          break;
+        default:
+          break;
+      }
       //切记传值前一定要先建立对应属性为null！！！！！
       //toData.deliveryFee = null;
       toData.value = null;

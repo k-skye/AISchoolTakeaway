@@ -76,11 +76,26 @@
           >
             投诉伙伴
           </van-button>
+          <!-- 需要付尾款时 -->
+          <van-button
+            v-if="orderDetail.status==9"
+            type="primary"
+            size="large"
+            @click="handlePay(orderDetail.id)"
+          >
+            <p style="display:flex;align-items: center;justify-content: center;">
+              <van-icon
+                name="wechat"
+                size="1.5rem"
+              />
+              支付尾款
+            </p>
+          </van-button>
         </div>
       </div>
       <!-- 伙伴信息 -->
       <div
-        v-if="orderDetail.deliverName"
+        v-if="orderDetail.deliverName && orderDetail.status<4"
         class="detail-card"
       >
         <div class="title">
@@ -98,7 +113,10 @@
           </li>
         </ul>
       </div>
-      <div class="restaurant-card">
+      <div
+        v-if="orderDetail.restName"
+        class="restaurant-card"
+      >
         <!-- 点餐内容 -->
         <section class="checkout-section cart-group">
           <h3>{{ orderDetail.restName }}</h3>
@@ -141,6 +159,41 @@
             </li>
           </ul>
         </section>
+      </div>
+
+      <!-- 快递信息 -->
+      <div
+        v-if="orderDetail.remark"
+        class="detail-card"
+      >
+        <div class="title">
+          快递
+        </div>
+        <ul class="card-list">
+          <li class="list-item">
+            <span>取件地: {{ orderDetail.expressAddr }}</span>
+          </li>
+          <li class="list-item">
+            <span>取件码: {{ orderDetail.expressCode }}</span>
+          </li>
+          <li class="list-item">
+            <span>重量: {{ orderDetail.weight }}</span>
+          </li>
+          <li class="list-item">
+            <span>类型: {{ orderDetail.goodType }}</span>
+          </li>
+          <div
+            v-if="orderDetail.isNeedFast == 1"
+            class="needFast"
+          >
+            <li class="list-item">
+              <span>需要加急: 是</span>
+            </li>
+            <li class="list-item">
+              <span>加急红包金额: {{ (parseFloat(orderDetail.fastMoney)).toFixed(2) }}</span>
+            </li>
+          </div>
+        </ul>
       </div>
 
       <!-- 配送信息 -->
@@ -220,6 +273,41 @@ export default {
     }
   },
   methods: {
+    handlePay(orderid){
+      this.$axios
+        .post("http://tatestapi.pykky.com/?s=Tradinglog.CreateOneCompensate", {
+          orderID: orderid,
+          openID: this.userInfo.openid,
+        })
+        .then(res => {
+          //重要接口加错误处理！！！
+          if (res.data.msg == "") {
+            //微信支付
+            const data = JSON.parse(res.data.data);
+            // eslint-disable-next-line no-undef
+            WeixinJSBridge.invoke("getBrandWCPayRequest", data, res => {
+              if (res.err_msg == "get_brand_wcpay_request:ok") {
+                // 使用以上方式判断前端返回,微信团队郑重提示：
+                //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+                Toast.success("支付成功");
+                this.$router.push("/order");
+              } else {
+                Dialog({
+                  message:
+                    "支付失败：" +
+                    res.data.data.err_code +
+                    res.data.data.err_desc +
+                    res.data.data.err_msg
+                });
+              }
+            });
+          } else {
+            Dialog({
+              message: "创建订单失败：" + res.data.msg
+            });
+          }
+        });
+    },
     onSendButtonClick(){
       this.$axios.post(
         "http://tatestapi.pykky.com/?s=Feedback.addOneComplaintByUser",
@@ -276,12 +364,12 @@ export default {
           this.statusContent = "如在30分钟后仍未被伙伴接单，将自动取消";
           break;
         case 2:
-          this.statusText = "待取餐";
-          this.statusContent = "伙伴正在前往取餐的路上";
+          this.statusText = "待取货";
+          this.statusContent = "伙伴正在前往取商品的路上";
           break;
         case 3:
           this.statusText = "配送中";
-          this.statusContent = "伙伴正在飞奔到您身边";
+          this.statusContent = "伙伴已取到商品，正在飞奔到您身边";
           break;
         case 4:
           this.statusText = "已送达";
@@ -302,6 +390,10 @@ export default {
         case 8:
           this.statusText = "已关闭";
           this.statusContent = "此订单已关闭，您可去重新下单。";
+          break;
+        case 9:
+          this.statusText = "待支付尾款";
+          this.statusContent = "快递实际重量与您下单填写的不符，需要支付 3元 尾款才能继续配送。";
           break;
         default:
           this.statusText = "订单异常";

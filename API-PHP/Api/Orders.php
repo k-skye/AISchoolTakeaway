@@ -92,10 +92,10 @@ class Orders extends Api {
         $domain = new DomainOders();
         $res = $domain->insertOneOrder($this->userID,$this->foodArrID,$this->remark,$this->restID,$this->totalPrice,$this->payPrice,$this->addrID,$this->discountID,$this->shouldDeliveTime,$this->deliveFee,$this->upstairs);
         switch ($res) {
-            case '-1':
+            case (-1):
                 throw new InternalServerErrorException("新增订单失败", 12);
                 break;
-            case '-2':
+            case (-2):
                 throw new InternalServerErrorException("变更红包状态失败", 13);
                 break;
             default:
@@ -105,7 +105,7 @@ class Orders extends Api {
                 $orderNo = $createTime.$res;
                 $rres = $domain->updateOrderNo($res,$orderNo);
                 if ($rres) {
-                    $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广饭堂外卖&notifyUrl=https://takeawayapi.pykky.com/pay/notifyOrder.php&openID=".$this->openID;
+                    $url = "http://tatestapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广饭堂外卖&notifyUrl=http://tatestapi.pykky.com/pay/notifyOrder.php&openID=".$this->openID;
                     $rs = $curl->get($url, 5000);
                     return $rs;
                 }else{
@@ -122,7 +122,7 @@ class Orders extends Api {
         $domain = new DomainOders();
         $res = $domain->insertOneExpressOrder($this->userID,$this->expressAddr,$this->remark,$this->expressCode,$this->totalPrice,$this->payPrice,$this->addrID,$this->shouldDeliveTime,$this->deliveFee,$this->weight,$this->goodType,$this->isNeedFast,$this->fastMoney);
         switch ($res) {
-            case '-1':
+            case (-1):
                 throw new InternalServerErrorException("新增订单失败", 33);
                 break;
             default:
@@ -132,7 +132,7 @@ class Orders extends Api {
                 $orderNo = $createTime.$res;
                 $rres = $domain->updateOrderNo($res,$orderNo);
                 if ($rres) {
-                    $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广快递代拿&notifyUrl=https://takeawayapi.pykky.com/pay/notifyExpressOrder.php&openID=".$this->openID;
+                    $url = "http://tatestapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广快递代拿&notifyUrl=http://tatestapi.pykky.com/pay/notifyExpressOrder.php&openID=".$this->openID;
                     $rs = $curl->get($url, 5000);
                     return $rs;
                 }else{

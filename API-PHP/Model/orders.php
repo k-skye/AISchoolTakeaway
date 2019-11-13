@@ -67,6 +67,14 @@ class orders extends NotORM {
         ->update($data);
     }
 
+    public function updateOrderCompensate($id,$totalPrice,$payPrice,$deliveFee) {
+        $data = array('totalPrice' => $totalPrice,'payPrice' => $payPrice,'deliveFee' => $deliveFee);
+        return $this->getORM()
+        ->where('status = 9')
+        ->where('id', $id)
+        ->update($data);
+    }
+
     public function updateStatus($id,$statusNum) {
         $data = array('status' => $statusNum);
         return $this->getORM()

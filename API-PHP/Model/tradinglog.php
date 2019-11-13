@@ -12,10 +12,37 @@ class tradinglog extends NotORM {
             ->fetchAll();
     }
 
+    public function getOneLogsByWechatID($wechatID) {
+        return $this->getORM()
+            ->where('orderWechatID = ?', $wechatID)
+            ->where('done = ?', 1)
+            ->fetchOne();
+    }
+
+    public function getOneLogsCompensateByWechatID($wechatID) {
+        return $this->getORM()
+            ->where('orderWechatID = ?', $wechatID)
+            ->fetchOne();
+    }
+
     public function updateDone($ID) {
         $data = array('done' => 1);
         return $this->getORM()
         ->where('id', $ID)
+        ->update($data);
+    }
+    
+    public function updateCompensate($id,$orderNo) {
+        $data = array('orderWechatID' => $orderNo);
+        return $this->getORM()
+        ->where('id', $id)
+        ->update($data);
+    }
+
+    public function updateCompensatePay($orderNo,$payPrice,$payTime) {
+        $data = array('money' => $payPrice,'date' => $payTime);
+        return $this->getORM()
+        ->where('orderWechatID', $orderNo)
         ->update($data);
     }
 
@@ -44,6 +71,15 @@ class tradinglog extends NotORM {
 
     public function addOneTradLogWithDeliver($deliverID,$money,$date,$deliverOrderID) {
         $data = array('type' => '配送费','deliverID' => $deliverID,'money' => $money,'date' => $date,'deliverorderID' => $deliverOrderID);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    }
+
+    public function addOneCompensate($orderID,$deliverID) {
+        $data = array('type' => '快递尾款','orderID' => $orderID,'deliverID' => $deliverID);
         $orm = $this->getORM();
         $orm->insert($data);
 
