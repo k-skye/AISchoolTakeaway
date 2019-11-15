@@ -198,13 +198,11 @@ export default {
           return;
         }
         this.orderlist = res.data.data;
-        this.orders = res.data.data;
         this.handleData();
       });
     },
     handleData() {
       //对商品数据处理
-      var i = 0;
       this.orderlist.forEach(orders => {
         var OrderFoods = JSON.parse(orders.order.foods);
         var foodsArr = new Array();
@@ -215,9 +213,9 @@ export default {
             }
           });
         });
-        this.orders[i].order.foodsArr = foodsArr;
-        this.orders[i].order.foodsCount = foodsArr.length; //食物数量
-        i++;
+        orders.order.foodsArr = foodsArr;
+        orders.order.foodsCount = foodsArr.length; //食物数量
+        this.orders.push(orders);
       });
     },
     onLoad() {

@@ -51,9 +51,9 @@ export default {
     };
   },
   methods: {
-    onConfirm(value) {
+    onConfirm(value, index) {
       this.changeValue = value;
-      this.$emit("getValue", this.changeValue);
+      this.$emit("getValue", this.changeValue, index);
       this.show = false;
     }
   }

@@ -128,11 +128,12 @@ class tradinglog {
 
     public function updateCompensatePay($orderNo,$payPrice,$payTime) {
         $model = new ModelTradinglog();
-        $res = $model->updateCompensatePay($orderNo,$payPrice,$payTime);
+        $res = $model->updateCompensatePay($orderNo,(((float)$payPrice)/100),$payTime);
         if ($res) {
             //拿orderid
             $logInfo = $model->getOneLogsCompensateByWechatID($orderNo);
             $orderID = $logInfo['orderID'];
+            $id = $logInfo['id'];
             
             //把钱加到订单的金额中
             $modelOrder = new ModelOders();
@@ -147,8 +148,9 @@ class tradinglog {
 
             //修改order的status为配送中
             $rres = $modelOrder->updateStatus($orderID,3);
+            $rrrres = $model->updateDone($id);
 
-            if ($rres && $rrres) {
+            if ($rres && $rrres & $rrrres) {
                 //提醒用户
                 //开始给用户发已支付/待接单消息
                 $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
@@ -174,7 +176,7 @@ class tradinglog {
                 $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
                 $openid = $trueUserInfo['openid'];
                 $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
-                
+        
 
                 return $res;
             }else {
@@ -198,7 +200,7 @@ class tradinglog {
             //支付时间
             $paytimeUnixTime = (int)date(strtotime($value['date']));
             $nowtimeUnix = (int)strtotime("now");
-            if ((($nowtimeUnix-$paytimeUnixTime)>7200)){
+            if ((($nowtimeUnix-$paytimeUnixTime)>7200)){//2小时
                 //通过配送订单id查order订单
                 $deliveOrderInfo = $modelDeliveOrder->getOneByID($value['deliverorderID']);
                 //查order
@@ -248,7 +250,7 @@ class tradinglog {
             return -10;
         }
         $income = round(($userInfo['income']),2);
-        $fee = round(($income*0.2),2);
+        $fee = round(($income*0.3),2);
         $OKmoney = round(($noun - $fee),2);
         //生成商家订单号
         $t = time();

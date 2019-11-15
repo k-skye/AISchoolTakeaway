@@ -155,12 +155,10 @@ export default {
           return;
         }
         this.orderlist = res.data.data;
-        this.orders = res.data.data;
         this.handleData();
       });
     },
     loadMore() {
-      // TODO
       // 异步更新数据
       setTimeout(() => {
         if (!this.allLoaded) {
@@ -192,7 +190,6 @@ export default {
     },
     handleData() {
       //对商品数据处理
-      var i = 0;
       this.orderlist.forEach(order => {
         if (order.type == 0) {
           //仅处理美食跑腿
@@ -206,7 +203,7 @@ export default {
               }
             });
           });
-          this.orders[i].foodsArr = foodsArr;
+          order.foodsArr = foodsArr;
           var o = 0;
           foodsArr.forEach(food => {
             if (o < 2) {
@@ -217,48 +214,48 @@ export default {
           if (o > 2) {
             showfood += " 等";
           }
-          this.orders[i].showfood = showfood;
+          order.showfood = showfood;
         }
 
         //状态提示文字
-        this.orders[i].statusText = null;
+        order.statusText = null;
         const status = parseInt(order.status);
         switch (status) {
           case 0:
-            this.orders[i].statusText = "未支付";
+            order.statusText = "未支付";
             break;
           case 1:
-            this.orders[i].statusText = "待接单";
+            order.statusText = "待接单";
             break;
           case 2:
-            this.orders[i].statusText = "待取货";
+            order.statusText = "待取货";
             break;
           case 3:
-            this.orders[i].statusText = "配送中";
+            order.statusText = "配送中";
             break;
           case 4:
-            this.orders[i].statusText = "待评价";
+            order.statusText = "待评价";
             break;
           case 5:
-            this.orders[i].statusText = "已评价";
+            order.statusText = "已评价";
             break;
           case 6:
-            this.orders[i].statusText = "已回复评价";
+            order.statusText = "已回复评价";
             break;
           case 7:
-            this.orders[i].statusText = "退款中";
+            order.statusText = "退款中";
             break;
           case 8:
-            this.orders[i].statusText = "已关闭";
+            order.statusText = "已关闭";
             break;
           case 9:
-            this.orders[i].statusText = "待支付尾款";
+            order.statusText = "待支付尾款";
             break;
           default:
-            this.orders[i].statusText = "订单异常";
+            order.statusText = "订单异常";
             break;
         }
-        i++;
+        this.orders.push(order);
       });
     },
     toOrderInfo(order) {

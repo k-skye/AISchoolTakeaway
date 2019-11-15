@@ -25,8 +25,8 @@ class deliverusers extends NotORM {
         ->update($data);
     }
 
-    public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear) {
-        $data = array('chooseAddr' => $chooseAddr,'chooseRest' => $chooseRest,'chooseNear' => $chooseNear);
+    public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear,$chooseType,$chooseExpress) {
+        $data = array('chooseAddr' => $chooseAddr,'chooseRest' => $chooseRest,'chooseNear' => $chooseNear,'chooseType' => $chooseType,'chooseExpress' => $chooseExpress);
         return $this->getORM()
         ->where('id', $userID)
         ->update($data);

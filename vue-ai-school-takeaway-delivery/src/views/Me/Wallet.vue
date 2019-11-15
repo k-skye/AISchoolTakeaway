@@ -51,7 +51,7 @@
         <p
           class="total"
         >
-          ¥ {{ (parseFloat(userInfo.noun) - (parseFloat(userInfo.income) * 0.2)).toFixed(2) }}
+          ¥ {{ (parseFloat(userInfo.noun) - (parseFloat(userInfo.income) * 0.3)).toFixed(2) }}
         </p>
         <van-divider />
         <div class="foodPay">
@@ -166,7 +166,7 @@ export default {
     },
     clickLeftInfo() {
       Dialog.alert({
-        message: "服务费是从伙伴的实际收入(配送费)中收取20%作为我们的运营成本"
+        message: "服务费是从伙伴的实际收入(配送费)中收取30%作为我们的运营成本"
       });
     }
     /*     onChangePassCellClick() {

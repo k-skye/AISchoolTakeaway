@@ -48,7 +48,7 @@ class tradinglog extends NotORM {
 
     public function getAllLogsNotDone() {
         return $this->getORM()
-            ->where('type LIKE ?', '%配送费%')
+            ->where('type LIKE ?', '%费%')
             ->where('done = ?', 0)
             ->fetchAll();
     }
@@ -71,6 +71,15 @@ class tradinglog extends NotORM {
 
     public function addOneTradLogWithDeliver($deliverID,$money,$date,$deliverOrderID) {
         $data = array('type' => '配送费','deliverID' => $deliverID,'money' => $money,'date' => $date,'deliverorderID' => $deliverOrderID);
+        $orm = $this->getORM();
+        $orm->insert($data);
+
+        // 返回新增的ID（注意，这里不能使用连贯操作，因为要保持同一个ORM实例）
+        return $orm->insert_id();
+    }
+
+    public function addOneTradLogWithExpressDeliver($deliverID,$money,$date,$deliverOrderID) {
+        $data = array('type' => '快递费','deliverID' => $deliverID,'money' => $money,'date' => $date,'deliverorderID' => $deliverOrderID);
         $orm = $this->getORM();
         $orm->insert($data);
 

@@ -45,13 +45,12 @@ class deliverorders extends NotORM {
         return $orm->insert_id();
     }
 
-    public function getAllOrder($deliverID,$offset,$limit) {
+    public function getAllOrder($deliverID,$page) {
         return $this->getORM()
-        ->where('id >= ?', $offset)
         ->where('deliverID = ?', $deliverID)
         ->where('delivedTime IS NULL')//未送达
-        ->limit($limit)
         ->order('getFoodTime DESC')
+        ->page($page, 5)
         ->fetchAll();
     } 
     
@@ -76,11 +75,10 @@ class deliverorders extends NotORM {
         ->update($data);
     } 
 
-    public function getOneUserAllOrderFinish($deliverID,$offset,$limit) {
+    public function getOneUserAllOrderFinish($deliverID,$page) {
         return $this->getORM()
-        ->where('id >= ?', $offset)
         ->where('deliverID = ?', $deliverID)
-        ->limit($limit)
+        ->page($page, 5)
         ->fetchAll();
     }
 

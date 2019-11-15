@@ -6,13 +6,16 @@
     >
       <div class="headerContain">
         <div class="orderButton">
+          <div
+            class="headerTitle"
+            style="padding-right:10px;"
+          >
+            {{ orderChecked ? '接单提醒' : '接单提醒' }}
+          </div>
           <van-switch
             :value="orderChecked"
             @input="onOrderInput"
           />
-          <div class="headerTitle">
-            {{ orderChecked ? '接单提醒:开' : '接单提醒:关' }}
-          </div>
         </div>
         <div class="headerEndButton">
           <van-icon
@@ -99,30 +102,46 @@
           >
             <van-collapse-item
               :name="index"
-              :icon="order.haveSumit == 1 ? 'checked' : 'shop-o'"
+              :icon="handleSubmitData(order.haveSumit,order.type)"
             >
               <div
                 slot="title"
                 class="title"
               >
-                第{{ order.restNum }}饭堂
+                <span v-if="order.type==0">
+                  第{{ order.restNum }}饭堂
+                </span>
+                <span v-if="order.type==1">
+                  {{ order.expressAddr=='商业街京东派'?'商业街京东派':(order.expressAddr+'快递点') }}
+                </span>
                 <van-icon
                   name="arrow"
                   class="icon"
                 />
                 {{ order.dormitory }}
+                <van-tag
+                  v-if="order.isNeedFast == 1"
+                  round
+                  type="danger"
+                  style="margin-left:5px;text-align: center;"
+                >
+                  加急 +{{ order.fastMoney }} 元
+                </van-tag>
                 <div
                   v-if="order.upstairs != 0"
                   class="lou"
                 >
                   要上楼
                 </div>
-                <div class="end">
+                <div
+                  v-if="order.type==0"
+                  class="end"
+                >
                   <van-icon
                     name="clock-o"
                     class="icon"
                   />
-                  {{ order.shouldDeliveTime }}
+                  {{ order.shouldDeliveTime }}送达
                   <van-icon
                     name="bag-o"
                     class="icon"
@@ -130,8 +149,21 @@
                   x{{ order.foodsCount }}
                   <!-- <van-icon name="contact" class="icon" />男 -->
                 </div>
+                <div
+                  v-if="order.type==1"
+                  class="end"
+                >
+                  <van-icon
+                    name="clock-o"
+                    class="icon"
+                  />
+                  {{ order.shouldDeliveTime }}送达
+                </div>
               </div>
-              <div class="foods">
+              <div
+                v-if="order.type==0"
+                class="foods"
+              >
                 <ul>
                   <li
                     v-for="(food,indexFood) in order.foodsArr"
@@ -148,9 +180,12 @@
                   </li>
                 </ul>
               </div>
-              <van-divider />
+              <van-divider v-if="order.type==0" />
               <div class="bottom">
-                <div class="totalMoney">
+                <div
+                  v-if="order.type==0"
+                  class="totalMoney"
+                >
                   <div class="totalTitle">
                     商品总价：
                   </div>
@@ -158,6 +193,20 @@
                     class="totalPrice"
                   >
                     ¥{{ parseFloat(order.totalPrice).toFixed(2) - parseFloat(order.deliveFee).toFixed(2) }}
+                  </div>
+                </div>
+                <div
+                  v-if="order.type==1"
+                  class="totalMoney"
+                >
+                  <div class="totalTitle">
+                    重量：
+                  </div>
+                  <div
+                    class="totalPrice"
+                    style="color:#5a5a5a"
+                  >
+                    {{ handleWeightData(order.weight) }}
                   </div>
                 </div>
                 <div class="incomeMoney">
@@ -261,11 +310,13 @@ export default {
       chooseRestNum: 0,
       chooseAddrNum: 0,
       chooseNearNum: 1,
+      chooseTypeNum: 0,
+      chooseExpressNum: 0,
       preUserInfo: null,
       chooseTypeValue: "",
-      types: ["全部","美食跑题","快递代拿"],
+      types: ["全部", "美食跑题", "快递代拿"],
       chooseExpressValue: "",
-      expresss: ["C3","C4","商业街京东派"],
+      expresss: ["全部","C3", "C4", "商业街京东派"],
     };
   },
   computed: {
@@ -280,11 +331,46 @@ export default {
     });
   },
   methods: {
-    getExpressValue(){
-
+    handleSubmitData(data,orderType){
+      data = parseInt(data);
+      switch (data) {
+        case 1:
+          return 'checked';
+        default:
+          orderType = parseInt(orderType);
+          if (orderType == 1) {
+            return 'send-gift-o';
+          }else{
+            return 'shop-o';
+          }
+      }
     },
-    getTypeValue(){
-
+    handleWeightData(weight){
+      weight = parseInt(weight);
+      switch (weight) {
+        case 0:
+          return '小(约0～3瓶中型怡宝)';
+        case 1:
+          return '中(约1瓶大型怡宝)';
+        case 2:
+          return '大(约1箱牛奶)';
+        case 3:
+          return '特大(约2箱牛奶)';
+        case 4:
+          return '>2箱牛奶重或者体积大';
+        default:
+          break;
+      }
+    },
+    getExpressValue(data, index) {
+      this.chooseExpressValue = data;
+      this.chooseExpressNum = index;
+      this.valueChange();
+    },
+    getTypeValue(data, index) {
+      this.chooseTypeValue = data;
+      this.chooseTypeNum = index;
+      this.valueChange();
     },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
@@ -294,6 +380,8 @@ export default {
       this.chooseRestNum = this.preUserInfo.chooseRest;
       this.chooseAddrNum = this.preUserInfo.chooseAddr;
       this.chooseNearNum = this.preUserInfo.chooseNear;
+      this.chooseTypeNum = this.preUserInfo.chooseType;
+      this.chooseExpressNum = this.preUserInfo.chooseExpress;
       //开启提醒按钮
       this.orderChecked = this.preUserInfo.sendMessage == "1" ? true : false;
       //筛选
@@ -328,6 +416,35 @@ export default {
           this.chooseAddrValue = str;
           break;
       }
+      switch (this.chooseTypeNum) {
+        case "0":
+          this.chooseTypeValue = "全部";
+          break;
+        case "1":
+          this.chooseTypeValue = "美食跑腿";
+          break;
+        case "2":
+          this.chooseTypeValue = "快递代拿";
+          break;
+        default:
+          break;
+      }
+      switch (this.chooseExpressNum) {
+        case "0":
+          this.chooseExpressValue = "全部";
+          break;
+        case "1":
+          this.chooseExpressValue = "C3";
+          break;
+        case "2":
+          this.chooseExpressValue = "C4";
+          break;
+        case "3":
+          this.chooseExpressValue = "商业街京东派";
+          break;
+        default:
+          break;
+      }
       this.firstLoadData();
     },
     firstLoadData() {
@@ -335,12 +452,11 @@ export default {
       this.finished = false;
       // 拉取商家信息
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
+        "http://tatestapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
         {
           params: {
             deliverID: this.userInfo.id,
-            offset: this.offset,
-            limit: this.size
+            page: this.offset,
           }
         }
       ).then(res => {
@@ -350,26 +466,26 @@ export default {
           return;
         }
         this.orderlist = res.data.data;
-        this.orders = res.data.data;
         this.handleData();
       });
     },
     handleData() {
       //对商品数据处理
-      var i = 0;
       this.orderlist.forEach(order => {
-        var OrderFoods = JSON.parse(order.foods);
-        var foodsArr = new Array();
-        OrderFoods.forEach(id => {
-          order.food.forEach(food => {
-            if (food.id == id) {
-              foodsArr.push(food); //把每行food的全部数据对象都放入数组
-            }
+        if (order.type == 0) {
+          var OrderFoods = JSON.parse(order.foods);
+          var foodsArr = new Array();
+          OrderFoods.forEach(id => {
+            order.food.forEach(food => {
+              if (food.id == id) {
+                foodsArr.push(food); //把每行food的全部数据对象都放入数组
+              }
+            });
           });
-        });
-        this.orders[i].foodsArr = foodsArr;
-        this.orders[i].foodsCount = foodsArr.length; //食物数量
-        i++;
+          order.foodsArr = foodsArr;
+          order.foodsCount = foodsArr.length; //食物数量
+        }
+        this.orders.push(order);
       });
     },
     onRefresh() {
@@ -385,18 +501,17 @@ export default {
     onOrderInput(orderChecked) {
       Dialog.confirm({
         title: "是否开/关？",
-        message:
-          "开启之后如关闭本页面也会在微信里继续收到筛选后的接单提醒噢～"
+        message: "开启之后如关闭本页面也会在微信里继续收到筛选后的接单提醒噢～"
       })
         .then(() => {
           this.orderChecked = orderChecked;
           //开始请求
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=DeliverUsers.changeUserInfoOnSendMessage",
+            "http://tatestapi.pykky.com/?s=DeliverUsers.changeUserInfoOnSendMessage",
             {
               params: {
                 userID: this.userInfo.id,
-                sendMessage: this.orderChecked==true?'1':'0'
+                sendMessage: this.orderChecked == true ? "1" : "0"
               }
             }
           ).then(res => {
@@ -415,15 +530,15 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += parseInt(this.orders[this.orders.length - 1].id);
+          //this.offset += parseInt(this.orders[this.orders.length - 1].id);
+          this.offset++;
           // 拉取商家信息
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
+            "http://tatestapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
             {
               params: {
                 deliverID: this.userInfo.id,
-                offset: this.offset,
-                limit: this.size
+                page: this.offset,
               }
             }
           ).then(res => {
@@ -447,45 +562,14 @@ export default {
     onSetting() {
       this.showRule = true;
     },
-    getRestValue(data) {
+    getRestValue(data, index) {
       this.chooseRestValue = data;
-      var needNum = 0;
-      switch (data) {
-        case "全部":
-          needNum = 0;
-          break;
-        case "第一饭堂+第二饭堂":
-          needNum = 1;
-          break;
-        case "第三饭堂":
-          needNum = 2;
-          break;
-        case "第四饭堂":
-          needNum = 3;
-          break;
-        case "校门口+其他":
-          needNum = 4;
-          break;
-        default:
-          needNum = 0;
-          break;
-      }
-      this.chooseRestNum = needNum;
+      this.chooseRestNum = index;
       this.valueChange();
     },
-    getAddrValue(data) {
+    getAddrValue(data, index) {
       this.chooseAddrValue = data;
-      var needNum = 0;
-      switch (data) {
-        case "全部":
-          needNum = 0;
-          break;
-        default:
-          //其他数字-正则匹配
-          needNum = data.replace(/[^0-9]/gi, "");
-          break;
-      }
-      this.chooseAddrNum = needNum;
+      this.chooseAddrNum = index;
       this.valueChange();
     },
     onNearInput() {
@@ -499,13 +583,15 @@ export default {
     },
     valueChange() {
       this.$axios(
-        "https://takeawayapi.pykky.com/?s=DeliverUsers.ChangeUserInfoOnChooseByUserId",
+        "http://tatestapi.pykky.com/?s=DeliverUsers.ChangeUserInfoOnChooseByUserId",
         {
           params: {
             userID: this.userInfo.id,
             chooseAddr: this.chooseAddrNum,
             chooseRest: this.chooseRestNum,
-            chooseNear: this.chooseNearNum
+            chooseNear: this.chooseNearNum,
+            chooseType: this.chooseTypeNum,
+            chooseExpress: this.chooseExpressNum
           }
         }
       ).then(res => {
@@ -517,7 +603,7 @@ export default {
       });
       const openid = localStorage.openid;
       //用openid去get全部用户信息回来
-      this.$axios("https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
+      this.$axios("http://tatestapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
         params: {
           openid: openid
         }
@@ -528,12 +614,12 @@ export default {
     onOrderButtonClick(orderID, indexx) {
       Dialog.confirm({
         title: "确定接单吗？",
-        message: "注：如果接单后不送将受到相应处罚甚至封号！"
+        message: "注：如果接单后不送将受到相应处罚甚至封号！(加急单如送达不准时将退还加急费给用户)"
       })
         .then(() => {
           //开始创建订单
           this.$axios(
-            "https://takeawayapi.pykky.com/?s=Deliverorders.CreateOneOrder",
+            "http://tatestapi.pykky.com/?s=Deliverorders.CreateOneOrder",
             {
               params: {
                 orderID: orderID,
@@ -542,7 +628,7 @@ export default {
             }
           ).then(res => {
             if (res.data.data == "ok") {
-              this.$set(this.orders[indexx], "status", 2); //让开头的图标变成打勾
+              this.$set(this.orders[indexx], "haveSumit", 1); //让开头的图标变成打勾
               //this.orders[indexx].haveSumit == 1; 用上面来替代掉这句，才能让vue刷新视图里的数据
               this.activeNames.forEach((item, index) => {
                 if (item == indexx) {
@@ -580,7 +666,7 @@ export default {
     justify-content: center;
     flex-direction: column;
     .headerContain {
-      margin-left: 8px;
+      margin-left: 1px;
       display: flex;
       align-items: center;
       justify-content: flex-end; //只有一个元素的时候用，让设置按钮居右显示

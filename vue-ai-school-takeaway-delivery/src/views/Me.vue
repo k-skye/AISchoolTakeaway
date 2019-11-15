@@ -130,7 +130,7 @@ export default {
     this.logoImgUrl =
       this.firstlogin == false
         ? this.userInfo.avatar
-        : "http://takeawaydeliver.pykky.com/newICON.png";
+        : "https://takeawayschool.oss-cn-shenzhen.aliyuncs.com/newICON.png";
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {

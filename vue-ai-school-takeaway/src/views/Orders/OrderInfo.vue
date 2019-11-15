@@ -183,7 +183,7 @@
             <span>类型: {{ orderDetail.goodType }}</span>
           </li>
           <div
-            v-if="orderDetail.isNeedFast == 1"
+            v-if="orderDetail.isNeedFast > 1"
             class="needFast"
           >
             <li class="list-item">

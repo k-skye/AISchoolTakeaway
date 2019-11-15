@@ -41,6 +41,8 @@ class DeliverUsers extends Api {
                 'chooseAddr'  => array('name' => 'chooseAddr', 'require' => true, 'desc' => '选择宿舍'),
                 'chooseRest'  => array('name' => 'chooseRest', 'require' => true, 'desc' => '选择饭堂'),
                 'chooseNear'  => array('name' => 'chooseNear', 'require' => true, 'desc' => '是否附近宿舍'),
+                'chooseType'  => array('name' => 'chooseType', 'require' => true, 'desc' => '接单类型'),
+                'chooseExpress'  => array('name' => 'chooseExpress', 'require' => true, 'desc' => '接单快递点'),
             ),
             'changeUserInfoOnSendMessage' => array(
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '配送员id'),
@@ -71,7 +73,7 @@ class DeliverUsers extends Api {
      */
     public function changeUserInfoOnChooseByUserId() {
         $domain = new DomainUsers();
-        $res = $domain->changeUserInfoOnChooseByUserId($this->userID,$this->chooseAddr,$this->chooseRest,$this->chooseNear);
+        $res = $domain->changeUserInfoOnChooseByUserId($this->userID,$this->chooseAddr,$this->chooseRest,$this->chooseNear,$this->chooseType,$this->chooseExpress);
         if ($res > 0) {
             return 'ok';
         }else {

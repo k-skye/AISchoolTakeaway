@@ -161,9 +161,9 @@ class deliverorders {
         }
     }
 
-    public function getAllOrder($deliverID,$offset,$limit) {
+    public function getAllOrder($deliverID,$page) {
         $modelOrder = new ModelDeliverorders();
-        $arr =  $modelOrder->getAllOrder($deliverID,$offset,$limit);
+        $arr =  $modelOrder->getAllOrder($deliverID,$page);
         $model = new ModelOders();
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();
@@ -198,9 +198,9 @@ class deliverorders {
         return $arr;
     }
 
-    public function getOneUserAllOrderFinish($deliverID,$offset,$limit) {
+    public function getOneUserAllOrderFinish($deliverID,$page) {
         $modelOrder = new ModelDeliverorders();
-        $arr =  $modelOrder->getOneUserAllOrderFinish($deliverID,$offset,$limit);
+        $arr =  $modelOrder->getOneUserAllOrderFinish($deliverID,$page);
         $model = new ModelOders();
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();
@@ -299,6 +299,40 @@ class deliverorders {
         }
     }
 
+    public function changToCompensate($orderID) {
+        $model = new ModelDeliverorders();
+        //修改原订单状态为9-商品不符
+        $modelOrder = new ModelOders();
+        $res = $modelOrder->updateStatus($orderID,9);
+        if ($res) {
+            //开始推送给用户已接单
+            $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+            $url='';
+            $first='您有 3 元快递尾款需要支付';
+            $remark='伙伴反馈实际拿到的快递重量与您下单所填写的不符，需要您支付尾款后继续配送';
+            //测试用
+            //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+            $modid='aqa1jV_h-Ok9hkSdy6fR6_sVaRMQuXuQ4uyj7xDtg2g';
+            $data = array(
+                'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                'keyword1'=>array('value'=>urlencode('3 元'),'color'=>"#0000FF"),
+                'keyword2'=>array('value'=>urlencode('17889465893'),'color'=>"#743A3A"),
+                'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+            );
+            //发送
+            $orderInfo = $modelOrder->getOnesOneOrder($orderID);
+            $userid = $orderInfo['userID'];
+            $modelTureUser = new ModelUsers();
+            $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+            $openid = $trueUserInfo['openid'];
+            $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+
+            return $res;
+        }else {
+            return -1;
+        }
+    }
+
     public function changToFinishDelive($orderID,$ID,$deliverID) {
         $model = new ModelDeliverorders();
         $t = time();
@@ -336,6 +370,97 @@ class deliverorders {
             $openid = $trueUserInfo['openid'];
             $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
 
+
+            return $rrres;
+        }else {
+            return -1;
+        }
+    }
+
+    public function changToFinishExpressDelive($orderID,$ID,$deliverID) {
+        $model = new ModelDeliverorders();
+        $t = time();
+        $createTime = date('Y-m-d H:i:s',$t);
+        //修改原订单状态为4-已送达
+        $modelOrder = new ModelOders();
+        $res = $modelOrder->updateStatus($orderID,4);
+        $orderInfo = $modelOrder->getOnesOneOrder($orderID);
+        $money = $orderInfo['deliveFee'];
+        $okmoney = (int)$orderInfo['payPrice'];
+        $okmoney = ($okmoney/100);
+        $modelTradLog = new ModelTradinglog();
+        $rres = $modelTradLog->addOneTradLogWithExpressDeliver($deliverID,$money,$createTime,$ID);
+        $rrres = $model->updatedelivedTime($ID,$createTime);
+
+        $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
+        //超时送达退款红包
+        //对比shouldDeliveTime和现在时间
+        $paytimeUnixTime = (int)date(strtotime($orderInfo['shouldDeliveTime']));
+        $nowtimeUnix = (int)strtotime("now");
+        if ((($nowtimeUnix-$paytimeUnixTime)>0) && $rrres && $res && $rres && (((int)$orderInfo['isNeedFast'])==1)) {
+            //拿金额
+            $orderNo = $orderInfo['orderNo'];
+            $totalPrice = $okmoney; 
+            $refundPrice = (float)$orderInfo['fastMoney'];
+            $curl = new \PhalApi\CUrl();
+            $url = "http://tatestapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
+            $rs = $curl->get($url, 10000);
+            //return $rs;
+            if ($rs == 'refund success') {
+                $payPrice = (int)$orderInfo['payPrice'];
+                $finalMoney = $okmoney-$refundPrice;
+                $payPrice = $payPrice-($refundPrice*100);
+                $resp = $modelOrder->updateOrderCompensate($orderID,$finalMoney,$payPrice,$finalMoney);
+                if ($resp) {
+                       //发退款消息
+                       $url='';
+                       $first='伙伴未在指定时间内送达，您的加急红包已退回';
+                       $remark='如有疑问可联系客服：17889465893';
+                       //测试用
+                       //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+                       $modid='3LIHebvXA-lvn0pZHt9vPH7a5a2Ezc9ggO3NeQhfa94';
+                       $data = array(
+                           'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                           'keyword1'=>array('value'=>urlencode('原路退回'),'color'=>'#0000FF'),
+                           'keyword2'=>array('value'=>urlencode($refundPrice.' 元'),'color'=>"#0000FF"),
+                           'keyword3'=>array('value'=>urlencode('具体以微信支付通知为准'),'color'=>"#743A3A"),
+                           'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+                       );
+                   
+                       //发已送达消息
+                       $userid = $orderInfo['userID'];
+                       $modelTureUser = new ModelUsers();
+                       $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+                       $openid = $trueUserInfo['openid'];
+                       $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
+                }else {
+                    return -3;
+                }
+            }else {
+                return -2;
+            }
+        }
+        if ($rrres && $res && $rres) {
+            
+            $url='';
+            $first='伙伴报告已送达至您手中啦～';
+            $remark='如有疑问可联系客服：17889465893';
+            //测试用
+            //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
+            $modid='KABBNyp3tEWy4MpcL5GCTzjwhX1vpPHpnmlaqaz58tE';
+            $data = array(
+                'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
+                'keyword1'=>array('value'=>urlencode('快递代拿'),'color'=>"#0000FF"),
+                'keyword2'=>array('value'=>urlencode($okmoney),'color'=>'#0000FF'),
+                'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
+                'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
+            );
+            //发送
+            $userid = $orderInfo['userID'];
+            $modelTureUser = new ModelUsers();
+            $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
+            $openid = $trueUserInfo['openid'];
+            $weixin->doSend($openid, $modid, $url, $data, $topcolor = '#7B68EE');
 
             return $rrres;
         }else {

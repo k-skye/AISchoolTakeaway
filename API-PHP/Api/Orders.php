@@ -39,8 +39,7 @@ class Orders extends Api {
             ),
             'getAllNeedDeliveOrders' => array(
                 'deliverID'  => array('name' => 'deliverID', 'require' => true, 'desc' => '配送员id'),
-                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
-                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+                'page'  => array('name' => 'page', 'require' => true, 'desc' => '页数'),
             ),
             'cancelOrder' => array(
                 'id'  => array('name' => 'id', 'require' => true, 'desc' => '订单id'),
@@ -82,7 +81,7 @@ class Orders extends Api {
      */
     public function getAllNeedDeliveOrders() {
         $domain = new DomainOders();
-        return $domain->getAllOrdersOnNeedDelive($this->deliverID,$this->offset,$this->limit);
+        return $domain->getAllOrdersOnNeedDelive($this->deliverID,$this->page);
     }
     /**
      * 创建订单

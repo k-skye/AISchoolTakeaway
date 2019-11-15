@@ -114,7 +114,7 @@ class deliverusers {
             foreach ($logs as $value) {
                 if ($value['money']>0) {
                     //拿deliverID去搜orderID再找到totalPrice
-                    $DeliverOrderInfo = $modelDeliverOrders->getOneOrderByID($value['deliverID']);
+                    $DeliverOrderInfo = $modelDeliverOrders->getOneByID($value['deliverorderID']);
                     $orderInfo = $modelorder->getOnesOneOrder($DeliverOrderInfo['orderID']);
                     $total += $orderInfo['totalPrice'];
                 }
@@ -165,9 +165,9 @@ class deliverusers {
         }
     }
 
-    public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear) {
+    public function changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear,$chooseType,$chooseExpress) {
         $model = new ModelDeliverUser();
-        return $model->changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear);
+        return $model->changeUserInfoOnChooseByUserId($userID,$chooseAddr,$chooseRest,$chooseNear,$chooseType,$chooseExpress);
     }
 
     public function changeUserInfoOnSendMessage($userID,$sendMessage) {

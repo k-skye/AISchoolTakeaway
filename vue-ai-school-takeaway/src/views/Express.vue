@@ -106,7 +106,7 @@
             v-model="currentTime"
             type="time"
             :min-hour="nowhour"
-            :max-hour="20"
+            :max-hour="24"
             :filter="filter"
             @cancel="showCriticalTimePicker = false"
             @confirm="onCriticalTimeConfirm"
@@ -118,7 +118,7 @@
           center
           clearable
           type="number"
-          maxlength="3"
+          maxlength="4"
           label="悬赏红包"
           placeholder="红包金额(越大接单几率增大)"
           :error-message="giftError"
@@ -506,6 +506,10 @@ export default {
           this.giftError = "红包金额不能为空";
           return;
         }
+        if (parseFloat(this.customGift) == 0) {
+          this.giftError = "红包金额必须大于0";
+          return;
+        }
         this.okTime = this.currentTime;
       } else {
         this.customGift = "0";
@@ -514,6 +518,10 @@ export default {
         //特殊其他件
         if (!this.customFee) {
           this.customFeeError = "伙伴配送费不能为空";
+          return;
+        }
+        if (parseFloat(this.customFee) < 10) {
+          this.customFeeError = "伙伴配送费不能低于10元";
           return;
         }
       }

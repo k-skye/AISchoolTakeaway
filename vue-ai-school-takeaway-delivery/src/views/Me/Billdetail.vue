@@ -25,6 +25,7 @@
             {{ trad.type }}
             {{ trad.done == 0 && trad.type == '提现' ? ' (待到账)':'' }}
             {{ trad.done == 0 && trad.type == '配送费' ? ' (待确认收货)':'' }}
+            {{ trad.done == 0 && trad.type == '快递费' ? ' (待确认收货)':'' }}
             <div
               v-if="(trad.money > 0)"
               slot="default"

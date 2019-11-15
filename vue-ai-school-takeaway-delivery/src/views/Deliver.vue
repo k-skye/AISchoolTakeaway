@@ -32,20 +32,35 @@
                 v-if="orderDelive.order.status == 3 ? true : false"
                 type="primary"
               >
-                待送达
+                待送
+              </van-tag>
+              <van-tag
+                v-if="orderDelive.order.status == 9 ? true : false"
+                type="warning"
+              >
+                待支付
               </van-tag>
               <van-tag
                 v-if="orderDelive.order.status == 4 ? true : false"
                 type="success"
               >
-                已完成
+                完成
               </van-tag>
-              第{{ orderDelive.order.restNum }}饭堂
+              <span v-if="orderDelive.order.type==0">第{{ orderDelive.order.restNum }}饭堂</span>
+              <span v-if="orderDelive.order.type==1">{{ orderDelive.order.expressAddr=='商业街京东派'?'商业街京东派':(orderDelive.order.expressAddr+'快递点') }}</span>
               <van-icon
                 name="arrow"
                 class="icon"
               />
               {{ orderDelive.addr.dormitory }}
+              <van-tag
+                v-if="orderDelive.order.isNeedFast == 1"
+                round
+                type="danger"
+                style="margin-left:5px;text-align: center;"
+              >
+                +{{ orderDelive.order.fastMoney }} 元
+              </van-tag>
               <div
                 v-if="orderDelive.order.upstairs != 0"
                 class="lou"
@@ -57,7 +72,7 @@
                   name="clock-o"
                   class="icon"
                 />
-                {{ orderDelive.order.shouldDeliveTime }}
+                {{ orderDelive.order.shouldDeliveTime }}送达
               </div>
             </div>
             <div class="info">
@@ -68,13 +83,14 @@
                       name="manager"
                       class="icon"
                     />
-                    <div
-                      class="name"
-                    >
+                    <div class="name">
                       {{ orderDelive.addr.name }}{{ orderDelive.addr.gender==1?'先生':'小姐' }}
+                      <p>
+                        <a :href="'tel:'+orderDelive.addr.phone">({{ orderDelive.addr.phone }})</a>
+                      </p>
                     </div>
                   </div>
-                  <div class="userphone">
+                  <!--                   <div class="userphone">
                     <van-icon
                       name="phone"
                       class="icon"
@@ -82,20 +98,26 @@
                     <div class="phoneno">
                       <a :href="'tel:'+orderDelive.addr.phone">{{ orderDelive.addr.phone }}</a>
                     </div>
-                  </div>
+                  </div>-->
                 </div>
-                <div class="notes">
+                <div
+                  class="notes"
+                  @click="remarkClick(orderDelive.order.remark)"
+                >
                   <van-icon
                     name="comment"
-                    class="icon"
+                    class="icon icon-right"
                   />
                   <div class="note">
-                    {{ orderDelive.order.remark }}
+                    {{ handleRemarkData(orderDelive.order.remark) }}
                   </div>
                 </div>
               </div>
               <div class="restAndAddr">
-                <div class="rest">
+                <div
+                  v-if="orderDelive.order.type==0"
+                  class="rest"
+                >
                   <van-icon
                     name="shop"
                     class="icon"
@@ -106,10 +128,22 @@
                     {{ orderDelive.order.restNum }}饭{{ orderDelive.order.restName }} {{ orderDelive.order.location }}
                   </div>
                 </div>
+                <div
+                  v-if="orderDelive.order.type==1"
+                  class="rest"
+                >
+                  <van-icon
+                    name="send-gift"
+                    class="icon"
+                  />
+                  <div class="res">
+                    {{ orderDelive.order.expressAddr }}快递点
+                  </div>
+                </div>
                 <div class="address">
                   <van-icon
                     name="location"
-                    class="icon"
+                    class="icon icon-right"
                   />
                   <div
                     class="addr"
@@ -120,7 +154,10 @@
               </div>
             </div>
             <van-divider />
-            <div class="foods">
+            <div
+              v-if="orderDelive.order.type==0"
+              class="foods"
+            >
               <ul>
                 <li
                   v-for="(food,indexFood) in orderDelive.order.foodsArr"
@@ -137,55 +174,117 @@
                 </li>
               </ul>
             </div>
-            <van-divider />
+            <van-divider v-show="orderDelive.order.type==0" />
             <div class="bottom">
-              <div class="totalMoney">
-                <div class="totalTitle">
-                  商品总价：
+              <div class="texts">
+                <div
+                  v-if="orderDelive.order.type==0"
+                  class="totalMoney"
+                >
+                  <div class="totalTitle">
+                    商品总价
+                  </div>
+                  <div
+                    class="totalPrice"
+                  >
+                    ¥{{ parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
+                  </div>
                 </div>
                 <div
-                  class="totalPrice"
+                  v-if="orderDelive.order.type==1"
+                  class="totalMoney"
                 >
-                  ¥{{ parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
+                  <div class="totalTitle">
+                    重量
+                  </div>
+                  <div
+                    class="totalPrice"
+                    style="color:#5a5a5a"
+                  >
+                    {{ handleWeightData(orderDelive.order.weight) }}
+                  </div>
+                </div>
+                <div class="incomeMoney">
+                  <div class="totalTitle">
+                    配送费
+                  </div>
+                  <div class="totalPrice">
+                    ¥{{ parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
+                  </div>
                 </div>
               </div>
-              <div class="incomeMoney">
-                <div class="totalTitle">
-                  可得配送费：
-                </div>
-                <div class="totalPrice">
-                  ¥{{ parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
-                </div>
-              </div>
-              <div
-                v-if="orderDelive.order.status == 2 ? true : false"
-                class="orderThisButton"
-              >
-                <van-button
-                  type="info"
-                  @click="onGetGoodsButtonClick(orderDelive.order.id,orderDelive.id,index)"
+              <div class="buttons">
+                <div
+                  v-if="orderDelive.order.status == 2 ? true : false"
+                  class="orderThisButton"
                 >
-                  已取到商品
-                </van-button>
-              </div>
-              <div
-                v-if="orderDelive.order.status == 3 ? true : false"
-                class="deliveButton"
-              >
-                <van-button
-                  type="primary"
-                  @click="onDeliveButtonClick(orderDelive.order.id,orderDelive.id,index,userInfo.id)"
+                  <van-button
+                    type="info"
+                    style="width: 100%"
+                    round
+                    @click="onGetGoodsButtonClick(orderDelive.order.id,orderDelive.id,index)"
+                  >
+                    已取到商品
+                  </van-button>
+                </div>
+                <div
+                  v-if="orderDelive.order.status == 9 ? true : false"
+                  class="compensateText"
                 >
-                  我已送达
-                </van-button>
-              </div>
-              <div
-                v-if="orderDelive.order.status == 4 ? true : false"
-                class="finishButton"
-              >
-                <van-button type="success">
-                  已完成
-                </van-button>
+                  客服已介入，请等待用户支付尾款后再继续派送！
+                </div>
+                <div
+                  v-if="orderDelive.order.status == 3 ? true : false"
+                  class="deliveButton"
+                >
+                  <div
+                    v-if="orderDelive.order.type == 1"
+                    style="width:100%;display:flex;justify-content: space-around;"
+                    class="onExpressButtons"
+                  >
+                    <van-button
+                      type="warning"
+                      style="width: 40%;"
+                      round
+                      @click="onNotWeightButtonClick(orderDelive.order.id,orderDelive.id,index)"
+                    >
+                      重量不符
+                    </van-button>
+                    <van-button
+                      type="primary"
+                      style="width: 40%;margin-left:5%;"
+                      round
+                      @click="onExpressDeliveButtonClick(orderDelive.order.id,orderDelive.id,index,userInfo.id)"
+                    >
+                      我已送达
+                    </van-button>
+                  </div>
+                  <div
+                    v-if="orderDelive.order.type == 0"
+                    class="onDeliveButtons"
+                  >
+                    <van-button
+                      type="primary"
+                      style="width: 100%;"
+                      round
+                      @click="onDeliveButtonClick(orderDelive.order.id,orderDelive.id,index,userInfo.id)"
+                    >
+                      我已送达
+                    </van-button>
+                  </div>
+                </div>
+                <div
+                  v-if="orderDelive.order.status == 4 ? true : false"
+                  class="finishButton"
+                >
+                  <van-button
+                    type="success"
+                    style="width: 100%"
+                    round
+                  >
+                    已完成
+                  </van-button>
+                </div>
               </div>
             </div>
           </van-collapse-item>
@@ -230,7 +329,7 @@ export default {
       loading: false,
       finished: false,
       activeNames: [],
-      isLoading: false
+      isLoading: false,
     };
   },
   computed: {
@@ -242,6 +341,92 @@ export default {
     this.getData();
   },
   methods: {
+    onExpressDeliveButtonClick(orderID, iD, indexx, deID) {
+      Dialog.confirm({
+        title: "确定已送达到客户手上了吗？"
+      })
+        .then(() => {
+          this.$axios(
+            "http://tatestapi.pykky.com/?s=Deliverorders.changToFinishExpressDelive",
+            {
+              params: {
+                orderID: orderID,
+                ID: iD,
+                deliverID: deID
+              }
+            }
+          ).then(res => {
+            if (res.data.data == "ok") {
+              this.$set(this.orders[indexx].order, "status", 4); //让开头的图标变化
+              this.activeNames.forEach((item, index) => {
+                if (item == indexx) {
+                  this.activeNames.splice(index, 1);
+                }
+              });
+              Toast.success("成功");
+            } else {
+              Toast.fail("失败！" + res.data.msg);
+            }
+          });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    onNotWeightButtonClick(orderID, iD, indexx){
+      Dialog.confirm({
+        title: "注意",
+        message: "确定实际拿到的快递与用户下单的重量不相符吗？确定后请联系客服，将提醒用户支付 3元 配送费尾款给您后再继续派送"
+      })
+        .then(() => {
+          this.$axios(
+            "http://tatestapi.pykky.com/?s=Deliverorders.changToCompensate",
+            {
+              params: {
+                orderID: orderID
+              }
+            }
+          ).then(res => {
+            if (res.data.data == "ok") {
+              this.$set(this.orders[indexx].order, "status", 9); //让开头的图标变化
+              Toast.success("成功");
+            } else {
+              Toast.fail("失败！" + res.data.msg);
+            }
+          });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    remarkClick(remark) {
+      Dialog({ title: "订单备注", message: remark });
+    },
+    handleRemarkData(remark) {
+      if (remark != "无") {
+        if (remark.length > 8) {
+          return remark.substring(0, 8) + "...";
+        }
+      }
+      return remark;
+    },
+    handleWeightData(weight) {
+      weight = parseInt(weight);
+      switch (weight) {
+        case 0:
+          return "小(约0～3瓶中型怡宝)";
+        case 1:
+          return "中(约1瓶大型怡宝)";
+        case 2:
+          return "大(约1箱牛奶)";
+        case 3:
+          return "特大(约2箱牛奶)";
+        case 4:
+          return ">2箱牛奶重或者体积大";
+        default:
+          break;
+      }
+    },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
       this.firstLoadData();
@@ -250,16 +435,12 @@ export default {
       this.offset = 1;
       this.finished = false;
       // 拉取商家信息
-      this.$axios(
-        "http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrder",
-        {
-          params: {
-            deliverID: this.userInfo.id,
-            offset: this.offset,
-            limit: this.size
-          }
+      this.$axios("http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrder", {
+        params: {
+          deliverID: this.userInfo.id,
+          page: this.offset
         }
-      ).then(res => {
+      }).then(res => {
         if (JSON.stringify(res.data.data) == "{}") {
           this.finished = true;
           this.loading = false;
@@ -267,41 +448,41 @@ export default {
           return;
         }
         this.orderlist = res.data.data;
-        this.orders = res.data.data;
         this.handleData();
       });
     },
     handleData() {
       //对商品数据处理
-      var i = 0;
       this.orderlist.forEach(orders => {
-        var OrderFoods = JSON.parse(orders.order.foods);
-        var foodsArr = new Array();
-        OrderFoods.forEach(id => {
-          orders.food.forEach(food => {
-            if (food.id == id) {
-              foodsArr.push(food); //把每行food的全部数据对象都放入数组
-            }
+        if (orders.order.type == 0) {
+          var OrderFoods = JSON.parse(orders.order.foods);
+          var foodsArr = new Array();
+          OrderFoods.forEach(id => {
+            orders.food.forEach(food => {
+              if (food.id == id) {
+                foodsArr.push(food); //把每行food的全部数据对象都放入数组
+              }
+            });
           });
-        });
-        this.orders[i].order.foodsArr = foodsArr;
-        this.orders[i].order.foodsCount = foodsArr.length; //食物数量
-        i++;
+          orders.order.foodsArr = foodsArr;
+          orders.order.foodsCount = foodsArr.length; //食物数量
+        }
+        this.orders.push(orders);
       });
     },
     onLoad() {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += parseInt(this.orders[this.orders.length - 1].id);
+          //this.offset += parseInt(this.orders[this.orders.length - 1].id);
+          this.offset++;
           // 拉取商家信息
           this.$axios(
             "http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrder",
             {
               params: {
                 deliverID: this.userInfo.id,
-                offset: this.offset,
-                limit: this.size
+                page: this.offset
               }
             }
           ).then(res => {
@@ -422,6 +603,13 @@ export default {
   .info {
     color: rgb(90, 90, 90);
     padding: 0 20px;
+    .van-icon {
+      display: flex;
+      padding-bottom: 5px;
+    }
+    .icon-right {
+      justify-content: flex-end;
+    }
     .user {
       display: flex;
       justify-content: space-between;
@@ -448,12 +636,32 @@ export default {
   .bottom {
     display: flex;
     justify-content: space-around;
-    .totalTitle {
-      color: black;
+    flex-wrap: wrap;
+    .deliveButton{
+      width: 100%;
     }
-    .totalPrice {
-      color: red;
-      font-size: 15px;
+    .texts {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      .totalTitle {
+        color: #323233;
+      }
+      .totalPrice {
+        color: red;
+        font-size: 15px;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+    .buttons {
+      width: 100%;
+      margin-top: 16px;
+      .compensateText{
+        margin-top: 16px;
+        text-align: center;
+      }
     }
   }
   .nologin {

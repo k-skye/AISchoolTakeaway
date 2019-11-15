@@ -140,9 +140,9 @@ class orders {
         return $arr;
     }
 
-    public function getAllOrdersOnNeedDelive($deliverID,$offset,$limit) {
+    public function getAllOrdersOnNeedDelive($deliverID,$page) {
         $model = new ModelOders();
-        $arr = $model->getAllOrdersOnNeedDelive($offset,$limit);
+        $arr = $model->getAllOrdersOnNeedDelive($page);
         $i = 0;
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();
@@ -190,7 +190,7 @@ class orders {
              $iisex++;
          }
          $arr = array_values($arr);//重建索引
-        if ($userInfo['chooseAddr'] == 0 && $userInfo['chooseRest'] ==0) {//默认
+        if ($userInfo['chooseAddr'] == 0 && $userInfo['chooseRest'] ==0 && $userInfo['chooseType'] ==0 && $userInfo['chooseExpress'] ==0) {//默认
             return $arr;
         }else{
             if ($userInfo['chooseAddr'] > 0){
@@ -341,6 +341,69 @@ class orders {
                 }
                 $arr = array_values($arr);//重建索引
             }
+            //去掉快递点不一样的
+            
+            if ($userInfo['chooseExpress'] > 0) {
+                $needNum = (int)$userInfo['chooseExpress'];//配送员需要的快递点
+                if ($needNum == 1) {
+                    $ii = 0;
+                    foreach ($arr as $value){
+                        $expressAddr = $value['expressAddr'];
+                         //把不等的去掉
+                         if ($expressAddr != 'C3') {
+                            unset($arr[$ii]);
+                         }
+                         $ii++;
+                     }
+                }else if ($needNum == 2) {
+                    $ii = 0;
+                    foreach ($arr as $value){
+                        $expressAddr = $value['expressAddr'];
+                         //把不等的去掉
+                         if ($expressAddr != 'C4') {
+                            unset($arr[$ii]);
+                         }
+                         $ii++;
+                     }
+                }else if ($needNum == 3) {
+                    $ii = 0;
+                    foreach ($arr as $value){
+                        $expressAddr = $value['expressAddr'];
+                         //把不等的去掉
+                         if ($expressAddr != '商业街京东派') {
+                            unset($arr[$ii]);
+                         }
+                         $ii++;
+                     }
+                }
+            }
+            $arr = array_values($arr);//重建索引
+            //去掉订单类型不一样的
+            if ($userInfo['chooseType'] > 0) {
+                $needNum = (int)$userInfo['chooseType'];//配送员需要的类型
+                if ($needNum == 1) {
+                    $ii = 0;
+                    foreach ($arr as $value){
+                        $typeNum = (int)$value['type'];
+                         //把不等的去掉
+                         if ($typeNum != 0) {
+                            unset($arr[$ii]);
+                         }
+                         $ii++;
+                     }
+                }else if ($needNum == 2) {
+                    $ii = 0;
+                    foreach ($arr as $value){
+                        $typeNum = (int)$value['type'];
+                         //把不等的去掉
+                         if ($typeNum != 1) {
+                            unset($arr[$ii]);
+                         }
+                         $ii++;
+                     }
+                }
+            }
+            $arr = array_values($arr);//重建索引
             return $arr;
         }
     }
@@ -913,7 +976,7 @@ class orders {
         $totalPrice = ((int)($orderDetail['payPrice']))/100; 
         $refundPrice = $totalPrice;
         $curl = new \PhalApi\CUrl();
-        $url = "https://takeawayapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
+        $url = "http://tatestapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
         $rs = $curl->get($url, 10000);
         //return $rs;
 
@@ -923,7 +986,7 @@ class orders {
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
 
             $url='';
-            $first='订单超时被关闭，稍后将返2元无门槛红包到您账户上';
+            $first='您的订单已被关闭';
             $remark='平台前期伙伴可能不充足，希望您能谅解，如有疑问可联系客服：17889465893';
             //测试用
             //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';

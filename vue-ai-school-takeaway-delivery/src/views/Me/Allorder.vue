@@ -28,7 +28,8 @@
               slot="title"
               class="title"
             >
-              第{{ orderDelive.order.restNum }}饭堂
+              <span v-if="orderDelive.order.type==0">第{{ orderDelive.order.restNum }}饭堂</span>
+              <span v-if="orderDelive.order.type==1">{{ orderDelive.order.expressAddr=='商业街京东派'?'商业街京东派':(orderDelive.order.expressAddr+'快递点') }}</span>
               <van-icon
                 name="arrow"
                 class="icon"
@@ -59,9 +60,12 @@
                 </li>
               </ul>
             </div>
-            <van-divider />
+            <van-divider v-show="orderDelive.order.type==0" />
             <div class="bottom">
-              <div class="totalMoney">
+              <div
+                v-if="orderDelive.order.type==0"
+                class="totalMoney"
+              >
                 <div class="totalTitle">
                   商品总价：
                 </div>
@@ -69,6 +73,20 @@
                   class="totalPrice"
                 >
                   ¥{{ parseFloat(orderDelive.order.totalPrice).toFixed(2) - parseFloat(orderDelive.order.deliveFee).toFixed(2) }}
+                </div>
+              </div>
+              <div
+                v-if="orderDelive.order.type==1"
+                class="totalMoney"
+              >
+                <div class="totalTitle">
+                  重量
+                </div>
+                <div
+                  class="totalPrice"
+                  style="color:#5a5a5a"
+                >
+                  {{ handleWeightData(orderDelive.order.weight) }}
                 </div>
               </div>
               <div class="incomeMoney">
@@ -99,7 +117,7 @@ export default {
       loading: false,
       finished: false,
       activeNames: [],
-      deliverID: null
+      deliverID: null,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -109,6 +127,23 @@ export default {
     });
   },
   methods: {
+    handleWeightData(weight) {
+      weight = parseInt(weight);
+      switch (weight) {
+        case 0:
+          return "小(约0～3瓶中型怡宝)";
+        case 1:
+          return "中(约1瓶大型怡宝)";
+        case 2:
+          return "大(约1箱牛奶)";
+        case 3:
+          return "特大(约2箱牛奶)";
+        case 4:
+          return ">2箱牛奶重或者体积大";
+        default:
+          break;
+      }
+    },
     firstLoadData() {
       this.offset = 1;
       this.finished = false;
@@ -118,8 +153,7 @@ export default {
         {
           params: {
             deliverID: this.deliverID,
-            offset: this.offset,
-            limit: this.size
+            page: this.offset,
           }
         }
       ).then(res => {
@@ -129,41 +163,41 @@ export default {
           return;
         }
         this.orderlist = res.data.data;
-        this.orders = res.data.data;
         this.handleData();
       });
     },
     handleData() {
       //对商品数据处理
-      var i = 0;
       this.orderlist.forEach(orders => {
-        var OrderFoods = JSON.parse(orders.order.foods);
-        var foodsArr = new Array();
-        OrderFoods.forEach(id => {
-          orders.food.forEach(food => {
-            if (food.id == id) {
-              foodsArr.push(food); //把每行food的全部数据对象都放入数组
-            }
+        if (orders.order.type == 0) {
+          var OrderFoods = JSON.parse(orders.order.foods);
+          var foodsArr = new Array();
+          OrderFoods.forEach(id => {
+            orders.food.forEach(food => {
+              if (food.id == id) {
+                foodsArr.push(food); //把每行food的全部数据对象都放入数组
+              }
+            });
           });
-        });
-        this.orders[i].order.foodsArr = foodsArr;
-        this.orders[i].order.foodsCount = foodsArr.length; //食物数量
-        i++;
+          orders.order.foodsArr = foodsArr;
+          orders.order.foodsCount = foodsArr.length; //食物数量
+        }
+        this.orders.push(orders);
       });
     },
     onLoad() {
       // 异步更新数据
       setTimeout(() => {
         if (!this.finished) {
-          this.offset += (parseInt(this.orders[this.orders.length-1].id));
+          //this.offset += parseInt(this.orders[this.orders.length - 1].id);
+          this.offset++;
           // 拉取商家信息
           this.$axios(
             "http://tatestapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
             {
               params: {
                 deliverID: this.deliverID,
-                offset: this.offset,
-                limit: this.size
+                page: this.offset,
               }
             }
           ).then(res => {

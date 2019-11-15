@@ -114,7 +114,7 @@ class TradingLog extends Api {
     }
 
     /**
-     * 自动3小时更新配送余额
+     * 自动指定时间更新配送余额
      * @desc 测试一下
      */
     public function autoDoneLog() {
