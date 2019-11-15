@@ -39,7 +39,7 @@
     <van-popup
       v-model="show"
       closeable
-      :style="{ height: '50%',width: '80%' }"
+      :style="{ height: '60%',width: '80%' }"
     >
       <div class="popup">
         <p class="header">
@@ -72,7 +72,7 @@
             服务费 
             <van-icon name="info-o" />
           </span>
-          <span class="right">- ¥ {{ (parseFloat(userInfo.income) * 0.2).toFixed(2) }}</span>
+          <span class="right">- ¥ {{ (parseFloat(userInfo.income) * 0.3).toFixed(2) }}</span>
         </div>
         <div class="yesButton">
           <van-button

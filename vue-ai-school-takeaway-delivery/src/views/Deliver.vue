@@ -429,7 +429,7 @@ export default {
     },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
-      this.firstLoadData();
+      this.firstLoadData();//可以参考用户端order.vue后期去掉
     },
     firstLoadData() {
       this.offset = 1;

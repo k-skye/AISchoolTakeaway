@@ -1,6 +1,7 @@
 <template>
   <div class="order">
     <van-pull-refresh
+      v-if="!firstlogin"
       v-model="isLoading"
       @refresh="onRefresh"
     >
@@ -153,9 +154,11 @@ export default {
     },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
-      this.firstLoadData();
+      this.offset = 0;
+      this.allLoaded = false;
+      //this.firstLoadData();
     },
-    firstLoadData() {
+/*     firstLoadData() {
       this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
@@ -174,7 +177,7 @@ export default {
         this.orderlist = res.data.data;
         this.handleData();
       });
-    },
+    }, */
     loadMore() {
       // 异步更新数据
       setTimeout(() => {
@@ -251,7 +254,11 @@ export default {
             order.statusText = "配送中";
             break;
           case 4:
-            order.statusText = "待评价";
+            if (order.type==1) {
+              order.statusText = "已完成";
+            }else{
+              order.statusText = "待评价";
+            }
             break;
           case 5:
             order.statusText = "已评价";

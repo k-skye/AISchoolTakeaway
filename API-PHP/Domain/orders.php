@@ -497,8 +497,8 @@ class orders {
                 break;
         }
         $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-        $url='http://takeawaydeliver.pykky.com/';
-        $first='您有 '.$express.' 新快递订单可接';
+        $url='http://tadetest.pykky.com/';
+        $first='您有 '.$express.' 新订单可接';
         $remark='若不想接收此消息可在配送端关闭提醒或更改筛选规则';
         //测试用
         //$remark='这是AI未来校园的测试消息，若给您带来不便请谅解！';
@@ -740,7 +740,7 @@ class orders {
         $addr = $restNum.'饭 - '.$dormitory;
         
         $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-        $url='http://takeawaydeliver.pykky.com/';
+        $url='http://tadetest.pykky.com/';
         $first='您有 '.$restNum.'饭 新跑腿订单可接';
         $remark='若不想接收此消息可在配送端关闭提醒或更改筛选规则';
         //测试用
@@ -967,9 +967,12 @@ class orders {
         }
     }
 
-    public function cancelOrder($id) {
+    public function cancelOrder($id,$isNotPay) {
         $model = new ModelOders();
-        $res = $model->cancelOrder($id);
+        if ($isNotPay==1) {
+            //没支付 直接退款
+            return $model->updateStatus($id,8);
+        }
         $orderDetail = $model->getOnesOneOrder($id);
         $orderNo = $orderDetail['orderNo'];
         //拿金额
@@ -979,9 +982,11 @@ class orders {
         $url = "http://tatestapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
         $rs = $curl->get($url, 10000);
         //return $rs;
-
+        if ($rs == 'refund success') {
+            $res = $model->cancelOrder($id);
+        }
         
-        if ($res && $rs == 'refund success') {
+        if ($res) {
             //发退款消息
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
 

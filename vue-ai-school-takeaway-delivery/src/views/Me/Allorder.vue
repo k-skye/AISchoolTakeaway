@@ -34,7 +34,7 @@
                 name="arrow"
                 class="icon"
               />
-              {{ orderDelive.dormitory }}{{ orderDelive.order.upstairs>0?'要上楼':'' }}
+              {{ orderDelive.dormitory }}{{ orderDelive.order.upstairs>0?'上楼':'' }}
               <div class="end">
                 <van-icon
                   name="clock-o"

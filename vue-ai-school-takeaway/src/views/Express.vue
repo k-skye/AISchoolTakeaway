@@ -11,7 +11,10 @@
         @confirm="onTimeConfirm"
       />
     </van-popup>
-    <div class="view-body">
+    <div
+      v-if="!firstlogin"
+      class="view-body"
+    >
       <!-- 收货地址 -->
       <section class="cart-address">
         <p class="title">
@@ -339,7 +342,7 @@ export default {
       weightNum: 0,
       customFeeError: "",
       preuserInfo: null,
-      isPayloading:false
+      isPayloading: false
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -424,7 +427,7 @@ export default {
           this.showCustomFee = true;
           break;
         default:
-          this.deliveFee = 3;
+          this.deliveFee = 0.1; //test:3
           this.okFee = this.deliveFee + gift;
           this.showCustomFee = false;
           break;
@@ -495,7 +498,6 @@ export default {
       }
       if (!this.remark) {
         this.remark = "无";
-        return;
       }
       if (parseInt(this.radio) == 2) {
         if (!this.currentTime) {
@@ -766,6 +768,11 @@ export default {
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
+  .nologin {
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
   .view-body {
     width: 100%;
     box-sizing: border-box;

@@ -257,13 +257,18 @@ class tradinglog {
         //不够24小时
         $lastTime = $userInfo['lastCashTimeStamp'];
         if (!empty($lastTime)) {
-            $lastTime = date('d',$lastTime);
-            $today = date('d',$t);
-            if($lastTime<28){
+            /* $lastTime = date('d',$lastTime);
+            $today = date('d',$t); */
+            $lastTime = (int)$lastTime;
+            $today = $t;
+/*             if($lastTime<28){
 				if (($lastTime+1)!=$today) {
                     return -11;
             	}
-			}
+            } */
+            if (($today-$lastTime)<86400) {
+                return -11;
+            }
         }
         $createTime = date('Y-m-d H:i:s',$t);
         $NoTime = date('YmdHis',$t);
@@ -303,7 +308,7 @@ class tradinglog {
                         'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
                         'keyword1'=>array('value'=>urlencode($personName),'color'=>'#0000FF'),
                         'keyword2'=>array('value'=>urlencode($createTime),'color'=>"#0000FF"),
-                        'keyword3'=>array('value'=>urlencode($OKmoney),'color'=>"#743A3A"),
+                        'keyword3'=>array('value'=>urlencode($OKmoney.' 元'),'color'=>"#743A3A"),
                         'keyword4'=>array('value'=>urlencode('微信零钱'),'color'=>"#743A3A"),
                         'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
                     );

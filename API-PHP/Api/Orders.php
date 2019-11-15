@@ -178,7 +178,7 @@ class Orders extends Api {
      */
     public function cancelOrder() {
         $domain = new DomainOders();
-        $res = $domain->cancelOrder($this->id);
+        $res = $domain->cancelOrder($this->id,0);
         if ($res) {
             return 'ok';
         }else{
@@ -191,7 +191,7 @@ class Orders extends Api {
      */
     public function autoCancelOrder() {
         $domain = new DomainOders();
-        //取60分钟前的订单
+        //取n时间前的订单
         $theTime = strtotime("-48 hour");
         $needCancelOrderArr = $domain->getNeedCancelOrder($theTime);
         $res = "";
@@ -199,12 +199,16 @@ class Orders extends Api {
             //对每一个订单，请求退款接口
             //支付时间
             $paytimeUnixTime = (int)date(strtotime($value['payTime']));
+            $createtimeUnixTime = (int)date(strtotime($value['createTime']));
             //预约单
             $shouldDelivetimeUnixTime = (int)date(strtotime($value['shouldDeliveTime']));
             $nowtimeUnix = (int)strtotime("now");
-            if ((($nowtimeUnix-$paytimeUnixTime)>1800) && (((int)$value['status'])==1) && (($shouldDelivetimeUnixTime-$nowtimeUnix)<3600)){
-                $res += $value['id'].$domain->cancelOrder($value['id']).';';
+            if ((($nowtimeUnix-$paytimeUnixTime)>1800) && (((int)$value['status'])==1) && (($shouldDelivetimeUnixTime-$nowtimeUnix)<1800)){
+                $res = $res.$value['id'].'-'.$domain->cancelOrder($value['id'],0).';';
                 //测试$res = $value['id'];
+            }
+            if ((($nowtimeUnix-$createtimeUnixTime)>1800) && (((int)$value['status'])==0)){
+                $res = $res.$value['id'].'-'.$domain->cancelOrder($value['id'],1).';';
             }
         }
         if (!empty($res)) {

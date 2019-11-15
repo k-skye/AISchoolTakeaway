@@ -77,7 +77,6 @@ class orders extends NotORM {
     public function updateOrderCompensate($id,$totalPrice,$payPrice,$deliveFee) {
         $data = array('totalPrice' => $totalPrice,'payPrice' => $payPrice,'deliveFee' => $deliveFee, 'isNeedFast' => 2);
         return $this->getORM()
-        ->where('isNeedFast = 1')
         ->where('id', $id)
         ->update($data);
     }
@@ -127,7 +126,7 @@ class orders extends NotORM {
     }
 
     public function getNeedCancelOrder($theTime) {
-        $query = 'payTime >= '.$theTime;
+        $query = 'createTime >= '.$theTime;
         return $this->getORM()
         ->where($query)
         ->fetchAll();

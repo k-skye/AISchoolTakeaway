@@ -134,7 +134,7 @@ class deliverorders {
             $phoneNo = $DeliverUserInfo['phoneNo'];
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='';
+            $url='http://tatest.pykky.com/order';
             $first='订单已被接单，小伙伴正在前往店铺';
             $remark='';
             //测试用
@@ -272,7 +272,7 @@ class deliverorders {
             $phoneNo = $DeliverUserInfo['phoneNo'];
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='';
+            $url='http://tatest.pykky.com/order';
             $first='小伙伴已取到商品，正在飞速前往您的宿舍';
             $remark='';
             //测试用
@@ -307,7 +307,7 @@ class deliverorders {
         if ($res) {
             //开始推送给用户已接单
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='';
+            $url='http://tatest.pykky.com/order';
             $first='您有 3 元快递尾款需要支付';
             $remark='伙伴反馈实际拿到的快递重量与您下单所填写的不符，需要您支付尾款后继续配送';
             //测试用
@@ -350,7 +350,7 @@ class deliverorders {
         if ($rrres && $res && $rres) {
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='';
+            $url='http://tatest.pykky.com/order';
             $first='伙伴报告已送达至您手中，给他/她和店铺一个评价吧～';
             $remark='如有疑问可联系客服：17889465893';
             //测试用
@@ -427,7 +427,6 @@ class deliverorders {
                            'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
                        );
                    
-                       //发已送达消息
                        $userid = $orderInfo['userID'];
                        $modelTureUser = new ModelUsers();
                        $trueUserInfo = $modelTureUser->getOneUserByUserID($userid);
@@ -442,7 +441,7 @@ class deliverorders {
         }
         if ($rrres && $res && $rres) {
             
-            $url='';
+            $url='http://tatest.pykky.com/order';
             $first='伙伴报告已送达至您手中啦～';
             $remark='如有疑问可联系客服：17889465893';
             //测试用
