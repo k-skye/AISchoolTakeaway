@@ -359,7 +359,7 @@ class deliverorders {
             $data = array(
                 'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
                 'keyword1'=>array('value'=>urlencode('美食跑腿'),'color'=>"#0000FF"),
-                'keyword2'=>array('value'=>urlencode($okmoney),'color'=>'#0000FF'),
+                'keyword2'=>array('value'=>urlencode($okmoney.' 元'),'color'=>'#0000FF'),
                 'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
                 'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
             );
@@ -451,7 +451,7 @@ class deliverorders {
             $data = array(
                 'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
                 'keyword1'=>array('value'=>urlencode('快递代拿'),'color'=>"#0000FF"),
-                'keyword2'=>array('value'=>urlencode($okmoney),'color'=>'#0000FF'),
+                'keyword2'=>array('value'=>urlencode($okmoney.' 元'),'color'=>'#0000FF'),
                 'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
                 'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
             );

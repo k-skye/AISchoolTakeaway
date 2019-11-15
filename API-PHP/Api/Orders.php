@@ -15,8 +15,7 @@ class Orders extends Api {
         return array(
             'getOnesAllOrders' => array(
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
-                'offset'  => array('name' => 'offset', 'require' => true, 'desc' => '忽略前几项'),
-                'limit'  => array('name' => 'limit', 'require' => true, 'desc' => '限制只获取多少行'),
+                'page'  => array('name' => 'page', 'require' => true, 'desc' => '第几页'),
             ),
             'createOneOrder' => array(
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
@@ -73,7 +72,7 @@ class Orders extends Api {
      */
     public function getOnesAllOrders() {
         $domain = new DomainOders();
-        return $domain->getOnesAllOrders($this->userID,$this->offset,$this->limit);
+        return $domain->getOnesAllOrders($this->userID,$this->page);
     }
     /**
      * 拿所有订单待接单的

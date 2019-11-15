@@ -33,7 +33,7 @@ export default {
 
 <style lang="scss" scoped>
 .tabbar {
-  height: 50px;
+  /* height: 50px; */
   width: 100%;
 }
 </style>

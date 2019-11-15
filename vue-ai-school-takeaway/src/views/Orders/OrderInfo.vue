@@ -62,7 +62,7 @@
           <van-button type="info" v-if="orderDetail.status==2">申请退款</van-button>-->
           <!-- 已送达时 -->
           <van-button
-            v-if="orderDetail.status==4"
+            v-if="orderDetail.status==4 && orderDetail.type==0"
             type="primary"
             @click="$router.push({name: 'comment',params: {restID: orderDetail.restID, userID: userInfo.id, orderID: orderDetail.id}})"
           >

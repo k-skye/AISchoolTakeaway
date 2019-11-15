@@ -108,9 +108,9 @@ class WeixinPush
 
 class orders {
 
-    public function getOnesAllOrders($userID,$offset,$limit) {
+    public function getOnesAllOrders($userID,$page) {
         $model = new ModelOders();
-        $arr = $model->getOnesAllOrders($userID,$offset,$limit);
+        $arr = $model->getOnesAllOrders($userID,$page);
         $i = 0;
         $modelRest = new ModelRestaurant();
         $modelFood = new ModelFood();

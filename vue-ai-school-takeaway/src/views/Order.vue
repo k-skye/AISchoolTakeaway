@@ -29,12 +29,30 @@
                 <div class="title">
                   <a>
                     <span>{{ (order.restName)?(order.restName):('快递代拿') }}</span>
+                    <van-tag
+                      v-if="order.isNeedFast == 1"
+                      round
+                      type="danger"
+                      plain
+                      style="margin-left:5px;text-align: center;"
+                    >
+                      加急 +{{ order.fastMoney }} 元
+                    </van-tag>
+                    <van-tag
+                      v-if="order.isNeedFast == 2"
+                      round
+                      type="success"
+                      plain
+                      style="margin-left:5px;text-align: center;"
+                    >
+                      加急 {{ order.fastMoney }} 元 已退回
+                    </van-tag>
                   </a>
                   <p style="display:flex;">
                     <van-icon
                       v-show="order.statusText=='待支付尾款'"
                       name="warning"
-                      style="padding-right:2px;"
+                      style="padding-right:2px;color:red;"
                     />{{ order.statusText }}
                   </p>
                 </div>
@@ -144,8 +162,7 @@ export default {
       this.$axios("http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders", {
         params: {
           userID: this.userInfo.id,
-          offset: this.offset,
-          limit: this.size
+          page: this.offset,
         }
       }).then(res => {
         if (JSON.stringify(res.data.data) == "{}") {
@@ -162,13 +179,13 @@ export default {
       // 异步更新数据
       setTimeout(() => {
         if (!this.allLoaded) {
-          this.offset += parseInt(this.orders[0].id);
+          //this.offset += parseInt(this.orders[0].id);
+          this.offset++;
           // 拉取商家信息
           this.$axios("http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders", {
             params: {
               userID: this.userInfo.id,
-              offset: this.offset,
-              limit: this.size
+              page: this.offset,
             }
           }).then(res => {
             if (JSON.stringify(res.data.data) != "{}") {
