@@ -47,7 +47,7 @@ export default {
   methods:{
     onSendButtonClick(){
       this.$axios.post(
-        "http://tatestapi.pykky.com/?s=Feedback.AddOneFeedBackByDeliver",
+        "https://takeawayapi.pykky.com/?s=Feedback.AddOneFeedBackByDeliver",
         {
             deliverID: this.deliverID,
             content: this.message

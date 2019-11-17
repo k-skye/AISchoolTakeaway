@@ -71,7 +71,7 @@ class TradingLog extends Api {
                 $orderNo = $createTime.$res;
                 $rres = $domain->updateCompensate($res,$orderNo);
                 if ($rres) {
-                    $url = "http://tatestapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=3.0&ordername=华广快递代拿尾款&notifyUrl=http://tatestapi.pykky.com/pay/notifyCompensateOrder.php&openID=".$this->openID;
+                    $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=3.0&ordername=华广快递代拿尾款&notifyUrl=https://takeawayapi.pykky.com/pay/notifyCompensateOrder.php&openID=".$this->openID;
                     $rs = $curl->get($url, 5000);
                     return $rs;
                 }else{

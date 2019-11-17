@@ -149,7 +149,7 @@ export default {
       this.finished = false;
       // 拉取商家信息
       this.$axios(
-        "http://tatestapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
+        "https://takeawayapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
         {
           params: {
             deliverID: this.deliverID,
@@ -193,7 +193,7 @@ export default {
           this.offset++;
           // 拉取商家信息
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
+            "https://takeawayapi.pykky.com/?s=Deliverorders.GetOneUserAllOrderFinish",
             {
               params: {
                 deliverID: this.deliverID,

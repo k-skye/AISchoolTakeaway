@@ -120,27 +120,27 @@ export default {
       menu: [
         {
           name: "一饭",
-          image: "http://tatestapi.pykky.com/homeImg/icons8-1-50.png",
+          image: "https://takeawayapi.pykky.com/homeImg/icons8-1-50.png",
           roomNum: 1
         },
         {
           name: "二饭",
-          image: "http://tatestapi.pykky.com/homeImg/icons8-2-50.png",
+          image: "https://takeawayapi.pykky.com/homeImg/icons8-2-50.png",
           roomNum: 2
         },
         {
           name: "门口/其他",
-          image: "http://tatestapi.pykky.com/homeImg/icons8-8-50.png",
+          image: "https://takeawayapi.pykky.com/homeImg/icons8-8-50.png",
           roomNum: 5
         },
         {
           name: "三饭",
-          image: "http://tatestapi.pykky.com/homeImg/icons8-3-50.png",
+          image: "https://takeawayapi.pykky.com/homeImg/icons8-3-50.png",
           roomNum: 3
         },
         {
           name: "四饭",
-          image: "http://tatestapi.pykky.com/homeImg/icons8-4-50.png",
+          image: "https://takeawayapi.pykky.com/homeImg/icons8-4-50.png",
           roomNum: 4
         }
       ],
@@ -184,7 +184,7 @@ export default {
       this.showResult = false;
     },
     onInput() {
-      this.$axios("http://tatestapi.pykky.com/?s=HomeData.GetSearchByRule", {
+      this.$axios("https://takeawayapi.pykky.com/?s=HomeData.GetSearchByRule", {
         params: {
           text: this.value
         }
@@ -214,7 +214,7 @@ export default {
       }
     },
     getData() {
-      this.$axios("http://tatestapi.pykky.com/?s=HomeData.GetHeadAdImg").then(
+      this.$axios("https://takeawayapi.pykky.com/?s=HomeData.GetHeadAdImg").then(
         res => {
           this.swipeImgs = JSON.parse(res.data.data).headAdImg;
           this.homeData = JSON.parse(res.data.data);
@@ -233,7 +233,7 @@ export default {
       this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
-      this.$axios("http://tatestapi.pykky.com/?s=Restaurant.GetRestsByRule", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule", {
         params: {
           page: this.offset,
           condition: this.condition
@@ -249,7 +249,7 @@ export default {
           this.offset++;
           // 拉取商家信息
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Restaurant.GetRestsByRule",
+            "https://takeawayapi.pykky.com/?s=Restaurant.GetRestsByRule",
             {
               params: {
                 page: this.offset,

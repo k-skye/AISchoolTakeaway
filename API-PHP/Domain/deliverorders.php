@@ -130,11 +130,11 @@ class deliverorders {
             //拿配送员信息
             $modelDeliverUser = new ModelDeliverUser();
             $DeliverUserInfo = $modelDeliverUser->getOneUserByUserID($deliverID);
-            $realName = $DeliverUserInfo['realName'];
+            $firstName = mb_substr($DeliverUserInfo['realName'], 0, 1);
             $phoneNo = $DeliverUserInfo['phoneNo'];
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='http://tatest.pykky.com/order';
+            $url='https://takeaway.pykky.com/order';
             $first='订单已被接单，小伙伴正在前往店铺';
             $remark='';
             //测试用
@@ -142,7 +142,7 @@ class deliverorders {
             $modid='Tbr9oI-fefuJplg6WOfn0oeHT9HAlKNPy-NICycgiwg';
             $data = array(
                 'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
-                'keyword1'=>array('value'=>urlencode($realName),'color'=>'#0000FF'),
+                'keyword1'=>array('value'=>urlencode($firstName.'同学'),'color'=>'#0000FF'),
                 'keyword2'=>array('value'=>urlencode($phoneNo),'color'=>"#0000FF"),
                 'keyword3'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
                 'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
@@ -268,11 +268,11 @@ class deliverorders {
             $modelDeliverUser = new ModelDeliverUser();
             $DeliverOrderInfo = $model->getOneByID($ID);
             $DeliverUserInfo = $modelDeliverUser->getOneUserByUserID($DeliverOrderInfo['deliverID']);
-            $realName = $DeliverUserInfo['realName'];
+            $firstName = mb_substr($DeliverUserInfo['realName'], 0, 1);
             $phoneNo = $DeliverUserInfo['phoneNo'];
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='http://tatest.pykky.com/order';
+            $url='https://takeaway.pykky.com/order';
             $first='小伙伴已取到商品，正在飞速前往您的宿舍';
             $remark='';
             //测试用
@@ -281,7 +281,7 @@ class deliverorders {
             $data = array(
                 'first'=>array('value'=>urlencode($first),'color'=>"#743A3A"),
                 'keyword1'=>array('value'=>urlencode($createTime),'color'=>"#743A3A"),
-                'keyword2'=>array('value'=>urlencode($realName),'color'=>'#0000FF'),
+                'keyword2'=>array('value'=>urlencode($firstName.'同学'),'color'=>'#0000FF'),
                 'keyword3'=>array('value'=>urlencode($phoneNo),'color'=>"#0000FF"),
                 'remark'=>array('value'=>urlencode($remark),'color'=>'#000000'),
             );
@@ -307,7 +307,7 @@ class deliverorders {
         if ($res) {
             //开始推送给用户已接单
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='http://tatest.pykky.com/order';
+            $url='https://takeaway.pykky.com/order';
             $first='您有 3 元快递尾款需要支付';
             $remark='伙伴反馈实际拿到的快递重量与您下单所填写的不符，需要您支付尾款后继续配送';
             //测试用
@@ -350,7 +350,7 @@ class deliverorders {
         if ($rrres && $res && $rres) {
 
             $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-            $url='http://tatest.pykky.com/order';
+            $url='https://takeaway.pykky.com/order';
             $first='伙伴报告已送达至您手中，给他/她和店铺一个评价吧～';
             $remark='如有疑问可联系客服：17889465893';
             //测试用
@@ -395,22 +395,22 @@ class deliverorders {
         $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
         //超时送达退款红包
         //对比shouldDeliveTime和现在时间
-        $paytimeUnixTime = (int)date(strtotime($orderInfo['shouldDeliveTime']));
+        $shouldtimeUnixTime = (int)date(strtotime($orderInfo['shouldDeliveTime']));
         $nowtimeUnix = (int)strtotime("now");
-        if ((($nowtimeUnix-$paytimeUnixTime)>0) && $rrres && $res && $rres && (((int)$orderInfo['isNeedFast'])==1)) {
+        if ((($nowtimeUnix-$shouldtimeUnixTime)>300) && $rrres && $res && $rres && (((int)$orderInfo['isNeedFast'])==1)) {
             //拿金额
             $orderNo = $orderInfo['orderNo'];
             $totalPrice = $okmoney; 
             $refundPrice = (float)$orderInfo['fastMoney'];
             $curl = new \PhalApi\CUrl();
-            $url = "http://tatestapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
+            $url = "https://takeawayapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
             $rs = $curl->get($url, 10000);
             //return $rs;
             if ($rs == 'refund success') {
                 $payPrice = (int)$orderInfo['payPrice'];
                 $finalMoney = $okmoney-$refundPrice;
                 $payPrice = $payPrice-($refundPrice*100);
-                $resp = $modelOrder->updateOrderCompensate($orderID,$finalMoney,$payPrice,$finalMoney);
+                $resp = $modelOrder->updateOrderOtherPay($orderID,$finalMoney,$payPrice,$finalMoney);
                 if ($resp) {
                        //发退款消息
                        $url='';
@@ -441,7 +441,7 @@ class deliverorders {
         }
         if ($rrres && $res && $rres) {
             
-            $url='http://tatest.pykky.com/order';
+            $url='https://takeaway.pykky.com/order';
             $first='伙伴报告已送达至您手中啦～';
             $remark='如有疑问可联系客服：17889465893';
             //测试用

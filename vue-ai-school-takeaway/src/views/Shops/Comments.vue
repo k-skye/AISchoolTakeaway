@@ -127,7 +127,7 @@ export default {
       this.offset = 1;
       this.finished = false;
       // 拉取商家信息
-      this.$axios("http://tatestapi.pykky.com/?s=Comment.GetSomeComment", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Comment.GetSomeComment", {
         params: {
           restID: this.restID,
           offset: this.offset,
@@ -150,7 +150,7 @@ export default {
           this.offset += (parseInt(this.evaluation[this.evaluation.length-1].id));
           // 拉取商家信息
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Comment.GetSomeComment",
+            "https://takeawayapi.pykky.com/?s=Comment.GetSomeComment",
             {
               params: {
                 restID: this.restInfo.id,

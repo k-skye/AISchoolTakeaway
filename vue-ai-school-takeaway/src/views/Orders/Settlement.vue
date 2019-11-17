@@ -478,7 +478,7 @@ export default {
       if (this.userInfo.mainAddressID != 0) {
         this.haveAddress = true;
         if (!this.addrInfo) {
-          this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
+          this.$axios("https://takeawayapi.pykky.com/?s=Address.GetOneAddr", {
             params: {
               id: this.userInfo.mainAddressID
             }
@@ -495,7 +495,7 @@ export default {
       }
       //拿用户红包
       this.$axios(
-        "http://tatestapi.pykky.com/?s=Discount.GetOnesAllcounts",
+        "https://takeawayapi.pykky.com/?s=Discount.GetOnesAllcounts",
         {
           params: {
             userID: this.userInfo.id
@@ -556,7 +556,7 @@ export default {
       const finalFormatTime =
         this.dateFormat("YYYY-mm-dd ", nowDate) + finalTime;
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Orders.CreateOneOrder", {
+        .post("https://takeawayapi.pykky.com/?s=Orders.CreateOneOrder", {
           userID: this.userInfo.id,
           foodArrID: foodArrID,
           remark: remarks,

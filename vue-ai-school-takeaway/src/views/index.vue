@@ -1,6 +1,11 @@
 <template>
   <div class="index">
-    <router-view />
+    <router-view v-if="!$route.meta.keepAlive" />
+    <keep-alive>
+      <router-view v-if="$route.meta.keepAlive">
+        <!-- 这里是会被缓存的视图组件，比如 page1-->
+      </router-view>
+    </keep-alive>
     <TabBar :data="tabbarData" />
   </div>
 </template>
@@ -37,7 +42,7 @@ export default {
           havefirstlogin = true;
           if (firstloginReq == 0) {
             //用openid去get全部用户信息回来
-            this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
+            this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
               params: {
                 openid: openidReq
               }
@@ -49,7 +54,7 @@ export default {
         if (!havefirstlogin) {//缓存中没有fistlogin
           const appid = "wx3df92dead7bcd174";
           const redirectUrl = encodeURI(
-            "http://tatestapi.pykky.com/?s=Users.GetOpenid"
+            "https://takeawayapi.pykky.com/?s=Users.GetOpenid"
           );
           const wechatUrl =
             "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
@@ -62,7 +67,7 @@ export default {
       } else {
         //用openid去get全部用户信息回来
         const openid = localStorage.openid;
-        this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
+        this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
           params: {
             openid: openid
           }

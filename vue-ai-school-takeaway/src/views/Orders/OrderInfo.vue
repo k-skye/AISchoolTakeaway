@@ -275,7 +275,7 @@ export default {
   methods: {
     handlePay(orderid){
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Tradinglog.CreateOneCompensate", {
+        .post("https://takeawayapi.pykky.com/?s=Tradinglog.CreateOneCompensate", {
           orderID: orderid,
           openID: this.userInfo.openid,
         })
@@ -310,7 +310,7 @@ export default {
     },
     onSendButtonClick(){
       this.$axios.post(
-        "http://tatestapi.pykky.com/?s=Feedback.addOneComplaintByUser",
+        "https://takeawayapi.pykky.com/?s=Feedback.addOneComplaintByUser",
         {
             userID: this.userInfo.id,
             content: this.message,
@@ -336,7 +336,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .post("http://tatestapi.pykky.com/?s=Orders.CancelOrder", {
+            .post("https://takeawayapi.pykky.com/?s=Orders.CancelOrder", {
               id: this.orderDetail.id
             })
             .then(res => {

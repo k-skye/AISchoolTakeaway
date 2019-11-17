@@ -162,7 +162,7 @@ export default {
       this.offset = 1;
       this.allLoaded = false;
       // 拉取商家信息
-      this.$axios("http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Orders.GetOnesAllOrders", {
         params: {
           userID: this.userInfo.id,
           page: this.offset,
@@ -185,7 +185,7 @@ export default {
           //this.offset += parseInt(this.orders[0].id);
           this.offset++;
           // 拉取商家信息
-          this.$axios("http://tatestapi.pykky.com/?s=Orders.GetOnesAllOrders", {
+          this.$axios("https://takeawayapi.pykky.com/?s=Orders.GetOnesAllOrders", {
             params: {
               userID: this.userInfo.id,
               page: this.offset,
@@ -320,7 +320,7 @@ export default {
       toData.value = null;
       toData.addrInfo = null;
       /* //店铺配送费信息
-      this.$axios("http://tatestapi.pykky.com/?s=Restaurant.GetOneRest", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Restaurant.GetOneRest", {
         params: {
           id: order.restID
         }
@@ -328,7 +328,7 @@ export default {
         toData.deliveryFee = res.data.data.deliveryFee;
       }); */
       //收货地址信息
-      this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Address.GetOneAddr", {
         params: {
           id: order.addressID
         }
@@ -337,7 +337,7 @@ export default {
       });
       //红包信息
       if (order.discountID != -1) {
-        this.$axios("http://tatestapi.pykky.com/?s=Discount.GetOnesDiscounts", {
+        this.$axios("https://takeawayapi.pykky.com/?s=Discount.GetOnesDiscounts", {
           params: {
             id: order.discountID
           }

@@ -121,17 +121,17 @@ class Users extends Api {
                 //跳转回去前端处理
                 switch ($res) {
                     case '1':
-                        $to = "location:http://tatest.pykky.com/?firstlogin=1&openid=".$rs->openid;
+                        $to = "location:https://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
                         header($to);
                         break;
                     
                     case '2':
-                        $to = "location:http://tatest.pykky.com/?firstlogin=1&openid=".$rs->openid;
+                        $to = "location:https://takeaway.pykky.com/?firstlogin=1&openid=".$rs->openid;
                         header($to);
                         break;
 
                     default:
-                        $to = "location:http://tatest.pykky.com/?firstlogin=0&openid=".$rs->openid;
+                        $to = "location:https://takeaway.pykky.com/?firstlogin=0&openid=".$rs->openid;
                         header($to);
                         break;
                 }
@@ -179,7 +179,7 @@ class Users extends Api {
                     throw new InternalServerErrorException('更新用户信息失败', 10);
                 }else {
                     //跳转回去前端处理
-                    $to = "location:http://tatest.pykky.com/register?isregister=1&openid=".$openid;
+                    $to = "location:https://takeaway.pykky.com/register?isregister=1&openid=".$openid;
                     header($to);
                 }
             }else {

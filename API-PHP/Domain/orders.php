@@ -130,7 +130,7 @@ class orders {
                 $arr[$i]['deliverID'] = $deliID;
                 $arr[$i]['delivedTime'] = $deliverOrder['delivedTime'];
                 $deliverInfo = $modelUser->getOneUserByUserID($deliID);
-                $arr[$i]['deliverName'] = $deliverInfo['realName'];
+                $arr[$i]['deliverName'] = (mb_substr($deliverInfo['realName'], 0, 1)).'同学';
                 $arr[$i]['deliverPhone'] = $deliverInfo['phoneNo'];
             }else {
                 $arr[$i]['deliverID'] = '';
@@ -449,7 +449,7 @@ class orders {
         $addrID = $orderInfo['addressID'];
         $express = $orderInfo['expressAddr'];
         $isNeedFast = $orderInfo['isNeedFast'];
-        $fastMoney = $orderInfo['fastMoney'];
+        //$fastMoney = $orderInfo['fastMoney'];
         $deliveTime = $orderInfo['shouldDeliveTime'];
         $deliverFee = (float)$orderInfo['deliveFee'];
         //找地址
@@ -477,9 +477,9 @@ class orders {
         }
         $title = '可得配送费';
         if (((int)$isNeedFast) == 1) {
-            $typeStr += ' 且 加急';
+            $typeStr = $typeStr.' 且 加急';//修复bug订单类型为0 2019.11.16
             $title = '可得配送费和加急红包共';
-            $deliverFee += (float)$fastMoney;
+            //$deliverFee += (float)$fastMoney;重复bug已修复 2019.11.16
         }
         $addr = $express.' - '.$dormitory;
         $expressNum = 0;//用于判断unset和原下标无关
@@ -497,7 +497,7 @@ class orders {
                 break;
         }
         $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-        $url='http://tadetest.pykky.com/';
+        $url='http://takeawaydeliver.pykky.com/';
         $first='您有 '.$express.' 新订单可接';
         $remark='若不想接收此消息可在配送端关闭提醒或更改筛选规则';
         //测试用
@@ -740,7 +740,7 @@ class orders {
         $addr = $restNum.'饭 - '.$dormitory;
         
         $weixin = new WeixinPush("wx3df92dead7bcd174","d6bade00fdeec6e09500d74a9d3fb15b");//传入appid和appsecret
-        $url='http://tadetest.pykky.com/';
+        $url='http://takeawaydeliver.pykky.com/';
         $first='您有 '.$restNum.'饭 新跑腿订单可接';
         $remark='若不想接收此消息可在配送端关闭提醒或更改筛选规则';
         //测试用
@@ -979,7 +979,7 @@ class orders {
         $totalPrice = ((int)($orderDetail['payPrice']))/100; 
         $refundPrice = $totalPrice;
         $curl = new \PhalApi\CUrl();
-        $url = "http://tatestapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
+        $url = "https://takeawayapi.pykky.com/pay/refund.php?orderNo=".$orderNo."&totalPrice=".$totalPrice."&refundPrice=".$refundPrice;
         $rs = $curl->get($url, 10000);
         //return $rs;
         if ($rs == 'refund success') {

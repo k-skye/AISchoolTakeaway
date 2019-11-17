@@ -132,7 +132,7 @@ export default {
       this.show = false;
       //开始提现
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Tradinglog.CashOneUser", {
+        .post("https://takeawayapi.pykky.com/?s=Tradinglog.CashOneUser", {
           deliverID: this.userInfo.id
         })
         .then(res => {
@@ -147,7 +147,7 @@ export default {
             const openid = localStorage.openid;
             //用openid去get全部用户信息回来
             this.$axios(
-              "http://tatestapi.pykky.com/?s=DeliverUsers.GetUserInfo",
+              "https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo",
               {
                 params: {
                   openid: openid

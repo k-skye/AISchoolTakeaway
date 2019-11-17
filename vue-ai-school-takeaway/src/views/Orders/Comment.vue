@@ -69,7 +69,7 @@ export default {
   methods: {
     handleClick() {
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Comment.CommentByUser", {
+        .post("https://takeawayapi.pykky.com/?s=Comment.CommentByUser", {
           userID: this.userID,
           text: this.message,
           restID: this.restID,

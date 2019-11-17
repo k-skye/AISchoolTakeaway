@@ -32,7 +32,10 @@ export default new Router({
         {
           path: '/express',
           name: 'express',
-          component: () => import('./views/Express.vue')
+          component: () => import('./views/Express.vue'),
+          meta: {
+            keepAlive: true, //此组件需要被缓存
+          }
         }
       ]
     },
@@ -56,7 +59,10 @@ export default new Router({
     {
       path: '/register',
       name: 'register',
-      component: () => import('./views/Register.vue')
+      component: () => import('./views/Register.vue'),
+      meta: {
+        keepAlive: true, //此组件需要被缓存
+      }
     },
     {
       path: '/myAddress',

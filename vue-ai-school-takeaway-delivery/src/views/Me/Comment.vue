@@ -183,7 +183,7 @@ export default {
       this.finished = false;
       // 拉取商家信息
       this.$axios(
-        "http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrderCountCanComment",
+        "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrderCountCanComment",
         {
           params: {
             deliverID: this.deliverID,
@@ -225,7 +225,7 @@ export default {
           this.offset += (parseInt(this.orderlist[this.orderlist.length-1].id));
           // 拉取商家信息
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Deliverorders.GetAllOrderCountCanComment",
+            "https://takeawayapi.pykky.com/?s=Deliverorders.GetAllOrderCountCanComment",
             {
               params: {
                 deliverID: this.deliverID,
@@ -266,7 +266,7 @@ export default {
       })
         .then(() => {
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Comment.CommentDeliveReply",
+            "https://takeawayapi.pykky.com/?s=Comment.CommentDeliveReply",
             {
               params: {
                 ID: this.commentID,

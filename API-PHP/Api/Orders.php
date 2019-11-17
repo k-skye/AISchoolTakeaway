@@ -103,7 +103,7 @@ class Orders extends Api {
                 $orderNo = $createTime.$res;
                 $rres = $domain->updateOrderNo($res,$orderNo);
                 if ($rres) {
-                    $url = "http://tatestapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广饭堂外卖&notifyUrl=http://tatestapi.pykky.com/pay/notifyOrder.php&openID=".$this->openID;
+                    $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广饭堂外卖&notifyUrl=https://takeawayapi.pykky.com/pay/notifyOrder.php&openID=".$this->openID;
                     $rs = $curl->get($url, 5000);
                     return $rs;
                 }else{
@@ -130,7 +130,7 @@ class Orders extends Api {
                 $orderNo = $createTime.$res;
                 $rres = $domain->updateOrderNo($res,$orderNo);
                 if ($rres) {
-                    $url = "http://tatestapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广快递代拿&notifyUrl=http://tatestapi.pykky.com/pay/notifyExpressOrder.php&openID=".$this->openID;
+                    $url = "https://takeawayapi.pykky.com/pay/jsapi.php?orderNo=".$orderNo."&payPrice=".$this->payPrice."&ordername=华广快递代拿&notifyUrl=https://takeawayapi.pykky.com/pay/notifyExpressOrder.php&openID=".$this->openID;
                     $rs = $curl->get($url, 5000);
                     return $rs;
                 }else{

@@ -95,7 +95,7 @@ export default {
       });
     },
     getData() {
-      this.$axios("http://tatestapi.pykky.com/?s=Address.GetUserAddrs", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Address.GetUserAddrs", {
         params: {
           userID: this.userInfo.id
         }
@@ -114,7 +114,7 @@ export default {
     },
     handleDelete(address, index) {
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Address.RemoveAddr", {
+        .post("https://takeawayapi.pykky.com/?s=Address.RemoveAddr", {
           id: address.id
         })
         .then(() => {

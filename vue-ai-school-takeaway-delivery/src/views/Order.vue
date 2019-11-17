@@ -452,7 +452,7 @@ export default {
       this.finished = false;
       // 拉取商家信息
       this.$axios(
-        "http://tatestapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
+        "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
         {
           params: {
             deliverID: this.userInfo.id,
@@ -507,7 +507,7 @@ export default {
           this.orderChecked = orderChecked;
           //开始请求
           this.$axios(
-            "http://tatestapi.pykky.com/?s=DeliverUsers.changeUserInfoOnSendMessage",
+            "https://takeawayapi.pykky.com/?s=DeliverUsers.changeUserInfoOnSendMessage",
             {
               params: {
                 userID: this.userInfo.id,
@@ -534,7 +534,7 @@ export default {
           this.offset++;
           // 拉取商家信息
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
+            "https://takeawayapi.pykky.com/?s=Orders.GetAllNeedDeliveOrders",
             {
               params: {
                 deliverID: this.userInfo.id,
@@ -583,7 +583,7 @@ export default {
     },
     valueChange() {
       this.$axios(
-        "http://tatestapi.pykky.com/?s=DeliverUsers.ChangeUserInfoOnChooseByUserId",
+        "https://takeawayapi.pykky.com/?s=DeliverUsers.ChangeUserInfoOnChooseByUserId",
         {
           params: {
             userID: this.userInfo.id,
@@ -603,7 +603,7 @@ export default {
       });
       const openid = localStorage.openid;
       //用openid去get全部用户信息回来
-      this.$axios("http://tatestapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
+      this.$axios("https://takeawayapi.pykky.com/?s=DeliverUsers.GetUserInfo", {
         params: {
           openid: openid
         }
@@ -619,7 +619,7 @@ export default {
         .then(() => {
           //开始创建订单
           this.$axios(
-            "http://tatestapi.pykky.com/?s=Deliverorders.CreateOneOrder",
+            "https://takeawayapi.pykky.com/?s=Deliverorders.CreateOneOrder",
             {
               params: {
                 orderID: orderID,

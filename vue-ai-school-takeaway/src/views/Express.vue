@@ -57,7 +57,7 @@
             <span class="delivery-time">送达时间</span>
           </div>
           <div class="delivery-right">
-            <span class="delivery-select">{{ okTime }}</span>
+            <span class="delivery-select">{{ (!okTime)?'填写重量后自动计算':okTime }}</span>
           </div>
         </div>
         <!-- 是否加急 -->
@@ -380,7 +380,7 @@ export default {
     showGiftQuestion() {
       Dialog({
         message:
-          "在原配送费的基础上给伙伴的加急红包，注意：金额少可能会无人接单，届时将自动全额退款，可能会浪费您的等待时间！伙伴接单后不能准时送达也将把红包全额退回！"
+          "在原配送费的基础上给伙伴的加急红包，注意：金额少可能会无人接单，届时将自动全额退款，可能会浪费您的等待时间！伙伴接单后送达超时5分钟也将把红包全额退回！"
       });
     },
     showCustomQuestion() {
@@ -406,28 +406,34 @@ export default {
       if (this.customGift != "") {
         gift = parseInt(this.customGift);
       }
+      this.columns=[];
       switch (index) {
         case 1:
+          this.calcData(15);
           this.deliveFee = 5;
           this.okFee = this.deliveFee + gift;
           this.showCustomFee = false;
           break;
         case 2:
+          this.calcData(30);
           this.deliveFee = 7;
           this.okFee = this.deliveFee + gift;
           this.showCustomFee = false;
           break;
         case 3:
+          this.calcData(45);
           this.deliveFee = 9;
           this.okFee = this.deliveFee + gift;
           this.showCustomFee = false;
           break;
         case 4:
+          this.calcData(60);
           this.deliveFee = 0;
           this.showCustomFee = true;
           break;
         default:
-          this.deliveFee = 0.1; //test:3
+          this.calcData(0);
+          this.deliveFee = 3; //test:0.1
           this.okFee = this.deliveFee + gift;
           this.showCustomFee = false;
           break;
@@ -543,7 +549,7 @@ export default {
         this.dateFormat("YYYY-mm-dd ", nowDate) + finalTime;
       let isNeedFastNum = parseInt(this.radio) - 1;
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=Orders.CreateOneExpressOrder", {
+        .post("https://takeawayapi.pykky.com/?s=Orders.CreateOneExpressOrder", {
           userID: this.userInfo.id,
           remark: this.remark,
           expressAddr: this.addrvalue,
@@ -639,7 +645,7 @@ export default {
       }
       return fmt;
     },
-    calcData() {
+    calcData(initTime) {
       //动态计算预估时间和配送费
       const roomNum = 1;
       let dormitory = this.addrInfo.dormitory;
@@ -650,7 +656,7 @@ export default {
       const dormNum = dormitory >= 1 && dormitory <= 6 ? 1 : 2;
       //默认起始配送费和时间为
       this.deliveFee = 3;
-      this.deliverTime = 30;
+      this.deliverTime = 30 + initTime;
       //区域点餐
       switch (dormNum) {
         case 1: //第一个区域点餐
@@ -716,7 +722,7 @@ export default {
       this.addrInfo = this.$store.getters.addrInfo;
       //用openid去get全部用户信息回来
       const openid = localStorage.openid;
-      this.$axios("http://tatestapi.pykky.com/?s=Users.GetUserInfo", {
+      this.$axios("https://takeawayapi.pykky.com/?s=Users.GetUserInfo", {
         params: {
           openid: openid
         }
@@ -725,17 +731,17 @@ export default {
         if (this.preuserInfo.mainAddressID != 0) {
           this.haveAddress = true;
           if (!this.addrInfo) {
-            this.$axios("http://tatestapi.pykky.com/?s=Address.GetOneAddr", {
+            this.$axios("https://takeawayapi.pykky.com/?s=Address.GetOneAddr", {
               params: {
                 id: this.preuserInfo.mainAddressID
               }
             }).then(res => {
               this.addrInfo = res.data.data;
               this.$store.dispatch("setAddrInfo", this.addrInfo);
-              this.calcData();
+              //this.calcData();
             });
           } else {
-            this.calcData();
+            //this.calcData();
           }
         } else {
           this.haveAddress = false;

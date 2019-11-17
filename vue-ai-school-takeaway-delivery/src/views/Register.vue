@@ -214,7 +214,7 @@ export default {
       this.errors = {};
       // 发送请求
       this.$axios
-        .post("http://tatestapi.pykky.com/?s=DeliverUsers.UserReg", {
+        .post("https://takeawayapi.pykky.com/?s=DeliverUsers.UserReg", {
           phoneNo: this.phone,
           loginCode: this.verifyCode,
           codeID: this.codeID,
@@ -243,7 +243,7 @@ export default {
         this.validateBtn();
         // 发送网络请求
         this.$axios
-          .post("http://tatestapi.pykky.com/?s=DeliverUsers.SendMessage", {
+          .post("https://takeawayapi.pykky.com/?s=DeliverUsers.SendMessage", {
             phoneNo: this.phone
           })
           .then(res => {
@@ -304,7 +304,7 @@ export default {
       let fd = new FormData();
       fd.append("file", e.file);
       axioskkk
-        .post("http://tatestapi.pykky.com/?s=UploadImg.DeliverCard", fd, {
+        .post("https://takeawayapi.pykky.com/?s=UploadImg.DeliverCard", fd, {
           headers: {
             "Content-Type": "multipart/form-data"
           }
