@@ -427,13 +427,20 @@ class orders {
         }
     }
 
-    public function insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney) {
+    public function insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney,$discountID) {
         $model = new ModelOders();
         $t = time();
         $createTime = date('Y-m-d H:i:s',$t);
-        $res = $model->insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$createTime,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney);
+        $res = $model->insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$createTime,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney,$discountID);
         if ($res) {
-            return $res;
+            //让红包报废
+            $modelDisc = new ModelDiscount();
+            $ress = $modelDisc->changeToFalseAndReason($discountID,"已使用");
+            if ($ress == 0 || $ress) {//数据已更新或无变化
+                return $res;
+            }else{
+                return -2;
+            }
         }else {
             return -1;
         }
@@ -663,7 +670,7 @@ class orders {
         $allDeliverArr = array_values($allDeliverArr);//重建索引
         //发送
         foreach ($allDeliverArr as $value) {
-                if ((!empty($value['cardImg'])) && $value['openid'] != 'oAMY6uDvgBa5GmRVLsRSeMavgDu8'){
+                if ((!empty($value['cardImg']))){
 
                     //测试用
                     //if ($value['openid'] == 'oAMY6uLSkezkVmGf2M27o07Xfthg') {
@@ -970,11 +977,12 @@ class orders {
     public function cancelOrder($id,$isNotPay) {
         $model = new ModelOders();
         if ($isNotPay==1) {
-            //没支付 直接退款
+            //没支付 直接关闭订单
             return $model->updateStatus($id,8);
         }
         $orderDetail = $model->getOnesOneOrder($id);
         $orderNo = $orderDetail['orderNo'];
+        $discountID = (int)$orderDetail['discountID'];
         //拿金额
         $totalPrice = ((int)($orderDetail['payPrice']))/100; 
         $refundPrice = $totalPrice;
@@ -984,6 +992,11 @@ class orders {
         //return $rs;
         if ($rs == 'refund success') {
             $res = $model->cancelOrder($id);
+            //红包恢复
+            if ($discountID != -1) {
+                $modelDisc = new ModelDiscount();
+                $ress = $modelDisc->changeToTrue($discountID);
+            }
         }
         
         if ($res) {

@@ -498,7 +498,8 @@ export default {
         "https://takeawayapi.pykky.com/?s=Discount.GetOnesAllcounts",
         {
           params: {
-            userID: this.userInfo.id
+            userID: this.userInfo.id,
+            type: 1
           }
         }
       ).then(res => {

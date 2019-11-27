@@ -14,6 +14,7 @@ class Discount extends Api {
         return array(
             'getOnesAllcounts' => array(
                 'userID'  => array('name' => 'userID', 'require' => true, 'desc' => '用户id'),
+                'type'  => array('name' => 'type', 'require' => false, 'desc' => '业务类型'),
             ),
             'getOnesDiscounts' => array(
                 'id'  => array('name' => 'id', 'require' => true, 'desc' => '红包id'),
@@ -26,7 +27,10 @@ class Discount extends Api {
      */
     public function getOnesAllcounts() {
         $domain = new DomainDiscount();
-        $res = $domain->getOnesAllcounts($this->userID);
+        if (empty($this->type)) {
+            $this->type = 0;
+        }
+        $res = $domain->getOnesAllcounts($this->userID,$this->type);
         if ($res == -1) {
             return 0;//这个用户没有红包
         }else{

@@ -42,8 +42,8 @@ class orders extends NotORM {
         return $orm->insert_id();
     }
     
-    public function insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$createTime,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney) {
-        $data = array('userID' => $userID,'expressAddr' => $expressAddr,'remark' => $remark,'expressCode' => $expressCode,'totalPrice' => $totalPrice,'payPrice' => $payPrice,'addressID' => $addrID,'createTime' => $createTime, 'status' => 0, 'type' => 1, 'shouldDeliveTime' => $shouldDeliveTime, 'deliveFee' => $deliveFee, 'weight' => $weight, 'goodType' => $goodType, 'isNeedFast' => $isNeedFast, 'fastMoney' => $fastMoney);
+    public function insertOneExpressOrder($userID,$expressAddr,$remark,$expressCode,$totalPrice,$payPrice,$addrID,$createTime,$shouldDeliveTime,$deliveFee,$weight,$goodType,$isNeedFast,$fastMoney,$discountID) {
+        $data = array('userID' => $userID,'expressAddr' => $expressAddr,'remark' => $remark,'expressCode' => $expressCode,'totalPrice' => $totalPrice,'payPrice' => $payPrice,'addressID' => $addrID,'createTime' => $createTime, 'status' => 0, 'type' => 1, 'shouldDeliveTime' => $shouldDeliveTime, 'deliveFee' => $deliveFee, 'weight' => $weight, 'goodType' => $goodType, 'isNeedFast' => $isNeedFast, 'fastMoney' => $fastMoney,'discountID' => $discountID);
         $orm = $this->getORM();
         $orm->insert($data);
 

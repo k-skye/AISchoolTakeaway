@@ -238,12 +238,33 @@
           rows="2"
           label="备注"
           type="textarea"
-          maxlength="50"
+          maxlength="80"
           placeholder="请输入备注，建议把快递短信内容直接复制到这里"
           show-word-limit
           clearable
           :error-message="markError"
         />
+      </van-cell-group>
+      <van-cell-group style="margin-top:2.133333vw;">
+        <van-coupon-cell
+          title="红包"
+          :coupons="coupons"
+          :chosen-coupon="chosenCoupon"
+          @click="showList = true"
+        />
+        <!-- 优惠券列表 -->
+        <van-popup
+          v-model="showList"
+          position="bottom"
+        >
+          <van-coupon-list
+            :show-exchange-bar="false"
+            :coupons="coupons"
+            :chosen-coupon="chosenCoupon"
+            :disabled-coupons="disabledCoupons"
+            @change="onChange"
+          />
+        </van-popup>
       </van-cell-group>
       <van-submit-bar
         :price="okFee*100"
@@ -342,7 +363,13 @@ export default {
       weightNum: 0,
       customFeeError: "",
       preuserInfo: null,
-      isPayloading: false
+      isPayloading: false,
+      chosenCoupon: -1,
+      coupons: [],
+      disabledCoupons: [],
+      showList: false,
+      noDiscountPrice: 0.0,
+      Discounid: -1,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -356,8 +383,25 @@ export default {
     }
   },
   methods: {
+    onChange(index) {
+      this.showList = false;
+      this.chosenCoupon = index;
+      if (this.chosenCoupon == -1) {
+        this.okFee = this.noDiscountPrice;
+        this.Discounid = -1;
+        this.radioChange();
+        return;
+      }
+      this.Discounid = this.coupons[index].id;
+      this.okFee = this.noDiscountPrice - ((this.coupons[index].value)/100);
+      this.okTime = "21:00前送达";
+    },
     onTimeConfirm(okTime) {
-      this.okTime = okTime;
+      if (this.chosenCoupon == -1) {
+        this.okTime = okTime;
+      }else{
+        this.okTime = "21:00前送达";
+      }
       this.showTimePicker = false;
     },
     goodTypeQuestion() {
@@ -389,6 +433,7 @@ export default {
     customGiftInput(value) {
       if (value != "") {
         this.okFee = this.deliveFee + parseFloat(value);
+        this.noDiscountPrice = this.okFee;
       }
     },
     customFeeInput(value) {
@@ -398,6 +443,7 @@ export default {
       }
       if (value != "") {
         this.okFee = parseFloat(value) + gift;
+        this.noDiscountPrice = this.okFee;
       }
     },
     onWeightConfirm(weightChoose, index) {
@@ -440,6 +486,8 @@ export default {
       }
       this.weightNum = index;
       this.showWeightPicker = false;
+      this.noDiscountPrice = this.okFee;
+      this.onChange(this.chosenCoupon);
     },
     shouldShowPicker() {
       if (parseInt(this.radio) != 2) {
@@ -474,6 +522,11 @@ export default {
       return options;
     },
     handlePay() {
+      let time = new Date();
+      if (((time.getHours())>=21) || ((time.getHours())<=6)) {
+        Dialog({ message: '平台不在服务时间内，服务时间:07点-20点' });
+        return;
+      }
       //先判断所有需要填的空是否已填写
       this.addrError = "";
       this.codeError = "";
@@ -563,7 +616,8 @@ export default {
           weight: this.weightNum,
           goodType: this.goodTypevalue,
           isNeedFast: isNeedFastNum,
-          fastMoney: this.customGift
+          fastMoney: this.customGift,
+          discountID: this.Discounid
         })
         .then(res => {
           //重要接口加错误处理！！！
@@ -611,10 +665,14 @@ export default {
           //this.okFee = this.deliveFee + 1;
           break;
         default:
-          this.okTime =
+          if (this.chosenCoupon == -1) {
+            this.okTime =
             "尽快送达 (" + this.deliveryTime(this.deliverTime) + "送达)";
-
+          }else{
+            this.okTime = "21:00前送达";
+          }
           this.okFee = this.okFee - gift;
+          this.noDiscountPrice = this.okFee;
           //this.okFee = this.deliveFee;
           break;
       }
@@ -715,6 +773,7 @@ export default {
         }
       }
       this.okFee = this.deliveFee;
+      this.noDiscountPrice = this.okFee;
     },
     getData() {
       this.firstlogin = localStorage.firstlogin == 0 ? false : true;
@@ -746,6 +805,26 @@ export default {
         } else {
           this.haveAddress = false;
         }
+        //拿用户红包
+      this.$axios(
+        "https://takeawayapi.pykky.com/?s=Discount.GetOnesAllcounts",
+        {
+          params: {
+            userID: this.preuserInfo.id,
+            type: 2
+          }
+        }
+      ).then(res => {
+        if (res.data.data != 0) {
+          res.data.data.forEach(element => {
+            element.forEach(item => {
+              item.condition = item.conditions;
+            });
+          });
+          this.disabledCoupons = res.data.data[0];
+          this.coupons = res.data.data[1];
+        }
+      });
       });
     },
     addAddress() {
@@ -784,7 +863,7 @@ export default {
     box-sizing: border-box;
     font-size: 0.9rem;
     color: #333;
-    padding-bottom: 14.133333vw;
+    padding-bottom: 18.133333vw;
     padding-left: 1.6vw;
     padding-right: 1.6vw;
     display: flex;

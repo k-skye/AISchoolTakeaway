@@ -145,10 +145,10 @@ export default {
     onRefresh() {
       this.orders = [];
       this.orderlist = [];
-      this.size = 5;
       this.allLoaded = false;
       this.loading = true;
-      this.firstLoadData();
+      //this.firstLoadData();
+      this.offset = 0;
       this.loadMore();
       this.isLoading = false;
     },

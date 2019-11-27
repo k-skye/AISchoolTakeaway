@@ -26,6 +26,13 @@ class discount extends NotORM {
         ->update($data);
     }
 
+    public function changeToTrue($id) {
+        $data = array('available' => 1, 'reason' => '');
+        return $this->getORM()
+        ->where('id', $id)
+        ->update($data);
+    }
+
     public function getOnesDiscounts($id) {
         return $this->getORM()
         ->where('id', $id)

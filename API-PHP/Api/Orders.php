@@ -58,6 +58,7 @@ class Orders extends Api {
                 'goodType'  => array('name' => 'goodType', 'require' => true, 'desc' => '快递类型'),
                 'isNeedFast'  => array('name' => 'isNeedFast', 'require' => true, 'desc' => '需要加急'),
                 'fastMoney'  => array('name' => 'fastMoney', 'require' => true, 'desc' => '加急红包金额'),
+                'discountID'  => array('name' => 'discountID', 'require' => true, 'desc' => '红包id'),
             ),
             'handleExpressPay' => array(
                 'payPrice'  => array('name' => 'payPrice', 'require' => true, 'desc' => '实际支付金额'),
@@ -118,7 +119,7 @@ class Orders extends Api {
      */
     public function createOneExpressOrder() {
         $domain = new DomainOders();
-        $res = $domain->insertOneExpressOrder($this->userID,$this->expressAddr,$this->remark,$this->expressCode,$this->totalPrice,$this->payPrice,$this->addrID,$this->shouldDeliveTime,$this->deliveFee,$this->weight,$this->goodType,$this->isNeedFast,$this->fastMoney);
+        $res = $domain->insertOneExpressOrder($this->userID,$this->expressAddr,$this->remark,$this->expressCode,$this->totalPrice,$this->payPrice,$this->addrID,$this->shouldDeliveTime,$this->deliveFee,$this->weight,$this->goodType,$this->isNeedFast,$this->fastMoney,$this->discountID);
         switch ($res) {
             case (-1):
                 throw new InternalServerErrorException("新增订单失败", 33);
