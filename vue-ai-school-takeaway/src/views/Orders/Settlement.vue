@@ -469,7 +469,9 @@ export default {
       this.okFee = this.deliveFee;
       if (Math.round(this.okFee) === this.okFee) {
         //是整数，折扣-0.1
-        this.okFee -= 0.1;
+        if (this.okFee>2.0) {
+          this.okFee -= 0.1;
+        }
       }
     },
     getData() {

@@ -195,7 +195,7 @@
           label="伙伴费"
           type="number"
           maxlength="3"
-          placeholder="请输入伙伴费(10元起)"
+          placeholder="自行决定伙伴费(2元起)"
           :error-message="customFeeError"
           @input="customFeeInput"
         >
@@ -314,7 +314,7 @@ export default {
       haveAddress: false,
       addrInfo: null,
       okTime: "",
-      deliveFee: 3.0,
+      deliveFee: 2.0,
       okFee: 0.0,
       deliverTime: 30,
       goodsAddress: "",
@@ -330,11 +330,11 @@ export default {
       showCriticalTimePicker: false,
       addrcolumns: ["C3", "C4", "商业街京东派"],
       weightcolumns: [
-        "小：3元(<1.5kg 约3瓶中型怡宝)",
-        "中：5元(>1.5-3kg 约1瓶大型怡宝)",
-        "大：7元(>3kg-5kg 约1箱牛奶)",
-        "特大：9元(>5kg-10kg 约2箱牛奶)",
-        "其他：最低10元(>10kg/体积大)"
+        "小：<1.5kg 约3瓶中型怡宝",
+        "中：>1.5-3kg 约1瓶大型怡宝",
+        "大：>3kg-5kg 约1箱牛奶",
+        "特大：>5kg-10kg 约2箱牛奶",
+        "其他：>10kg/体积过大"
       ],
       columns: [],
       currentTime: "",
@@ -370,6 +370,7 @@ export default {
       showList: false,
       noDiscountPrice: 0.0,
       Discounid: -1,
+      DiscountPrice: 0.0
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -393,7 +394,8 @@ export default {
         return;
       }
       this.Discounid = this.coupons[index].id;
-      this.okFee = this.noDiscountPrice - ((this.coupons[index].value)/100);
+      this.DiscountPrice = (this.coupons[index].value)/100;
+      this.okFee = this.noDiscountPrice - this.DiscountPrice;
       this.okTime = "21:00前送达";
     },
     onTimeConfirm(okTime) {
@@ -456,21 +458,27 @@ export default {
       switch (index) {
         case 1:
           this.calcData(15);
-          this.deliveFee = 5;
+          /* this.deliveFee = 5;
           this.okFee = this.deliveFee + gift;
-          this.showCustomFee = false;
+          this.showCustomFee = false; */
+          this.deliveFee = 0;
+          this.showCustomFee = true;
           break;
         case 2:
           this.calcData(30);
-          this.deliveFee = 7;
+          /* this.deliveFee = 7;
           this.okFee = this.deliveFee + gift;
-          this.showCustomFee = false;
+          this.showCustomFee = false; */
+          this.deliveFee = 0;
+          this.showCustomFee = true;
           break;
         case 3:
           this.calcData(45);
-          this.deliveFee = 9;
+          /* this.deliveFee = 9;
           this.okFee = this.deliveFee + gift;
-          this.showCustomFee = false;
+          this.showCustomFee = false; */
+          this.deliveFee = 0;
+          this.showCustomFee = true;
           break;
         case 4:
           this.calcData(60);
@@ -479,7 +487,7 @@ export default {
           break;
         default:
           this.calcData(0);
-          this.deliveFee = 3; //test:0.1
+          this.deliveFee = 2; //test:0.1
           this.okFee = this.deliveFee + gift;
           this.showCustomFee = false;
           break;
@@ -575,14 +583,14 @@ export default {
       } else {
         this.customGift = "0";
       }
-      if (this.weightNum == 4) {
+      if (this.weightNum >= 1) {
         //特殊其他件
         if (!this.customFee) {
           this.customFeeError = "伙伴配送费不能为空";
           return;
         }
-        if (parseFloat(this.customFee) < 10) {
-          this.customFeeError = "伙伴配送费不能低于10元";
+        if (parseFloat(this.customFee) < 2) {
+          this.customFeeError = "伙伴配送费不能低于2元";
           return;
         }
       }
@@ -606,12 +614,12 @@ export default {
           userID: this.userInfo.id,
           remark: this.remark,
           expressAddr: this.addrvalue,
-          totalPrice: this.okFee,
+          totalPrice: (this.okFee+this.DiscountPrice),
           payPrice: this.okFee,
           addrID: this.addrInfo.id,
           openID: this.userInfo.openid,
           shouldDeliveTime: finalFormatTime,
-          deliveFee: this.okFee,
+          deliveFee: (this.okFee+this.DiscountPrice),
           expressCode: this.code,
           weight: this.weightNum,
           goodType: this.goodTypevalue,
@@ -713,7 +721,7 @@ export default {
       //两个之间差值来算，把宿舍分成2个区域
       const dormNum = dormitory >= 1 && dormitory <= 6 ? 1 : 2;
       //默认起始配送费和时间为
-      this.deliveFee = 3;
+      this.deliveFee = 2;
       this.deliverTime = 30 + initTime;
       //区域点餐
       switch (dormNum) {

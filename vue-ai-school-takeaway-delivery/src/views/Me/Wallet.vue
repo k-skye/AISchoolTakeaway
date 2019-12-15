@@ -72,7 +72,7 @@
             服务费 
             <van-icon name="info-o" />
           </span>
-          <span class="right">- ¥ {{ (parseFloat(userInfo.income) * 0.3).toFixed(2) }}</span>
+          <span class="right">- ¥ 0<!-- {{ (parseFloat(userInfo.income) * 0.3).toFixed(2) }} --></span>
         </div>
         <div class="yesButton">
           <van-button
@@ -166,7 +166,7 @@ export default {
     },
     clickLeftInfo() {
       Dialog.alert({
-        message: "服务费是从伙伴的实际收入(配送费)中收取30%作为我们的运营成本"
+        message: "服务费是从伙伴的实际收入(配送费)中收取0%作为我们的运营成本，平台前期暂不收取服务费"
       });
     }
     /*     onChangePassCellClick() {
